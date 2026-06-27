@@ -4,20 +4,38 @@
 
 The reader is the product. Optimize for long sessions, low fatigue, and fast return to the current chapter. Every interaction in the reader must serve the reading act or stay out of the way.
 
-## Required Reader Controls
+## Required Reader Controls by Tier
 
-All of these must be present in a complete reader implementation:
+Controls are gated by the complexity tier chosen in SKILL.md Phase 1. Do not implement controls the tier does not require.
 
-| Control | Minimum | Notes |
+**Minimal tier (default for social traffic / fast MVPs):**
+
+| Control | Requirement | Notes |
 | --- | --- | --- |
-| Font size | ≥4 steps | Typically 14/16/18/20px or similar graduated steps |
-| Line height / density | ≥2 options | "Compact" and "Comfortable" are enough |
+| Previous / next chapter | Required | Always visible; must work at end of chapter content |
+| End-of-chapter prompt | Required | Clear "Next chapter" CTA at bottom of content |
+| Keyboard prev/next | Required on desktop | `←` / `→` arrow keys |
+| Error / empty states | Required | See Error States section |
+
+**Standard tier (adds to Minimal):**
+
+| Control | Requirement | Notes |
+| --- | --- | --- |
+| Dark mode toggle | Required | CSS custom property swap; persists in `localStorage` |
+| Resume last chapter | Required | Store last visited chapter slug in `localStorage`; restore on home/detail page |
+| Tap zones (mobile) | Recommended | Left/right 15% tap zones for prev/next |
+
+**Full tier (adds to Standard):**
+
+| Control | Requirement | Notes |
+| --- | --- | --- |
+| Font size | ≥4 steps | Typically 14/16/18/20px graduated steps |
+| Line height / density | ≥2 options | "Compact" and "Comfortable" |
 | Theme | 3 options | Light, Sepia/Paper, Dark/Night |
-| Chapter catalog | Drawer or slide-in | Accessible from within the reader without leaving the page |
-| Previous / next chapter | Always visible or single tap | Must work at end of chapter content |
+| Chapter catalog | Drawer or slide-in | Accessible from within the reader |
 | Reading progress | Visible indicator | Position in current chapter; not distracting |
-| Resume position | On return visit | Scroll restoration or position save |
-| Tap/swipe zones | Optional but common | Left/right tap zones for prev/next on mobile |
+| Resume scroll position | Per-chapter | Scroll restoration within a chapter |
+| Immersive mode | Optional | Chrome-hidden reading mode |
 
 ## Default Typography
 

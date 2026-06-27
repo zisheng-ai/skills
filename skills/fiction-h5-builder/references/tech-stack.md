@@ -8,7 +8,7 @@ Choose the simplest stack that meets all the brief's requirements. Complexity ne
 | --- | --- |
 | Quick H5 prototype, no routing, no build step | Static HTML + vanilla CSS/JS |
 | Multiple pages, SPA routing, no SEO needed | Vite + vanilla JS or Preact/Svelte |
-| Static catalog, SEO matters, oh-story JSON pre-built | Next.js with `output: 'export'` or Astro |
+| Static catalog, SEO matters, oh-story-claudecode JSON pre-built | Next.js with `output: 'export'` or Astro |
 | Dynamic routes, ISR, or server API needed | Next.js SSR/ISR |
 | Maximum performance, mostly static content | Astro (zero-JS by default) |
 | Existing project | Match the existing stack exactly |
@@ -27,7 +27,7 @@ Keep all logic in a minimal ES module. Do not introduce a framework for a protot
 
 Use when:
 - Multiple pages require deep-linkable URLs (`/book/[slug]`, `/book/[slug]/chapter/[id]`).
-- oh-story content is pre-generated and needs SSG.
+- oh-story-claudecode content is pre-generated and needs SSG.
 - SEO is a requirement for a public-facing fiction site.
 - The user's existing project already uses Next.js.
 - The site will grow to need dynamic features (user accounts, reading history, payments).

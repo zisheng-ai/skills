@@ -1,6 +1,6 @@
 ---
 name: fiction-h5-builder
-description: build, redesign, or review reader-facing fiction H5 websites and responsive web novel templates. use when the user asks for a mobile-first fiction reading site, web novel H5, work list/detail/catalog/reader pages, markdown or oh-story generated chapters, multilingual reading sites in english/spanish/japanese/korean, or a polished reading product that adapts to desktop. do not use for authoring workflows, creative writing, story generation, creator dashboards, ranking systems, bookshelf platforms, or reader community features unless the user explicitly asks for those.
+description: build, redesign, or review reader-facing fiction H5 websites and responsive web novel templates. use when the user asks for a mobile-first fiction reading site, web novel H5, work list/detail/catalog/reader pages, markdown or oh-story-claudecode generated chapters, multilingual reading sites in english/spanish/japanese/korean, or a simple fiction site for social traffic campaigns. do not use for authoring workflows, creative writing, story generation, creator dashboards, ranking systems, bookshelf platforms, or reader community features unless the user explicitly asks for those.
 ---
 
 # Fiction H5 Builder
@@ -8,21 +8,32 @@ description: build, redesign, or review reader-facing fiction H5 websites and re
 ## Two Core Goals
 
 **Goal 1 — Deliver a real reading product.**
-The site must feel like something a reader would return to: comfortable typography, fast chapter loading, persistent preferences, and no implementation-visible seams. The reader page is the product. Discovery pages exist to bring readers there.
+The site must load fast, read comfortably on mobile, and get out of the reader's way. Discovery pages exist to bring readers to chapters. The chapter page is where users stay or leave.
 
-**Goal 2 — Respect reading comfort above everything else.**
-Every screen, control, and visual element must serve reading comfort. Distinctiveness is welcome — but only where it does not compete with readable, restful prose rendering.
+**Goal 2 — Reading comfort above visual complexity.**
+Typography, spacing, and contrast are non-negotiable. Interactive reader controls (theme switcher, font-size stepper) are optional enhancements — not requirements. A well-set fixed type scale beats a broken control panel every time.
 
-These goals are not in tension. A site that passes the reader-comfort test will also feel credible to new visitors. Build for readers first. Everything else follows.
+## Complexity Tiers
+
+Assess the brief before choosing a tier. Do not over-build.
+
+| Tier | When to use | Reader controls |
+| --- | --- | --- |
+| **Minimal** | Social traffic campaigns, single-story sites, fast MVPs | Prev / Next only |
+| **Standard** | Multi-book sites, returning-reader products | Prev / Next + dark mode toggle + resume position |
+| **Full** | Subscription products, long-term reading platforms | All controls: font size, themes, progress, catalog drawer |
+
+Default to **Minimal** unless the brief explicitly asks for more. State the chosen tier before writing any code.
 
 ## Operating Principles
 
-- The reader page is the product. Every other page is a path to it.
+- The chapter page is the product. Every other page is a path to it.
+- Mobile first. Facebook / social traffic is 90% mobile — if it breaks at 390px, it's broken.
 - One deliberate visual choice per build. Everything else supports reading.
-- Mobile first, but desktop must have its own layout logic — never a stretched phone screen.
+- Prefer the simplest tech choice that meets the brief. Complexity needs a reason.
+- Fixed good typography beats user-adjustable bad typography.
 - Content language determines layout, font, and line-flow decisions.
 - Realistic content only. Never ship placeholder text to readers.
-- Prefer the simplest tech choice that meets the brief. Complexity needs a reason.
 - Load only the references needed for the current task phase.
 
 ## Build Pipeline
@@ -31,14 +42,16 @@ Run these phases in order unless the user starts from an existing artifact.
 
 | Phase | Load Reference | Required Output |
 | --- | --- | --- |
-| 1. Stack decision | `references/tech-stack.md` | Chosen stack with one-line rationale |
-| 2. Design plan | `references/design-system.md` | Brief: tone, palette, type system, layout concept, signature element |
-| 3. Product IA | `references/product-surface.md` | Page list, URL structure, navigation pattern |
-| 4. Data setup | `references/data-contract.md` | Data models, loader plan, realistic mock data |
-| 5. Build | `references/mobile-ui.md` + `references/reader-ux.md` | Working H5 with all required pages |
-| 6. Internationalization | `references/internationalization.md` | `lang`, font stack, locale-aware labels |
-| 7. Performance | `references/performance.md` | Core Web Vitals targets met, images optimized |
-| 8. QA | `references/qa-checklist.md` | Screenshots at required viewports, checklist passed |
+| 1. Tier + stack | `references/tech-stack.md` | Chosen tier and stack with one-line rationale |
+| 2. Design plan | `references/design-system.md` | Tone, palette, type system, layout concept, signature element |
+| 3. Data setup | `references/data-contract.md` | Loader plan (direct filesystem or JSON), realistic mock data |
+| 4. Build | `references/mobile-ui.md` + `references/reader-ux.md` | Working site with all required pages |
+| 5. Performance | `references/performance.md` | Core Web Vitals targets met, images optimized |
+| 6. QA | `references/qa-checklist.md` | Screenshots at required viewports, checklist passed |
+
+Optional phases (load only when the brief requires):
+- `references/internationalization.md` — when target language is not the build default
+- `references/product-surface.md` — when IA or URL structure needs formal documentation
 
 For review and redesign tasks, start at the relevant phase and load only the references covering the failing areas.
 
@@ -47,22 +60,21 @@ For review and redesign tasks, start at the relevant phase and load only the ref
 Do not deliver a build if any of these are true.
 
 **Reading product:**
-- Reader page is missing font size, theme, or chapter navigation controls.
 - Chapter content contains lorem ipsum or generic placeholder text.
-- Reader background is pure white (`#fff`) or pure black (`#000`) in the default theme.
-- Reading position is lost on page refresh for any template with more than one chapter.
+- Reader background is pure white (`#fff`) or pure black (`#000`).
+- Previous / next chapter navigation is missing or broken.
+- Chapter content fails to load or shows a blank page.
 
 **Visual quality:**
-- Loud gradients, fake glass panels, glowing orbs, or heavy drop shadows appear on any surface.
+- Loud gradients, fake glass panels, glowing orbs, or heavy drop shadows on any surface.
 - Body font is decorative, handwritten, or a novelty display face.
 - Body text is below 16px on mobile or below 17px on desktop.
-- Any theme fails WCAG AA contrast (4.5:1) for body text.
+- Body text fails WCAG AA contrast (4.5:1) against the page background.
 - Desktop is a stretched phone layout with no layout adaptation.
 
 **Content and language:**
 - `<html lang>` is missing or set to the wrong locale.
 - Font stack does not include appropriate language fallbacks for the target language.
-- Labels overflow or clip in the target language at any tested viewport.
 - Any reader-visible copy mentions AI, Markdown, parser, prompt, skill, or generation.
 
 **Technical:**
@@ -70,54 +82,72 @@ Do not deliver a build if any of these are true.
 - Routes do not work or data does not load.
 - Any required page (home, book detail, reader) is missing.
 - Initial JS bundle exceeds 200KB for a prototype.
+- Cover images are not optimized (`next/image` or equivalent).
 
 ## Non-Negotiables
 
-- Reader-facing only by default: no AI labels, writing workflow panels, creator backends, or "generated by" branding unless the user requests an author product.
-- H5/mobile is the primary target. Desktop must have its own layout logic.
-- Required pages: home/work list, book detail with chapter catalog, reader.
-- Required reader controls: font size (≥4 steps), line height or density, theme (light / sepia / dark), chapter catalog drawer, previous/next chapter, reading progress indicator, resume position.
-- Do not add ranking, category, bookshelf, history, search, payment, comments, or account modules unless explicitly requested.
-- Respect content language: set `lang`, use language-appropriate font stacks, handle CJK line flow and long Latin/Spanish words without overflow.
-- One deliberate visual signature per build — connected to reading, books, chapters, or genre. Everything else must serve reading comfort.
+- Reader-facing only by default: no AI labels, writing workflow panels, or "generated by" branding.
+- Mobile is the primary target. Desktop must have its own layout logic — not a stretched phone screen.
+- Required pages: home / book list, book detail with chapter list, chapter reader.
+- Required reader minimum (all tiers): previous chapter / next chapter navigation.
+- Standard tier adds: dark mode toggle, resume-last-chapter via localStorage.
+- Full tier adds: font size control (≥ 4 steps), light / sepia / dark themes, reading progress indicator, chapter catalog drawer.
+- Do not add ranking, bookshelf, search, payment, comments, or account modules unless explicitly requested.
+- Respect content language: set `lang`, use language-appropriate font stacks, handle CJK line flow.
+- One deliberate visual signature per build — connected to reading, books, chapters, or genre.
+
+## Performance Baseline (all tiers)
+
+These apply regardless of tier — fast loading is a product requirement for social traffic.
+
+- SSG (`generateStaticParams`) for all chapter and book routes. No runtime filesystem reads.
+- Cover images: `next/image` with `priority` on above-the-fold images when covers exist; CSS placeholder when they don't.
+- Chapter content: loaded per route, never bundled all-at-once.
+- Prefetch next chapter at 80% scroll depth (simple `router.prefetch()` call).
+- Initial JS bundle under 200KB.
+- LCP target: under 2.5s on a mid-range Android device on 4G.
 
 ## Reference Loading
 
-Load references only when entering that phase. Do not preload all references at the start of a task.
+Load references only when entering that phase. Do not preload all references at the start.
 
 - `tech-stack.md` — choose the implementation stack before writing any code.
 - `design-system.md` — plan design identity before building any UI.
-- `product-surface.md` — define IA, URL structure, and navigation patterns.
-- `data-contract.md` — define data models and oh-story loader when needed.
+- `data-contract.md` — define data models and oh-story-claudecode loader.
 - `mobile-ui.md` — visual and component quality floor during build.
-- `reader-ux.md` — reader page UX requirements during build.
-- `internationalization.md` — language, font, and locale decisions.
-- `performance.md` — Core Web Vitals, loading strategy, and image optimization.
+- `reader-ux.md` — chapter page UX requirements during build.
+- `performance.md` — Core Web Vitals, loading strategy, image optimization.
 - `qa-checklist.md` — final QA and screenshot verification.
+- `product-surface.md` — IA and URL structure (optional, load when needed).
+- `internationalization.md` — language and font decisions (optional, load when needed).
 
 ## Output Contract
 
-For a complete fiction H5 build:
+For a Minimal or Standard tier build:
 
 ```
 <project>/
-  src/ (or equivalent per stack)
-    pages/ or app/         # home, book-detail, reader routes
-    components/            # Reader, BookCard, ChapterList, ReaderSettings
-    styles/                # design tokens, reader themes as CSS custom properties
-    data/ or lib/          # loader, data models, mock data
+  src/app/
+    page.tsx                    # home: book list
+    book/[slug]/
+      page.tsx                  # book detail: synopsis + chapter list
+      chapter/[n]/
+        page.tsx                # chapter reader: content + prev/next
+  src/lib/
+    chapters.ts                 # oh-story-claudecode filesystem loader or JSON loader
+  src/components/
+    BookCard.tsx
+    ChapterNav.tsx
   public/
-    covers/                # cover images or CSS placeholder definitions
-  outputs/
-    <site-slug>/
-      design-brief.md      # phase 2 output: tone, palette, type, signature element
-      ia-map.md            # phase 3 output: page list and URL structure
+    covers/                     # optional: cover images (not generated by oh-story-claudecode)
 ```
 
-For a review or redesign task, the output is a findings report and patch set, not a full project scaffold.
+Cover images are optional. When no cover exists, `BookCard` renders a genre-tinted CSS placeholder — never a broken `<img>`. Full tier adds `ReaderSettings.tsx`, CSS custom property theme tokens, and progress tracking.
+
+For a review or redesign task, the output is a findings report and patch set, not a full scaffold.
 
 ## Collaboration With Other Skills
 
-If a frontend design, Sites, or framework-specific skill is available, use it for implementation and visual verification. This skill's product rules, reader-comfort requirements, and QA standards take priority over any visual suggestion from a collaborating skill.
+If a frontend-design or taste-skill is available, use it for implementation and visual verification. This skill's reader-comfort requirements and QA gates take priority over any visual suggestion from a collaborating skill.
 
-When a frontend-design skill provides critique, accept aesthetic feedback only when it does not reduce reading comfort, reduce contrast, or add visual noise to the reader surface.
+Accept aesthetic feedback only when it does not reduce reading comfort, reduce contrast, or add visual noise to the chapter surface.

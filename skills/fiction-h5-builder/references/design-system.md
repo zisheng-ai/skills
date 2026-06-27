@@ -269,7 +269,7 @@ Write from the reader's side of the screen. Name things by what readers control 
 | "Operation successful" | "Added to shelf" |
 | "No data" | "No books yet. Add a title to start reading." |
 | "AI generated" | (never say this) |
-| "Powered by oh-story" | (never say this) |
+| "Powered by oh-story-claudecode" | (never say this) |
 | "Markdown" | (never say this) |
 | "Loading..." | "Loading chapter…" or a skeleton screen |
 
@@ -326,16 +326,28 @@ Run every item before delivering. If any item fails, the output is not done.
 - [ ] `letter-spacing` not applied to body or CJK text?
 - [ ] Italic descender clearance: `leading-[1.1]` min + `pb-1` for display italic with `y g j p q`?
 
-**Reader page:**
+**Reader page (all tiers):**
 - [ ] No JavaScript animation library active on the reader page?
 - [ ] No scroll effects, entrance transitions, or infinite loops in the prose column?
-- [ ] Font size control (≥ 4 steps), theme switch (light / sepia / dark), chapter nav all present?
-- [ ] Reading position persists on page refresh (localStorage)?
-- [ ] Reader background is not pure `#fff` or `#000` in any theme?
+- [ ] Previous / next chapter navigation present and working?
+- [ ] End-of-chapter "Next chapter" prompt visible at bottom of content?
+- [ ] Reader background is not pure `#fff` or `#000`?
+- [ ] Body text ≥ 16px mobile, contrast ≥ 4.5:1 against page background?
+
+**Reader page (Standard tier — check only if tier ≥ Standard):**
+- [ ] Dark mode toggle present and persists in `localStorage`?
+- [ ] Last visited chapter stored and surfaced on home/detail page?
+
+**Reader page (Full tier — check only if tier = Full):**
+- [ ] Font size control (≥ 4 steps) present?
+- [ ] Three themes (light / sepia / dark) implemented via CSS custom properties?
+- [ ] Reading progress indicator present and not distracting?
+- [ ] Chapter catalog drawer accessible from within the reader?
+- [ ] WCAG AA (4.5:1) verified across all three themes?
 
 **Copy and content:**
 - [ ] Zero em-dashes (`—` or `–`) anywhere visible to the reader?
-- [ ] No reader-visible copy mentions AI, Markdown, oh-story, prompt, or generation?
+- [ ] No reader-visible copy mentions AI, Markdown, oh-story-claudecode, prompt, or generation?
 - [ ] No lorem ipsum or placeholder text in any chapter content?
 - [ ] Copy self-audit passed: no grammatically broken or AI-hallucinated phrases?
 - [ ] Empty states give the reader a next action, not just an error?
@@ -348,7 +360,7 @@ Run every item before delivering. If any item fails, the output is not done.
 - [ ] Required pages present: home / work list, book detail with chapter catalog, reader?
 
 **Accessibility and performance:**
-- [ ] WCAG AA (4.5:1) for body text across all three reader themes?
+- [ ] WCAG AA (4.5:1) for body text in the default theme?
 - [ ] `prefers-reduced-motion` respected for all motion above intensity 2?
 - [ ] `<html lang>` set to the correct locale?
 - [ ] Initial JS bundle under 200KB for a prototype?

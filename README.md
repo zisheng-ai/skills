@@ -171,7 +171,7 @@ description: one-line description of what this skill does and when to use it.
       references/        # 子模块：设计、UX、国际化、QA 等
       agents/            # 可选：Agent 配置
       assets/            # 静态资源说明
-      scripts/           # 辅助脚本（如 parse-oh-story.mjs）
+      scripts/           # 辅助脚本（如 parse-oh-story-claudecode.mjs）
 ```
 
 ## License

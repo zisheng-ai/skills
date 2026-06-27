@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * parse-oh-story.mjs
+ * parse-oh-story-claudecode.mjs
  *
- * Parses an oh-story writing directory and outputs a site-data.json
+ * Parses an oh-story-claudecode writing directory and outputs a site-data.json
  * conforming to the SiteData type in references/data-contract.md.
  *
  * Usage:
- *   node parse-oh-story.mjs <source-dir> [output-file]
+ *   node parse-oh-story-claudecode.mjs <source-dir> [output-file]
  *
  * If output-file is omitted, writes to stdout.
  */
@@ -16,7 +16,7 @@ import path from "node:path";
 const root = path.resolve(process.argv[2] || ".");
 const output = process.argv[3] ? path.resolve(process.argv[3]) : null;
 
-// Directories that are internal to oh-story and must never appear in reader routes.
+// Directories that are internal to oh-story-claudecode and must never appear in reader routes.
 const INTERNAL_DIRS = new Set([".git", "node_modules", "拆文库", "对标", "大纲", "设定", "追踪", "参考资料"]);
 
 function slugify(value) {
@@ -182,7 +182,7 @@ async function parseLongBook(bookDir) {
     latestChapterId: latestChapter?.id || "",
     updatedAt: latestChapter?.publishedAt || "",
     featured: false,
-    sourceType: "oh-story-long",
+    sourceType: "oh-story-claudecode-long",
     sourcePath: path.relative(root, bookDir),
     chapters,
   };
@@ -212,7 +212,7 @@ async function parseShortBook(file) {
     latestChapterId: chapter.id,
     updatedAt: chapter.publishedAt || "",
     featured: false,
-    sourceType: "oh-story-short",
+    sourceType: "oh-story-claudecode-short",
     sourcePath: path.relative(root, path.dirname(file)),
     chapters: [chapter],
   };

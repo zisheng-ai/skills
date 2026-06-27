@@ -113,7 +113,7 @@ For each language used:
 
 - [ ] No lorem ipsum anywhere.
 - [ ] No placeholder text ("Coming soon", "TODO", "[BOOK TITLE]") on any reader-visible page.
-- [ ] No reader-visible copy mentions AI, Markdown, oh-story, parser, prompt, or skill.
+- [ ] No reader-visible copy mentions AI, Markdown, oh-story-claudecode, parser, prompt, or skill.
 - [ ] All empty states show a helpful message and a navigation affordance.
 - [ ] End-of-chapter state shows "Next: [Chapter Title]" and navigates correctly.
 - [ ] End-of-book state shows a completion message and links back to the book detail.
