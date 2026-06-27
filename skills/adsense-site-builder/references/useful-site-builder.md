@@ -6,6 +6,16 @@ Do not finish this phase until every item in the completion gate is checked. A p
 
 ---
 
+## Inputs
+
+Before building anything, load these artifacts produced by earlier phases:
+
+- `outputs/niches.json` — read the `competitive_brief` for this site's entry (produced in phase 1). Used in Step 0.
+- `outputs/<site-slug>/site-map.json` — the full page list and internal link map from phase 2. Every page in this file must be built.
+- `outputs/<site-slug>/page-model.md` — the visual direction, token system, anchor choice, and page templates from phase 3. The build must match the design read, token system, and dial settings defined there. Do not deviate from the token system without documenting why.
+
+---
+
 ## Step 0: Load the competitive brief
 
 Before choosing a pattern or writing any page, read `competitive_brief` from this site's entry in `outputs/niches.json` (produced in phase 1). It is the differentiation baseline — the build's job is to be measurably better than the incumbents on the specific weaknesses recorded there.
@@ -336,9 +346,67 @@ For AdSense specifically: ad units that inject late cause CLS. Reserve the ad sl
 
 ---
 
+## Trust and Identity Pages
+
+Build these pages as part of the site in phase 4. All are required for AdSense approval and must be linked from the global footer of every page. The completion gate below confirms they exist before the distribution plan (phase 5) begins.
+
+### Privacy Policy (AdSense hard requirement)
+
+The most critical trust page for AdSense approval. Must explicitly state:
+
+1. The site uses **Google AdSense** to display advertisements.
+2. Google uses **cookies** (including the DoubleClick cookie) to serve ads based on user visits.
+3. Users can opt out of personalized advertising via **[Google's Ads Settings](https://adssettings.google.com)**.
+4. What other data the site collects (email submissions, analytics, session data).
+5. Whether the site uses **Google Analytics** or other tracking tools.
+6. A link to the **Google Privacy Policy** at `https://policies.google.com/privacy`.
+
+Generate the full text. Do not link to an external generator and assume it is complete.
+
+### About
+
+States who runs the site (person, team, or project — no fake credentials), what the site helps users do, why it was built, and when it launched or was last updated. If the owner has not provided identity details, use a transparent brand or project identity and mark all placeholders clearly for the owner to fill in before submission.
+
+### Contact
+
+Provide at minimum one of: a working email address or a functional contact form. The contact path must work when tested — Google reviewers will test it. Do not use a non-functional placeholder.
+
+### Terms of Use
+
+Required whenever the site includes interactive tools, calculators, or outputs users act on. Must cover: acceptable use, a disclaimer that tool outputs are informational only and not professional advice, limitations of liability, and a DMCA or content removal policy if the site hosts user-generated content.
+
+### Content rules for all trust pages
+
+- Written in plain language — not unread legal boilerplate.
+- No fabricated credentials or unverifiable authority claims.
+- Hosted on the same domain (not a subdomain or externally hosted page).
+- Not blocked by `robots.txt` or tagged `noindex`.
+- Linked from the global footer on every page.
+
+After building, add the status to `outputs/<site-slug>/site-brief.md`:
+
+```md
+## Trust Pages
+
+- Privacy Policy: done | needs AdSense/cookie language | needs legal review
+- About: done | needs owner details
+- Contact: done | needs working email or form endpoint
+- Terms of Use: done | not applicable | needs review
+
+## AdSense Privacy Policy Checklist
+- [ ] Mentions Google AdSense by name
+- [ ] Mentions cookies / DoubleClick cookie
+- [ ] Links to Google Ads Settings opt-out
+- [ ] Links to Google Privacy Policy
+- [ ] Covers other data collection (analytics, forms)
+- [ ] Linked from every page footer
+```
+
+---
+
 ## Completion Gate
 
-Before advancing to phase 5, verify all of the following:
+Before advancing to phase 5 (pre-launch distribution plan), verify all of the following:
 
 **Content:**
 - [ ] Primary tool or resource works correctly. Tested with at least 3 input scenarios including an edge case.
@@ -372,3 +440,12 @@ Before advancing to phase 5, verify all of the following:
 - [ ] No horizontal scroll on any page.
 - [ ] Touch targets (buttons, links) are at least 44×44px.
 - [ ] Font size ≥ 16px for body text.
+
+**Trust pages:**
+- [ ] Privacy Policy is live and passes the AdSense checklist: names Google AdSense, mentions the DoubleClick cookie, links to Google Ads Settings opt-out, links to the Google Privacy Policy, covers any other data collection.
+- [ ] About page is live. No fabricated credentials or unverifiable claims.
+- [ ] Contact page is live with a working email or functional form endpoint — tested, not a placeholder.
+- [ ] Terms of Use is live for any site with interactive tools or user-actionable outputs.
+- [ ] All trust pages are linked from the global footer on every page.
+- [ ] No trust page is blocked by `robots.txt` or tagged `noindex`.
+- [ ] `outputs/<site-slug>/site-brief.md` trust pages section is complete.

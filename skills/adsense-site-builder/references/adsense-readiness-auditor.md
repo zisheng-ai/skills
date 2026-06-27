@@ -1,6 +1,6 @@
 # AdSense Readiness Auditor
 
-Use this reference during phase 8 — after the site has been live for 2–4 weeks — before recommending AdSense submission. The two goals are: (1) pass the review on the first attempt, (2) maintain account health after approval.
+Use this reference during phase 7 — after the site has been live for 2–4 weeks — before recommending AdSense submission. The two goals are: (1) pass the review on the first attempt, (2) maintain account health after approval.
 
 Do not recommend submission unless every blocking item passes. "Needs revision" is always better than a rejected or suspended account.
 
@@ -11,7 +11,7 @@ Do not recommend submission unless every blocking item passes. "Needs revision" 
 Confirm the site meets these preconditions before running the audit:
 
 - The site has been live on the **final domain** for at least **2–4 weeks**.
-- Google Search Console shows at least **10–15 indexed pages**.
+- Google Search Console shows at least **15 indexed pages**. (GSC can lag real crawl coverage by a few days — if the site has 15+ live pages but only 12 are indexed, use the URL Inspection tool to request indexing for the unindexed pages and wait a few more days before submitting. Do not submit with fewer than 10 indexed pages under any circumstances.)
 - GSC shows **some impressions** (even low ones). This proves the site is real to Google before you apply.
 - All pages load on **HTTPS**. HTTP is an instant rejection.
 - The Google account being used for AdSense has **no existing policy violations**.
@@ -73,6 +73,7 @@ These are required by AdSense policy. Missing any will cause rejection.
 | Page speed | LCP under 4s on mobile (verify with PageSpeed Insights). |
 | No intrusive pop-ups | No full-screen overlays blocking content on page load before user interaction. |
 | No auto-play media | No video or audio that auto-plays without user action. |
+| AdSense auto-ads script in `<head>` | The `pagead2.googlesyndication.com` script is present in the `<head>` of every page with the correct `ca-pub-XXXXXXXX` publisher ID. Google uses this to verify site ownership during review. |
 
 ### 4. AdSense Policy Compliance (blocking if any violation present)
 
@@ -93,7 +94,17 @@ These are required by AdSense policy. Missing any will cause rejection.
 | Readable typography | Body text ≥ 16px. Sufficient contrast (WCAG AA). |
 | Internal linking present | Pages link to related content. No orphan pages. |
 
-### 6. Traffic Quality Pre-Check
+### 6. Competitive Differentiation (advisory — not blocking for AdSense, but affects long-term ranking)
+
+If `competitive_brief` is present in `outputs/niches.json`, verify that the site actually beat the incumbents on the documented weaknesses. This is not an AdSense policy requirement, but a site that fails its own differentiation baseline will plateau in organic search shortly after approval.
+
+| Check | Pass Criteria |
+| --- | --- |
+| All `competitive_brief` entries were addressed | Phase 4's completion gate confirmed each entry was handled. No entry was silently dropped. |
+| Build actions are visible on the live site | For each `beat_action` recorded in the brief, the corresponding improvement is live and verifiable on the real site. |
+| Site is measurably better than incumbents | The differentiating element (tool, depth, CWV, freshness, free access) exists and works on the live site. |
+
+### 7. Traffic Quality Pre-Check
 
 | Check | Pass Criteria |
 | --- | --- |
@@ -117,7 +128,7 @@ Blocking items (any failure = do not submit):
 - Site on HTTP
 - Insufficient page count (Google's standard is "sufficient content" — fewer than 10 complete, indexable pages is almost always insufficient; 15+ is the practical safe threshold)
 - Content is primarily images/videos, not text — or pages contain only headlines without complete sentences
-- Site not indexed in Google Search Console
+- Site not indexed in Google Search Console, or GSC shows zero impressions (no impressions means Google has not yet registered the site as real — wait until impressions appear before submitting)
 - Any banned category content present
 
 ---
@@ -161,7 +172,11 @@ ready | needs revision | not ready
 | Check | Result | Notes |
 | --- | --- | --- |
 
-### 6. Traffic Quality Pre-Check
+### 6. Competitive Differentiation
+| Check | Result | Notes |
+| --- | --- | --- |
+
+### 7. Traffic Quality Pre-Check
 | Check | Result | Notes |
 | --- | --- | --- |
 

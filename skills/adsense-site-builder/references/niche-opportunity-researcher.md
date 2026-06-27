@@ -79,7 +79,7 @@ All three must pass:
 
 1. **Google autocomplete** — the seed keyword appears as an autocomplete suggestion (not just a longer phrase you invented).
 2. **At least one existing result in the top 5** that has clear engagement — comments, backlinks, or a high word count on the topic. This proves the market exists.
-3. **Supporting keyword set** — you can name at least 8–10 supporting page topics, each with its own search intent. A niche with only 1–2 keyword angles cannot support a site.
+3. **Supporting keyword set** — you can name at least 10 supporting page topics, each with its own search intent. A niche with only 1–2 keyword angles cannot support a site. Phase 2 requires a firm minimum of 10 supporting pages; this check ensures the niche can sustain that before any build work begins.
 
 Reject candidates that fail any of these three checks.
 
@@ -308,3 +308,18 @@ Write `outputs/niches.json`:
 - **needs research** — potentially viable but missing data on one critical dimension; mark and note what to verify before building.
 
 Select only candidates with strong utility potential, confirmed search demand, and a clear path through AdSense policy review.
+
+---
+
+## Completion Gate
+
+Before advancing to phase 2, verify all of the following:
+
+- [ ] `outputs/niches.json` is written and valid JSON.
+- [ ] At least one niche has `decision: "select"`.
+- [ ] Every selected niche: `adsense_safety ≥ 3`, average score ≥ 3.5, no single dimension below 2.
+- [ ] Every selected niche has a `competitive_brief` array. If no clear incumbents were found, the array may be empty — but note that the build will have no differentiation baseline and will default to the content-depth standards in phase 4.
+- [ ] Every `competitive_brief` entry has `acts_in_phase` set to a single token (`keywords`, `page_model`, or `build`), never a pipe string or prose.
+- [ ] No selected niche is in a banned AdSense category.
+- [ ] Every `needs research` candidate has a specific note on what must be verified before it can be promoted to `select`. Do not advance a `needs research` candidate to phase 2 without resolving the gap.
+- [ ] Demand validation passes all three signals (autocomplete, existing engaged result, at least 10 supporting page angles each with distinct search intent) for every selected niche.

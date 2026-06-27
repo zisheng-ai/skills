@@ -197,4 +197,20 @@ Write `outputs/<site-slug>/site-map.json`:
 
 If the map cannot reach 10 meaningful supporting pages, return to phase 1 and choose a better niche.
 
-**Start small principle:** Launch with 10–20 high-quality pages, not 100 thin ones. Google rewards depth and engagement. A site with 15 complete, useful pages that users actually finish reading will rank faster and pass AdSense review more reliably than a site with 200 shallow pages that users bounce from in 8 seconds. Scale page count only after the first pages show real GSC impressions and user engagement.
+**Start small principle:** Launch with 15–20 high-quality pages, not 100 thin ones. 15 is the practical safe threshold for AdSense approval — fewer than 10 is almost always insufficient. Google rewards depth and engagement. A site with 15 complete, useful pages that users actually finish reading will rank faster and pass AdSense review more reliably than a site with 200 shallow pages that users bounce from in 8 seconds. Scale page count only after the first pages show real GSC impressions and user engagement.
+
+---
+
+## Completion Gate
+
+Before advancing to phase 3, verify all of the following:
+
+- [ ] `outputs/<site-slug>/site-map.json` is written and complete.
+- [ ] The primary tool or resource page is defined with a clear keyword, intent, and schema type.
+- [ ] At least 10 supporting pages are defined, each with a **distinct search intent** that differs from every other page.
+- [ ] Total planned indexable pages (tool + supporting + FAQ + homepage) reaches **at least 11**, knowing that phase 5 will add 4 trust pages (Privacy Policy, About, Contact, Terms of Use) to reach the 15-page safe threshold. If the niche cannot support 11 content pages here, it cannot safely pass AdSense review — return to phase 1 and choose a different niche.
+- [ ] Every page has a defined title tag (50–60 chars), meta description (150–160 chars), H1, schema type, and internal link target.
+- [ ] No two pages differ only by a swapped keyword, location name, or adjective without distinct data or logic.
+- [ ] All `acts_in_phase: "keywords"` entries from `competitive_brief` in `outputs/niches.json` are accounted for — the missing sub-topics or page angles are either present in the site map or explicitly ruled out with a reason.
+- [ ] Internal link map ensures no orphan pages.
+- [ ] `outputs/<site-slug>/site-brief.md` is initialized with: site name, one-sentence purpose, target audience, primary keyword strategy, and a link to this site-map.json. Subsequent phases will append to this file.

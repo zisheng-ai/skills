@@ -1,6 +1,6 @@
 # Programmatic SEO Architect
 
-Use this reference during phase 3 when a niche supports repeated page patterns.
+Use this reference during phase 3 for all site types. The visual design and page model sections apply universally — not only to niches with repeated page patterns.
 
 ## Goal
 
@@ -266,3 +266,4 @@ Before moving to phase 4, verify:
 - [ ] Image strategy is defined; no fake-screenshot plans; placeholder slots labeled.
 - [ ] Ad placements are accounted for without breaking layout.
 - [ ] Mobile collapse declared per multi-column component.
+- [ ] All `acts_in_phase: "page_model"` entries from `competitive_brief` in `outputs/niches.json` are addressed in at least one page template — the differentiating tool, asset, or feature exists in the page model and is planned for build. If an entry was missed here, note it and ensure phase 4 Step 0 catches it.
