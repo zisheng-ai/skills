@@ -2,9 +2,61 @@
 
 Use this reference before building any new UI or major redesign. Do the design plan first — do not skip to code.
 
-## Design Plan
+---
 
-Before writing any markup, decide the following and record them as a brief `outputs/<site-slug>/design-brief.md`:
+## Step 0 — Design Read (Read the Room First)
+
+Before any palette, font, or layout decision, state a one-line design read:
+
+**"Reading this as: \<genre> fiction for \<audience>, with a \<vibe> language, leaning toward \<aesthetic family>."**
+
+Examples:
+- *"Reading this as: serialized web novel for mobile readers, with a clean modern language, leaning toward strong cover grid + restrained reader chrome."*
+- *"Reading this as: literary short story collection for desktop readers, with a quiet editorial language, leaning toward typographic hierarchy + minimal UI chrome."*
+- *"Reading this as: fantasy serial for CJK readers, with an atmospheric language, leaning toward warm amber palette + system CJK stack."*
+
+If the brief is ambiguous, ask **one** clarifying question. If you can infer from genre, content language, or audience, declare the design read and proceed.
+
+**Anti-default discipline:** Do not default to cream + terracotta + giant serif. Do not default to near-black + neon accent. Do not default to Inter everywhere. These are the LLM defaults for reading apps. Reach past them based on the design read.
+
+---
+
+## Step 1 — Fiction Dials
+
+After the design read, set three dials. Every layout, motion, and density decision is gated by these.
+
+| Dial | Range | Meaning |
+| --- | --- | --- |
+| `DESIGN_VARIANCE` | 1–10 | 1 = perfectly symmetrical, 10 = artsy chaos |
+| `MOTION_INTENSITY` | 1–10 | 1 = static, 10 = cinematic physics |
+| `VISUAL_DENSITY` | 1–10 | 1 = art gallery / airy, 10 = cockpit / packed |
+
+**Fiction presets by page type:**
+
+| Page | VARIANCE | MOTION | DENSITY | Rationale |
+| --- | --- | --- | --- | --- |
+| Reader page | 3–4 | 1–2 | 2–3 | Reading comfort overrides everything. No animation in the prose column. |
+| Home / discovery | 6–7 | 3–4 | 3–4 | Enough visual energy to sell the genre; restrained enough to feel like a reading product. |
+| Book detail | 5–6 | 2–3 | 3–4 | Genre atmosphere in cover and description; calm catalog. |
+
+**Genre dial adjustments:**
+
+| Genre | VARIANCE | MOTION | DENSITY |
+| --- | --- | --- | --- |
+| Literary / short story | 4–5 | 1–2 | 2–3 |
+| Serialized web novel | 6–7 | 3–4 | 3–5 |
+| Light novel / manga | 6–8 | 3–5 | 3–4 |
+| Romance | 5–6 | 2–3 | 2–3 |
+| Fantasy / historical | 5–6 | 2–3 | 2–3 |
+| Thriller / mystery | 5–7 | 2–4 | 3–4 |
+
+**Hard override:** The reader page MOTION dial is always capped at 2. No scroll animations, no entrance transitions, no infinite loops on the prose surface. Discovery pages may use motion; the reader page does not.
+
+---
+
+## Step 2 — Design Plan
+
+Before writing any markup, decide the following and record them as `outputs/<site-slug>/design-brief.md`:
 
 1. **Purpose** — What reading job does this site solve? (Serialized fiction discovery, CJK light novel reading, English short story collection, Spanish romance serial, etc.)
 2. **Audience** — Casual web novel reader, serialized fiction subscriber, literary reader, language-learner, manga/manhwa crossover reader, etc.
@@ -28,9 +80,13 @@ Before writing any markup, decide the following and record them as a brief `outp
 6. **Layout concept** — How do discovery, book detail, and reader layouts differ between H5 and desktop?
 7. **Signature element** — One memorable detail connected to reading, books, chapters, or genre (see below).
 
+**Two-pass process:** First, brainstorm the design plan in thinking. Then review it against the design read — if any part reads like the generic default you would produce for any similar genre, revise that part and say what changed. Only after confirming the relative uniqueness of the plan should you write code.
+
+---
+
 ## Signature Element Rules
 
-Spend all the distinctiveness in one place. A good signature element improves reader orientation, mood, or recognition — not decoration.
+Spend all the distinctiveness in one place. A good signature element improves reader orientation, mood, or recognition — not decoration. Take one real aesthetic risk you can justify.
 
 Examples that work:
 - A chapter progress rail styled as a bookmark ribbon or page-edge marker.
@@ -47,7 +103,9 @@ Examples that fail:
 - A floating "AI" badge or creation-process callout anywhere.
 - Multiple signature elements. One is the rule.
 
-If the signature element does not improve orientation or reading mood, remove it.
+If the signature element does not improve orientation or reading mood, remove it. Chanel's rule applies: before shipping, remove one decorative element you added.
+
+---
 
 ## Genre-Specific Visual Direction
 
@@ -61,6 +119,8 @@ If the signature element does not improve orientation or reading mood, remove it
 | Thriller / mystery | Taut, focused | Near-black base, single cold accent | High-contrast sans display, tight body | Warm/cozy palettes |
 | Short story collection | Calm editorial | High contrast, minimal or no accent | Strong typographic hierarchy, no cover grid needed | Cover-grid layouts when there are no covers |
 
+---
+
 ## Palette Guidance
 
 Default to calm. The reader page inherits these tokens.
@@ -73,21 +133,39 @@ Default to calm. The reader page inherits these tokens.
 - `--night-ink`: soft off-white (`#e8e4de`) or warm light. Never `#ffffff`.
 - Sepia: `--sepia-base: #f2ead8`, `--sepia-ink: #3d3220`.
 
+**Color Consistency Lock:** Once an accent color is chosen, it is used on the whole site. A warm-toned reader site does not suddenly get a blue chapter-nav CTA. Pick one accent, lock it, audit every component before shipping.
+
+**Page Theme Lock:** The site has one theme (light, dark, or system). Sections do not flip between modes. The only exception is the reader page offering light / sepia / dark themes as a user preference, controlled by CSS custom properties — not section-level overrides.
+
 Avoid:
-- Cream + terracotta + giant serif as a default answer for every brief.
+- Cream + terracotta + giant serif as a default for every brief — this is the LLM default for reading apps.
 - Neon + near-black as a default "dark reading" treatment.
 - Multiple accent colors. One accent per palette, used sparingly.
 - Any pure `#000` / `#fff` in any theme.
+- AI-purple gradients, glowing orbs, or frosted glass panels on the reader surface.
+
+---
 
 ## Typography Guidance
 
 Reader body typography matters more than display typography. Get body right before touching anything else.
 
-- Display type: characterful but not decorative. Use for the site logo, book titles, and section headers only.
-- Reader body: highly readable. Prefer a classic text serif (Georgia, Palatino) or a properly hinted hosted serif. For CJK, always use system stacks (see `internationalization.md`).
-- UI text: `system-ui` stack for all controls, labels, and navigation. Never use display or body fonts for controls.
+**Display type:** Characterful but not decorative. Use for the site logo, book titles, and section headers only. Prefer `Lora`, `Playfair Display`, `Libre Baskerville`, `Source Serif 4`, or a humanist sans like `Outfit` or `Cabinet Grotesk` for a modern web-novel feel. Avoid `Fraunces` and `Instrument Serif` — they are LLM default display serifs, deployed without thought.
+
+**Reader body:** Highly readable. Prefer `Lora`, `Merriweather`, `Source Serif 4`, or `Georgia` for Latin scripts. For CJK, always use system stacks (see `internationalization.md`). The body face must hold up at 17px mobile with 1.75 line height for 500+ words at a time.
+
+**UI/utility text:** `system-ui` stack for all controls, labels, and navigation. Never use display or body fonts for controls.
+
+**Font choice discipline:**
+- `Inter` is discouraged as the default UI font. Pick `Geist`, `Outfit`, or `system-ui` first.
+- Never use decorative, handwritten, or novelty display fonts for chapter prose.
 - Never apply letter-spacing to body or CJK text. Use it only on uppercase UI labels, sparingly.
-- Never use decorative, handwritten, or display fonts for chapter prose.
+- Serif is appropriate for literary/romance/fantasy reader bodies. For thriller, modern web-novel, or manga, a highly readable sans body may be more on-genre.
+- If italic is used in display type with descenders (`y g j p q`), use `leading-[1.1]` minimum and add `pb-1` reserve on the wrapper.
+
+**Typography carries personality.** The type treatment should be a memorable part of the design identity — not a neutral delivery vehicle for the content.
+
+---
 
 ## Typography Scale
 
@@ -110,9 +188,79 @@ Reader body typography matters more than display typography. Get body right befo
 }
 ```
 
+---
+
+## Dark Mode Protocol
+
+The reader page requires three themes — light, sepia, dark — as user-controlled preferences, not OS-based switching. Discovery pages should support system dark mode via `prefers-color-scheme`.
+
+**Token strategy:** Use CSS custom properties for all color tokens. Swap the full token set under a `[data-theme]` attribute on `<html>` or the reader wrapper. Do not use Tailwind `dark:` classes for reader themes — they cannot handle three-way switching.
+
+```css
+[data-theme="light"]  { --base: #f9f6f1; --ink: #1a1814; ... }
+[data-theme="sepia"]  { --base: #f2ead8; --ink: #3d3220; ... }
+[data-theme="dark"]   { --base: #141210; --ink: #e8e4de; ... }
+```
+
+**Contrast mandate:** WCAG AA minimum for body text (4.5:1) across all three themes. Test each theme before shipping. Do not ship a theme you have only seen in one mode.
+
+**No pure extremes:** Off-black and off-white only. `#000000` and `#ffffff` kill depth and are banned in all themes.
+
+---
+
+## Motion Guidance
+
+**Reader page:** No animations. No scroll effects. No entrance transitions. No infinite loops. Only permitted motion: theme-switch CSS transition (200ms), chapter-nav hover state (CSS only), settings panel slide-in (CSS only). Any JavaScript animation library is forbidden on the reader page.
+
+**Discovery pages:** Motion is allowed when `MOTION_INTENSITY > 2` and the brief reads energetic (web novel, manga). Use Motion (`motion/react`) for scroll-reveal on cover grids and book cards. Use spring physics — no linear easing.
+
+**Motion must be motivated.** Before adding any animation, ask: what does this communicate? Valid: hierarchy, storytelling, feedback, state change. Invalid: "it looked cool." Every animation needs a one-sentence justification.
+
+**Reduced motion is mandatory.** Wrap all motion above intensity 2 in `prefers-reduced-motion` or `useReducedMotion()`. Infinite loops, scroll effects, and entrance transitions collapse to static under reduced motion.
+
+**Forbidden patterns:**
+- `window.addEventListener('scroll', ...)` — use Motion's `useScroll()` or IntersectionObserver.
+- `useState` for continuous values (mouse position, scroll progress) — use `useMotionValue`.
+- Typewriter animation on chapter titles. Particle effects on the reader surface. Parallax inside the prose column.
+
+---
+
+## AI-Tells Banned in Fiction UI
+
+These are the patterns LLMs default to for reading-adjacent products. Avoid them unless the brief explicitly asks.
+
+**Visual:**
+- Gradient orbs, glowing blobs, frosted glass panels on the reader surface.
+- Three equal feature cards in a row on the discovery page.
+- Drop shadows heavier than `0 1px 4px rgba(0,0,0,0.08)`.
+- Corner-radius inconsistency (pill buttons in a sharp-card layout).
+
+**Typography:**
+- `Inter` as the default body font without a reason.
+- `Fraunces` or `Instrument Serif` as display fonts — the two most-reached-for LLM serif defaults.
+- Decorative `letter-spacing` on body text.
+- Mixed font families in chapter prose.
+
+**Content and copy:**
+- Em-dash (`—`) anywhere — headlines, body, attribution, labels, buttons, captions. Use a regular hyphen (`-`) or restructure the sentence. Zero em-dashes is the rule, not a guideline.
+- "Jane Doe" / "John Smith" as author names. Use contextually appropriate, believable names.
+- Section-numbering eyebrows (`001 · Chapters`, `02 / Catalog`) — name sections plainly.
+- Generic placeholder text in chapter content. Fiction sites must have real prose before shipping.
+- Any reader-visible copy mentioning AI, Markdown, parser, prompt, skill, or generation.
+
+**Layout:**
+- Discovery page that is just a stretched phone screen on desktop.
+- Navigation that wraps to two lines at desktop viewport.
+- Empty bento cells — N items means N cells, no blank tiles.
+- Scrollcue labels (`Scroll ↓`, `Scroll to explore`) — readers know what scroll is.
+
+---
+
 ## Interface Copy Rules
 
-Copy must feel editorial and reader-side. Never mention the implementation.
+Copy must feel editorial and reader-side. Words in an interface are design material — bring the same intentionality to copy that you bring to spacing and color.
+
+Write from the reader's side of the screen. Name things by what readers control and recognize, never by how the system is built. Describe what something does in plain terms. Use active voice. A control says exactly what happens when used.
 
 | Avoid | Use instead |
 | --- | --- |
@@ -125,17 +273,27 @@ Copy must feel editorial and reader-side. Never mention the implementation.
 | "Markdown" | (never say this) |
 | "Loading..." | "Loading chapter…" or a skeleton screen |
 
-Empty states must tell the reader what to do next, not just that a data structure is empty.
+Empty states must tell the reader what to do next, not just that a data structure is empty. Error messages explain what went wrong and how to fix it — they do not apologize.
+
+Keep one copy register per site. Do not mix editorial prose, technical labels, and marketing punch in the same composition.
+
+**Copy self-audit before shipping:** Re-read every visible string. Flag anything grammatically broken, unclear in referent, or that sounds like an LLM trying to sound thoughtful ("elegant nothing" phrases, mock-poetic micro-meta, passive-aggressive humility). Rewrite every flagged string. Boring-but-clear beats cute-but-wrong.
+
+---
 
 ## Self-Critique Before Build
 
 Before writing any markup, check:
 
-- Would this palette and layout still work on a finance dashboard or SaaS landing page? If yes, it is too generic — revise.
+- Does the design read match the genre and audience, or is it a generic reading-app default?
+- Would this palette and layout work equally well on a finance dashboard? If yes, it is too generic — revise.
 - Is the signature element connected to reading, books, chapters, or genre? If not, revise.
 - Does anything on the reader page compete with comfortable prose reading? If yes, remove it.
 - Does the desktop layout have its own logic, or is it just wider? If just wider, revise.
 - Is the type system derived from the audience and genre, or from a generic design kit? If the latter, revise.
+- Is there an em-dash (`—`) anywhere in the planned copy? Replace it now.
+
+---
 
 ## Self-Critique After Build
 
@@ -146,3 +304,52 @@ After taking screenshots:
 - Confirm the reader page is calmer and more focused than the home page.
 - Confirm the first visible screen shows a usable reading product, not brand theater.
 - Confirm no reader-visible copy mentions AI, tools, or implementation details.
+
+---
+
+## Pre-flight Checklist
+
+Run every item before delivering. If any item fails, the output is not done.
+
+**Design identity:**
+- [ ] Design Read declared (one-line brief inference)?
+- [ ] Dial values set and reasoned from the genre and brief?
+- [ ] Signature element is exactly one, connected to reading?
+- [ ] Palette is not the LLM default (cream + terracotta + giant serif)?
+- [ ] Color Consistency Lock: one accent used identically across all pages?
+- [ ] Page Theme Lock: no mid-page theme inversion between sections?
+
+**Typography:**
+- [ ] Display font is not `Fraunces` or `Instrument Serif` without explicit brand reason?
+- [ ] Reader body is a high-readability serif or system CJK stack?
+- [ ] Body text ≥ 17px mobile, ≥ 17px desktop?
+- [ ] `letter-spacing` not applied to body or CJK text?
+- [ ] Italic descender clearance: `leading-[1.1]` min + `pb-1` for display italic with `y g j p q`?
+
+**Reader page:**
+- [ ] No JavaScript animation library active on the reader page?
+- [ ] No scroll effects, entrance transitions, or infinite loops in the prose column?
+- [ ] Font size control (≥ 4 steps), theme switch (light / sepia / dark), chapter nav all present?
+- [ ] Reading position persists on page refresh (localStorage)?
+- [ ] Reader background is not pure `#fff` or `#000` in any theme?
+
+**Copy and content:**
+- [ ] Zero em-dashes (`—` or `–`) anywhere visible to the reader?
+- [ ] No reader-visible copy mentions AI, Markdown, oh-story, prompt, or generation?
+- [ ] No lorem ipsum or placeholder text in any chapter content?
+- [ ] Copy self-audit passed: no grammatically broken or AI-hallucinated phrases?
+- [ ] Empty states give the reader a next action, not just an error?
+
+**Layout and structure:**
+- [ ] Desktop is not a stretched phone layout — has its own layout logic?
+- [ ] Navigation renders on one line at desktop, height ≤ 80px?
+- [ ] No section-numbering eyebrows (`001 · Chapters`)?
+- [ ] No scroll cue labels (`Scroll ↓`)?
+- [ ] Required pages present: home / work list, book detail with chapter catalog, reader?
+
+**Accessibility and performance:**
+- [ ] WCAG AA (4.5:1) for body text across all three reader themes?
+- [ ] `prefers-reduced-motion` respected for all motion above intensity 2?
+- [ ] `<html lang>` set to the correct locale?
+- [ ] Initial JS bundle under 200KB for a prototype?
+- [ ] Build errors and console errors absent on page load?

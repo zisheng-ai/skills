@@ -4,7 +4,78 @@
 
 This skill can generate a site from mock data, Markdown files, or an oh-story writing directory. Treat oh-story as an upstream content source — never expose it as a visible product concept.
 
-`worldwonderer/oh-story-claudecode` produces filesystem-based novel projects. The H5 site must be able to load those novels directly when the user asks for integration.
+`worldwonderer/oh-story-claudecode` produces filesystem-based novel projects. The H5 site reads those files directly — no JSON intermediate is required for single-book readers.
+
+## Loader Strategy
+
+Choose based on the user's setup:
+
+| Scenario | Loader |
+| --- | --- |
+| oh-story dir co-located with Next.js project | **Direct filesystem** (recommended) |
+| Multiple books, CMS, or external content pipeline | `parse-oh-story.mjs` → `site-data.json` |
+| Mock data only | Inline TypeScript data file |
+
+## Direct Filesystem Loader (Recommended for Co-located Projects)
+
+When the user places the oh-story output directory inside the Next.js project root, read `正文/` directly from `lib/chapters.ts`. No build script, no JSON file.
+
+**Project layout:**
+
+```
+my-novel-site/
+├── 我的小说/                 ← oh-story-claudecode output
+│   ├── 正文/
+│   │   ├── 第001章_开始.md
+│   │   └── 第002章_发展.md
+│   ├── 大纲/                 ← ignored by Next.js
+│   ├── 设定/                 ← ignored by Next.js
+│   └── 追踪/                 ← ignored by Next.js
+├── src/
+│   ├── app/
+│   │   ├── page.tsx          ← chapter catalog
+│   │   └── reader/[chapter]/
+│   │       └── page.tsx      ← reader page with prev/next
+│   └── lib/
+│       └── chapters.ts       ← reads 正文/, sorts, parses
+└── tailwind.config.ts
+```
+
+**`lib/chapters.ts` baseline:**
+
+```ts
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
+
+const ZHENGWEN = path.join(process.cwd(), '我的小说/正文')
+
+export function getChapters() {
+  return fs.readdirSync(ZHENGWEN)
+    .filter(f => f.endsWith('.md'))
+    .sort()
+    .map((f, i) => ({ slug: String(i + 1), file: f }))
+}
+
+export function getChapter(slug: string) {
+  const chapters = getChapters()
+  const cur = chapters[Number(slug) - 1]
+  const { content, data } = matter(
+    fs.readFileSync(path.join(ZHENGWEN, cur.file), 'utf8')
+  )
+  return {
+    title: data.title ?? cur.file.replace(/\.md$/, ''),
+    content,
+    prev: chapters[Number(slug) - 2]?.slug ?? null,
+    next: chapters[Number(slug)]?.slug ?? null,
+  }
+}
+```
+
+- Only reads `.md` files from `正文/`. All other oh-story directories are invisible to the reader.
+- Chapter order derives from filename sort (`第001章` → `第002章`). No metadata file needed.
+- Chapter title: frontmatter `title` → filename (with leading number and underscores stripped).
+- `prev` / `next` are null at boundaries — the reader page disables the corresponding nav button.
 
 ## Data Models
 
@@ -73,6 +144,10 @@ type SiteData = {
   books: ParsedBook[];
 };
 ```
+
+## JSON Loader (Multi-book / Pipeline Scenario)
+
+When the user has multiple books, an external content pipeline, or needs catalog-level metadata (wordCount, genres, status), use `scripts/parse-oh-story.mjs` to produce `site-data.json` conforming to `SiteData`. This is the slower path — prefer the direct filesystem loader unless the user explicitly needs it.
 
 ## oh-story Directory Structure
 
@@ -182,7 +257,7 @@ Korean mock titles: `비의 기록자`, `밤의 나루터`, `거울 너머`
 
 ## Pagination and Loading
 
-- For static builds: generate one output file per chapter (HTML or JSON).
+- For co-located Next.js projects: use `generateStaticParams` with `getChapters()` to pre-render each chapter at build time. One route per chapter, zero runtime filesystem reads.
 - For client-side apps: fetch chapter content on demand when the reader enters the route.
 - Do not load all chapter content into a single bundle. A book with 100 chapters should not load all 100 on the home page.
 - Prefetch the next chapter's content when the reader reaches 80% scroll depth in the current chapter.
