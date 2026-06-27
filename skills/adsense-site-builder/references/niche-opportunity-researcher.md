@@ -12,9 +12,34 @@ All five factors multiply — a zero in any one factor kills the opportunity reg
 
 ---
 
+## GEO and Target Market
+
+AdSense RPM varies 5–10× across markets. Decide the target market before evaluating any niche — a niche earning $4 RPM in the US may earn $0.40 in a lower-tier market.
+
+### GEO tiers by expected RPM
+
+| Tier | Markets | Expected AdSense RPM |
+| --- | --- | --- |
+| **High** | US, CA, UK, AU, NZ, IE | $2–8+ |
+| **Moderate** | DE, FR, NL, SG, JP, SE, NO, CH | $1–3 |
+| **Low** | Most of Asia, Latin America, Eastern Europe, Africa | <$1 |
+
+Default: English, United States. The US has the highest combination of search volume, CPC, and advertiser density.
+
+### What GEO affects in every downstream phase
+
+- **Keywords**: Volume, CPC, and KD all differ by country. Run keyword research in the target market's Google. A US KD of 25 may be a UK KD of 10 for the same query.
+- **Content**: Match geo conventions — currency (USD vs GBP), date format (MM/DD vs DD/MM), units (imperial vs metric), legal context (HIPAA vs GDPR), and local colloquialisms.
+- **Technical**: Set `<html lang="">` correctly. Use ccTLD (`.co.uk`, `.ca`) or hreflang when targeting a specific country.
+- **Traffic quality**: AdSense evaluates geo-match between content and visitors. Geo-mismatched traffic depresses RPM. A US-targeted site with primarily UK visitors earns lower ad fill rates.
+
+Record `geo_rpm_tier` in each niche entry in `niches.json` (see Output schema below). This makes the expected monetization ceiling explicit and feeds the `adsense_safety` score.
+
+---
+
 ## Inputs
 
-- Target language and country or market
+- Target language and country or market (e.g. `en-us`, `en-gb`, `en-au`)
 - Batch size
 - Preferred monetization path (usually AdSense)
 - Exclusions (user-stated or policy-mandated)
@@ -278,6 +303,7 @@ Write `outputs/niches.json`:
         "acts_in_phase": "build"
       }
     ],
+    "geo_rpm_tier": "high | moderate | low",
     "adsense_policy_check": {
       "banned_category": false,
       "high_risk_category": false,

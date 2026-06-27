@@ -175,7 +175,17 @@ Apply these hard rules to every page model. Failing any is broken work.
 
 Every page needs real visual assets. Text-only pages read as thin or incomplete.
 
-Priority order:
+**Site identity assets (favicon, logo) — generate first, before any page component:**
+
+Do not ship with a browser-default blank favicon. Priority order:
+
+1. **Codex** — delegate with: site name, niche, one-sentence purpose, accent color from the token system, design anchor. Preferred — generates multiple variants and SVG output.
+2. **Claude native image generation** — if Codex is unavailable.
+3. **SVG placeholder** — label clearly (`<!-- TODO: replace with final favicon/logo -->`). Add to the phase 4 completion gate so it cannot be forgotten.
+
+Minimum required deliverables: 32×32 px favicon + 180×180 px Apple touch icon at `/favicon.ico` and `/apple-touch-icon.png`. Logo in the header: SVG preferred; fallback is site name as styled text using the token system typeface and accent color.
+
+**Page-level visual assets:**
 
 1. **Generated images.** If an image-generation tool is available, create section-specific assets: hero photography, product shots, diagrams.
 2. **Real photography or brand assets.** Use actual stock or provided URLs when available. Acceptable placeholder: `https://picsum.photos/seed/{descriptive-seed}/{w}/{h}` — seed should describe the section.

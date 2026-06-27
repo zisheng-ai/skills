@@ -91,6 +91,8 @@ A site is not ready to submit for AdSense if any of these are true:
 ## Output Contract
 
 ```txt
+<project-root>/
+  README.md               ← operations guide, generated at end of phase 4
 outputs/
   niches.json
   <site-slug>/
@@ -99,7 +101,7 @@ outputs/
     page-model.md
     adsense-readiness-report.md
     launch-plan.md
-    gsc-report.md         ← added by phase 9, monthly post-approval
+    gsc-report.md         ← added by phase 8, monthly post-approval
 ```
 
 For actual web projects, follow the user's repository structure. Keep `outputs/<site-slug>/` as the planning and audit record regardless.

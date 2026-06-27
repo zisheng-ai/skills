@@ -14,6 +14,13 @@ New sites have no domain authority. Targeting broad, high-competition keywords f
 
 Use keyword difficulty estimates from Ahrefs (free tier), Semrush, or Google's keyword planner. For a brand-new site, prefer keywords with difficulty ≤ 30.
 
+**GEO-specific research:** Run keyword research in the target market's Google, not the global index. Volume, CPC, and competition differ significantly by country. Set the country filter in Ahrefs or Semrush to the target market before pulling any data.
+
+- For US: no geo modifier usually needed — Google.com defaults to US intent.
+- For UK: check whether the query is geo-implicit ("tax calculator" already targets UK tax on google.co.uk) or needs an explicit modifier ("uk tax calculator").
+- For CA/AU: same check — add the country modifier only where search intent genuinely differs by country.
+- Avoid appending a geo modifier to every keyword — it produces thin near-duplicate pages and only helps when the user's intent is explicitly country-specific.
+
 ---
 
 ## Keyword Type Classification

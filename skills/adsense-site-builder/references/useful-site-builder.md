@@ -346,6 +346,19 @@ For AdSense specifically: ad units that inject late cause CLS. Reserve the ad sl
 
 ---
 
+## Site Identity Assets
+
+Generate favicon and logo before writing any page component so they embed from day one.
+
+Priority order:
+1. **Codex** — provide: site name, niche, one-sentence purpose, accent color from the phase 3 token system, design anchor. Preferred.
+2. **Claude native image generation** — if Codex is unavailable.
+3. **SVG placeholder** — label clearly and note in the completion gate.
+
+Minimum: `/favicon.ico` (32×32) + `/apple-touch-icon.png` (180×180). Logo in header: SVG or styled text in the token system typeface. Do not ship with a browser-default blank icon — it signals an incomplete site to Google reviewers.
+
+---
+
 ## Trust and Identity Pages
 
 Build these pages as part of the site in phase 4. All are required for AdSense approval and must be linked from the global footer of every page. The completion gate below confirms they exist before the distribution plan (phase 5) begins.
@@ -449,3 +462,140 @@ Before advancing to phase 5 (pre-launch distribution plan), verify all of the fo
 - [ ] All trust pages are linked from the global footer on every page.
 - [ ] No trust page is blocked by `robots.txt` or tagged `noindex`.
 - [ ] `outputs/<site-slug>/site-brief.md` trust pages section is complete.
+
+**Site identity:**
+- [ ] Favicon and Apple touch icon are in place (not browser-default blank).
+- [ ] Logo or site name mark is in the header and matches the token system.
+
+**Project README:**
+- [ ] `README.md` generated in the project root using the Operations Guide template below.
+
+---
+
+## Project README — Operations Guide Template
+
+Generate `README.md` in the project root at the end of phase 4. Fill in the site-specific values. This file is the single reference point for every post-launch operational task.
+
+````md
+# [Site Name] — Operations Guide
+
+## Site Overview
+
+| Field | Value |
+| --- | --- |
+| Niche | [one-line description] |
+| Primary keyword | [keyword] |
+| Target market | [e.g. en-us, en-gb] |
+| Site URL | [https://your-domain.com] |
+| Launch date | [YYYY-MM-DD — fill in on go-live] |
+
+## Pipeline Status
+
+| Phase | Status | Artifact |
+| --- | --- | --- |
+| 1. Niche validation | ✅ done | `outputs/niches.json` |
+| 2. Keyword planning | ✅ done | `outputs/<site>/site-map.json` |
+| 3. Page model | ✅ done | `outputs/<site>/page-model.md` |
+| 4. Site build + trust pages | ✅ done | — |
+| 5. Distribution plan | ⬜ todo | `outputs/<site>/launch-plan.md` |
+| 6. Go-live | ⬜ todo | — |
+| 7. AdSense audit | ⬜ todo | `outputs/<site>/adsense-readiness-report.md` |
+| 8. Monthly growth loop | ⬜ ongoing | `outputs/<site>/gsc-report.md` |
+
+---
+
+## Phase 5 — Distribution Plan (before go-live)
+
+See `outputs/<site>/launch-plan.md` for the full 14-day sequence.
+
+**Safe channels:**
+- Organic search (submit sitemap on launch day)
+- Directory submissions: Product Hunt, Indie Hackers, AlternativeTo, niche directories
+- Community participation: Reddit, Quora, Discord — answer first, link when genuinely helpful
+- Pinterest (for template/checklist/visual niches): 3 pins/week, one board per page cluster
+- YouTube Shorts: 60-second screen demo of the primary tool, keyword in title
+- Newsletter/creator outreach: offer a preview to relevant newsletters in the niche
+
+**Metrics to watch (weeks 1–4):**
+- Average session duration > 45s
+- Pages per session > 1.5
+- Return visitor rate (growing)
+- Tool completion rate (users who start the tool finish it)
+
+**Never do this:**
+- Traffic packages, bot visits, autosurf, traffic exchanges
+- Incentivized clicks or click rings
+- Paid display/social ads before AdSense approval
+- Any tactic whose goal is hitting a visit count rather than reaching real users
+
+---
+
+## Phase 6 — Go-Live Day
+
+- [ ] Site live on final domain (not staging)
+- [ ] HTTPS active, no mixed-content warnings
+- [ ] `sitemap.xml` submitted to Google Search Console
+- [ ] Homepage + primary tool page requested for indexing via GSC URL Inspection
+- [ ] GA4 tracking active (if included in plan)
+- [ ] Day 1 action from `launch-plan.md` executed
+
+---
+
+## Phase 7 — AdSense Readiness Audit (2–4 weeks post-launch)
+
+See `outputs/<site>/adsense-readiness-report.md` for the full checklist.
+
+**Prerequisites before submitting:**
+- Site live on final domain ≥ 2 weeks
+- GSC shows ≥ 15 indexed pages
+- GSC shows real impressions (not zero)
+- All blocking items in the readiness report pass
+
+**Run the audit before submitting.** A rejected account delays approval and raises scrutiny on resubmission.
+
+---
+
+## Phase 8 — Monthly Growth Loop
+
+Update `outputs/<site>/gsc-report.md` each month.
+
+**Monthly process:**
+1. Open GSC → Performance → Search results. Set date: last 28 days vs previous 28 days.
+2. **Quick wins** (position 8–20, ≥ 50 impressions): improve the page — add a section, example, or FAQ that the top 3 results have and the page lacks.
+3. **Low CTR** (impressions > 100, CTR < 2%): rewrite the title tag and meta description to match actual search intent.
+4. **Content gaps** (queries landing on the wrong page): build a dedicated supporting page for that query.
+5. **Declining pages** (clicks falling month-over-month): audit against current top-3 results and update.
+6. Pick top 3–5 actions. Do not try to fix everything at once.
+
+**Healthy growth signals:**
+- Organic impressions growing month-over-month
+- Organic CTR: 3–8% for informational, 1–3% for navigational queries
+- Average position gradually improving over 3–6 months
+- New long-tail queries appearing (topical authority building)
+- All sitemap pages indexed (no "Discovered — currently not indexed" issues)
+
+**Problem signals — act immediately:**
+- Sudden drop on a specific page → audit against current top-3, improve and re-index
+- "Discovered — currently not indexed" → thin content likely, improve and re-request
+- Core Web Vitals failing in GSC → run PageSpeed Insights, fix the regression
+
+**Ad optimization (post-approval):**
+- Start with auto-ads for the first 60 days.
+- After 60 days: compare RPM on pages with manual placements (below tool result, after first body paragraph) vs auto-ads-only pages.
+- Tool pages typically earn higher RPM than guide pages — prioritize their improvement.
+- If ads cause CLS or dominate the mobile viewport, reduce placement density. Long-term organic ranking matters more than marginal ad placement gain.
+
+---
+
+## Key Metrics Reference
+
+| Metric | Target | Source |
+| --- | --- | --- |
+| Session duration | > 45s | GA4 |
+| Pages per session | > 1.5 | GA4 |
+| Organic CTR | 3–8% (info) / 1–3% (nav) | GSC |
+| Average position | improving monthly | GSC |
+| LCP mobile | < 2.5s | PageSpeed Insights |
+| CLS | < 0.1 | PageSpeed Insights |
+| Indexed pages | 100% of sitemap | GSC Coverage |
+````
