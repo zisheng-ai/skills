@@ -70,7 +70,7 @@ After analysis, construct the writable project.
 ### Long-form project structure
 
 ```
-{书名}/
+content/{书名}/
 ├── 设定/
 │   ├── 世界观.md          — extracted from the manuscript
 │   └── 角色/{名}.md       — one file per major character
@@ -91,7 +91,7 @@ After analysis, construct the writable project.
 ### Short-form project structure
 
 ```
-{短篇标题}/
+content/短篇/{短篇标题}/
 ├── 设定.md               — emotion target + characters + world notes
 ├── 小节大纲.md            — beat outline of the imported story
 ├── 正文.md               — full prose
@@ -131,7 +131,7 @@ When the source is a single file with chapter markers:
 - [ ] `大纲/大纲.md` shows where the story is and what is planned next
 - [ ] `追踪/上下文.md` is ready to hand off to `/story-long-write`
 - [ ] `追踪/伏笔.md` captures all unresolved threads
-- [ ] `.active-book` created if this is the active reading project
+- [ ] `.active-book` created at project root pointing to `content/{书名}` if this is the active reading project
 - [ ] Analysis assets in `对标/` (not deleted — they feed future writing decisions)
 
 ## What Import Does Not Do

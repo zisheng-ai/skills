@@ -32,7 +32,7 @@ Load this reference when the user asks to write, continue, or revise long-form n
 6. Write the **escalation**: raise stakes through action/dialogue. No passive reflection blocks.
 7. Write the **turn**: the moment that changes something — reveal, decision, or loss.
 8. Write the **hook-out**: end mid-motion or on an open question. Never summarize.
-9. Save to `正文/第NNN章_章名.md` with correct zero-padded number.
+9. Save to `content/{书名}/正文/第NNN章_章名.md` from the project root, with correct zero-padded number.
 10. Update `追踪/上下文.md`: last beat + open threads + any foreshadow planted.
 11. Update `追踪/伏笔.md` if foreshadow added or resolved.
 12. Update `追踪/角色状态.md` for any character changes.
@@ -91,4 +91,4 @@ Always overwrite `上下文.md` after each chapter. Do not append history — th
 - Hook-out: does it create forward pull? Reader must want the next chapter.
 - No consecutive paragraphs with identical rhythm or length.
 - No three consecutive sentences starting with the same subject.
-- `正文/去AI味`: run `/story-deslop` before marking a chapter complete if AI flavor is detected.
+- Run `/story-deslop` before marking a chapter complete if AI flavor is detected.

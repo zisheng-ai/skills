@@ -5,7 +5,7 @@ Load this reference when the user asks to generate a novel cover (封面, /story
 ## Generation Method
 
 **Primary — Codex via `codex-plugin-cc` (no API key needed):**
-Delegate image generation to Codex using the `codex-plugin-cc` plugin installed in this environment. Build the prompt using Steps 1–2 below, then invoke Codex image generation. Save the result to `covers/<书名>/封面/封面_v1.png`.
+Delegate image generation to Codex using the `codex-plugin-cc` plugin installed in this environment. Build the prompt using Steps 1–2 below, then invoke Codex image generation. Save the result to `public/covers/<书名>/封面/封面_v1.png`.
 
 **Secondary — Claude native image generation:**
 Use Claude's built-in image generation tool directly if `codex-plugin-cc` is unavailable. Build the same prompt from Steps 1–2 and call the image generation tool.
@@ -22,7 +22,7 @@ Use Steps 3–3.5 below only when the user explicitly requests GPT-Image-2 and p
 | `GPT_IMAGE_MODEL` | No | `gpt-image-2` | Override only for testing |
 | `GPT_IMAGE_SIZE` | No | `1024x1536` | Target ratio hint — many proxies ignore it; Step 3.5 crops to exact size |
 | `UPLOAD_SIZE` | No | — | Platform exact pixels (e.g. `600x800` for 番茄); Step 3.5 center-crops to this |
-| `BOOK_DIR` | Yes | — | Output directory, e.g. `./covers/<书名>` |
+| `BOOK_DIR` | Yes | — | Output directory, e.g. `./public/covers/<书名>` |
 | `REF_IMAGE` | No | — | Local path or URL for image-to-image mode |
 
 ## Step 1 — Collect required info
@@ -150,9 +150,9 @@ If unsatisfied: adjust composition variant, color palette, or character descript
 ## Output location
 
 ```
-covers/<书名>/封面/封面_v1.png        ← main output
-covers/<书名>/封面/封面_v1.prompt.txt ← prompt used
-covers/<书名>/封面/封面_v1_上传.png   ← platform-cropped version (if UPLOAD_SIZE set)
+public/covers/<书名>/封面/封面_v1.png        ← main output, served as /covers/<书名>/封面/封面_v1.png
+public/covers/<书名>/封面/封面_v1.prompt.txt ← prompt used
+public/covers/<书名>/封面/封面_v1_上传.png   ← platform-cropped version (if UPLOAD_SIZE set)
 ```
 
-The site builder reads `covers/<书名>/封面/封面_v1.png` as `Book.cover`.
+The site builder reads `Book.cover` as `/covers/<书名>/封面/封面_v1.png` (URL path, served from `public/`).

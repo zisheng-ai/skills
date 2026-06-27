@@ -2,10 +2,11 @@
 
 ## Stack
 
-Always use **Next.js + Tailwind CSS + DaisyUI**. No exceptions.
+Always use **Next.js + Tailwind CSS + DaisyUI + @content-collections**. No exceptions.
 
 - App Router + `output: 'export'` for static hosting. Switch to full SSR only when dynamic content genuinely requires server rendering per request.
-- oh-story-claudecode content is read directly from the filesystem at build time via `lib/chapters.ts` (or `lib/books.ts` for multi-book). No pre-built JSON, no intermediate files.
+- Fiction content is managed by `@content-collections`. Define collections in `content-collections.ts` → import fully-typed `allChapters` / `allShortStories` directly in pages. No manual `fs` reads, no hand-written parsers.
+- Adding new content = drop files into `content/`, run `next build`. Zero config change.
 
 ## Styling
 

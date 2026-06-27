@@ -120,7 +120,10 @@ For each language used:
 
 - [ ] No lorem ipsum anywhere.
 - [ ] No placeholder text ("Coming soon", "TODO", "[BOOK TITLE]") on any reader-visible page.
-- [ ] No reader-visible copy mentions AI, Markdown, oh-story-claudecode, parser, prompt, or skill.
+- [ ] Site has a real generated logo (`public/logo.svg`) — not placeholder text or default Next.js icon.
+- [ ] Favicon is a real generated asset (`public/favicon-32x32.png`) — not the default Next.js favicon.
+- [ ] Favicon wired up in `layout.tsx` via Next.js `metadata.icons`.
+- [ ] No reader-visible copy mentions AI, Markdown, parser, prompt, or skill.
 - [ ] All empty states show a helpful message and a navigation affordance.
 - [ ] End-of-chapter state shows "Next: [Chapter Title]" and navigates correctly.
 - [ ] End-of-book state shows a completion message and links back to the book detail.

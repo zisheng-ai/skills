@@ -1,6 +1,6 @@
 ---
 name: fiction-h5-builder
-description: write fiction and build the reading site end-to-end. use when the user asks to write a novel or short story (长篇小说, 短篇小说, write chapters, continue writing, story setup, import a manuscript, review prose, remove AI flavor), or asks for a mobile-first fiction reading site, web novel H5, work list/detail/catalog/reader pages, markdown or oh-story-claudecode generated chapters, multilingual reading sites in english/spanish/japanese/korean, or a simple fiction site for social traffic campaigns. do not use for creator dashboards, ranking systems, bookshelf platforms, or reader community features unless the user explicitly asks for those.
+description: write fiction and build the reading site end-to-end. use when the user asks to write a novel or short story (长篇小说, 短篇小说, write chapters, continue writing, story setup, import a manuscript, review prose, remove AI flavor), or asks for a mobile-first fiction reading site, web novel H5, work list/detail/catalog/reader pages, markdown chapters, multilingual reading sites in english/spanish/japanese/korean, or a simple fiction site for social traffic campaigns. do not use for creator dashboards, ranking systems, bookshelf platforms, or reader community features unless the user explicitly asks for those.
 ---
 
 # Fiction H5 Builder
@@ -27,9 +27,19 @@ Typography, spacing, and contrast are non-negotiable. Interactive reader control
 - Realistic content only. Never ship placeholder text to readers.
 - Load only the references needed for the current task phase.
 
+## Content-to-Site Promise
+
+This skill delivers a Hexo/Next.js-blog-style experience:
+
+1. Novel files live in `content/` inside the Next.js project root.
+2. `next dev` / `next build` picks them up automatically — no scripts, no JSON generation.
+3. Adding a new book = create `content/{书名}/正文/` and write chapters. Rebuild. Done.
+
+All writing phase outputs MUST be saved to the correct path under `content/` from the project root. `@content-collections` reads `content/` at build time and generates typed collections automatically.
+
 ## Build Pipeline
 
-### Writing phases (optional — run only when the user asks to write content)
+### Writing phases (run when the user has no existing content — always produce real chapters, never mock)
 
 | Phase | Load Reference | Required Output |
 | --- | --- | --- |
@@ -37,7 +47,7 @@ Typography, spacing, and contrast are non-negotiable. Interactive reader control
 | 1. Write long-form | `references/story-long-write.md` | Chapters in `正文/第NNN章_章名.md`, updated `追踪/` |
 | 1. Write short-form | `references/story-short-write.md` | `正文.md`, `设定.md`, `小节大纲.md` |
 | 2. Import manuscript | `references/story-import.md` | Split chapters, `设定/`, `大纲/`, `追踪/` reconstructed |
-| 3. Cover (optional) | `references/story-cover.md` + `references/cover-styles.md` | Cover image in `covers/<书名>/封面/封面_v1.png` |
+| 3. Cover (optional) | `references/story-cover.md` + `references/cover-styles.md` | Cover image in `public/covers/<书名>/封面/封面_v1.png` |
 | 4. Quality pass | `references/story-review.md` + `references/story-deslop.md` | Review report, prose with AI flavor removed |
 
 These phases are skipped entirely when the user starts from existing Markdown files.
@@ -48,7 +58,7 @@ These phases are skipped entirely when the user starts from existing Markdown fi
 | --- | --- | --- |
 | 4. Stack | `references/tech-stack.md` | Chosen stack with one-line rationale |
 | 5. Design plan | `references/design-system.md` | Tone, palette, type system, layout concept, signature element |
-| 6. Data setup | `references/data-contract.md` | Loader plan (direct filesystem), realistic mock data |
+| 6. Data setup | `references/data-contract.md` | Loader plan (direct filesystem) |
 | 7. Build | `references/mobile-ui.md` + `references/reader-ux.md` | Working site with all required pages |
 | 8. Performance | `references/performance.md` | Core Web Vitals targets met, images optimized |
 | 9. QA | `references/qa-checklist.md` | Screenshots at required viewports, checklist passed |
@@ -127,7 +137,7 @@ Load references only when entering that phase. Do not preload all references at 
 **Site build references (load for publishing tasks):**
 - `tech-stack.md` — choose the implementation stack before writing any code.
 - `design-system.md` — plan design identity before building any UI.
-- `data-contract.md` — define data models and oh-story-claudecode loader.
+- `data-contract.md` — define data models and @content-collections setup.
 - `mobile-ui.md` — visual and component quality floor during build.
 - `reader-ux.md` — chapter page UX requirements during build.
 - `performance.md` — Core Web Vitals, loading strategy, image optimization.
@@ -145,14 +155,15 @@ Load references only when entering that phase. Do not preload all references at 
       page.tsx                  # book detail: synopsis + chapter list
       chapter/[n]/
         page.tsx                # chapter reader: content + prev/next
+  content-collections.ts          # collection schema definitions
   src/lib/
-    chapters.ts                 # oh-story-claudecode filesystem loader
+    active-book.ts              # reads .active-book (build-time only)
   src/components/
     BookCard.tsx
     ChapterNav.tsx
     ThemeToggle.tsx             # DaisyUI data-theme switcher
   public/
-    covers/                     # optional: cover images (not generated by oh-story-claudecode)
+    covers/                     # optional: cover images
 ```
 
 Cover images are optional. When no cover exists, `BookCard` renders a genre-tinted CSS placeholder — never a broken `<img>`.

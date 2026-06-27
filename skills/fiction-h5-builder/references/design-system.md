@@ -166,6 +166,35 @@ Reader body typography matters more than display typography. Get body right befo
 
 ---
 
+## Site Logo and Favicon
+
+Never use placeholder text, generic emoji, or external icon libraries as the site logo or favicon. Always generate real assets.
+
+**Logo:**
+- Delegate SVG logo generation to Codex first. Fall back to Claude Code's native SVG generation only if Codex is unavailable.
+- The logo should reflect the book's genre and visual tone (see `cover-styles.md` for genre references).
+- Default placement: top-left of the nav header. Render as an inline SVG or `<img>` tag pointing to `/logo.svg` in `public/`.
+- Output path: `public/logo.svg`
+
+**Favicon:**
+- Delegate favicon generation to Codex first. Fall back to Claude Code's image generation only if Codex is unavailable.
+- The favicon should be a simplified version of the logo — single motif, high contrast, readable at 16px.
+- Output paths: `public/favicon-32x32.png`, `public/apple-touch-icon.png`, `public/favicon.ico` (convert from 32×32 PNG).
+- Wire up in `src/app/layout.tsx` via Next.js metadata:
+
+```ts
+export const metadata: Metadata = {
+  icons: {
+    icon: '/favicon-32x32.png',
+    apple: '/apple-touch-icon.png',
+  },
+}
+```
+
+**Never ship a site with the default Next.js favicon or a missing logo.**
+
+---
+
 ## Typography Scale
 
 ```css
@@ -275,7 +304,7 @@ Write from the reader's side of the screen. Name things by what readers control 
 | "Operation successful" | "Added to shelf" |
 | "No data" | "No books yet. Add a title to start reading." |
 | "AI generated" | (never say this) |
-| "Powered by oh-story-claudecode" | (never say this) |
+| "Powered by AI" | (never say this) |
 | "Markdown" | (never say this) |
 | "Loading..." | "Loading chapter…" or a skeleton screen |
 
@@ -346,7 +375,7 @@ Run every item before delivering. If any item fails, the output is not done.
 
 **Copy and content:**
 - [ ] Zero em-dashes (`—` or `–`) anywhere visible to the reader?
-- [ ] No reader-visible copy mentions AI, Markdown, oh-story-claudecode, prompt, or generation?
+- [ ] No reader-visible copy mentions AI, Markdown, prompt, or generation?
 - [ ] No lorem ipsum or placeholder text in any chapter content?
 - [ ] Copy self-audit passed: no grammatically broken or AI-hallucinated phrases?
 - [ ] Empty states give the reader a next action, not just an error?
