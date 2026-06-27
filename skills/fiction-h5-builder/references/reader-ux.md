@@ -4,11 +4,9 @@
 
 The reader is the product. Optimize for long sessions, low fatigue, and fast return to the current chapter. Every interaction in the reader must serve the reading act or stay out of the way.
 
-## Required Reader Controls by Tier
+## Required Reader Controls
 
-Controls are gated by the complexity tier chosen in SKILL.md Phase 1. Do not implement controls the tier does not require.
-
-**Minimal tier (default for social traffic / fast MVPs):**
+The default reader ships with a focused set of controls. Add font size, density, catalog drawer, or progress indicator only when the brief explicitly asks for them.
 
 | Control | Requirement | Notes |
 | --- | --- | --- |
@@ -16,26 +14,23 @@ Controls are gated by the complexity tier chosen in SKILL.md Phase 1. Do not imp
 | End-of-chapter prompt | Required | Clear "Next chapter" CTA at bottom of content |
 | Keyboard prev/next | Required on desktop | `←` / `→` arrow keys |
 | Error / empty states | Required | See Error States section |
-
-**Standard tier (adds to Minimal):**
-
-| Control | Requirement | Notes |
-| --- | --- | --- |
-| Dark mode toggle | Required | CSS custom property swap; persists in `localStorage` |
+| Dark mode toggle | Required | DaisyUI `data-theme` swap; persists in `localStorage` |
 | Resume last chapter | Required | Store last visited chapter slug in `localStorage`; restore on home/detail page |
 | Tap zones (mobile) | Recommended | Left/right 15% tap zones for prev/next |
 
-**Full tier (adds to Standard):**
+## Optional Enhancements
 
-| Control | Requirement | Notes |
-| --- | --- | --- |
-| Font size | ≥4 steps | Typically 14/16/18/20px graduated steps |
-| Line height / density | ≥2 options | "Compact" and "Comfortable" |
-| Theme | 3 options | Light, Sepia/Paper, Dark/Night |
-| Chapter catalog | Drawer or slide-in | Accessible from within the reader |
-| Reading progress | Visible indicator | Position in current chapter; not distracting |
-| Resume scroll position | Per-chapter | Scroll restoration within a chapter |
-| Immersive mode | Optional | Chrome-hidden reading mode |
+Add only when explicitly requested:
+
+| Control | Notes |
+| --- | --- |
+| Font size | ≥ 4 steps (e.g. 14/16/18/20px) |
+| Line height / density | ≥ 2 options: "Compact" and "Comfortable" |
+| Theme | Light, Sepia/Paper, Dark/Night via DaisyUI themes |
+| Chapter catalog | Drawer or slide-in, accessible from the reader |
+| Reading progress | Visible but not distracting |
+| Resume scroll position | Per-chapter scroll restoration |
+| Immersive mode | Chrome-hidden reading mode |
 
 ## Default Typography
 
@@ -67,12 +62,33 @@ If implementing an immersive (chrome-hidden) reading mode:
 
 ## Theme Implementation
 
-Implement themes using CSS custom property swaps, not class-based layout changes.
+Use DaisyUI's `data-theme` attribute on `<html>` to switch themes. Define light, sepia, and dark themes in `tailwind.config.js`.
 
-```css
-:root                { --bg: #f9f6f1; --ink: #1a1814; --muted: #8a8480; }
-[data-theme="sepia"] { --bg: #f2ead8; --ink: #3d3220; --muted: #8a7a60; }
-[data-theme="dark"]  { --bg: #141210; --ink: #e8e4de; --muted: #6a6560; }
+```js
+// tailwind.config.js
+plugins: [require('daisyui')],
+daisyui: {
+  themes: [
+    {
+      light: {
+        'base-100': '#f9f6f1',
+        'base-content': '#1a1814',
+      },
+    },
+    {
+      sepia: {
+        'base-100': '#f2ead8',
+        'base-content': '#3d3220',
+      },
+    },
+    {
+      dark: {
+        'base-100': '#141210',
+        'base-content': '#e8e4de',
+      },
+    },
+  ],
+}
 ```
 
 - Theme change must be instant — no transition delay that makes the UI feel unresponsive.

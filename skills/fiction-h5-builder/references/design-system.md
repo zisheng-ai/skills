@@ -66,13 +66,12 @@ Before writing any markup, decide the following and record them as `outputs/<sit
    - Premium serialized fiction (strong cover grid, genre-forward)
    - Modern manga / light-novel adjacent (structured, character-art-friendly)
    - Warm personal library (bookshelf feel, cozy)
-4. **Palette** — Define 4–6 named CSS custom property roles (not just "nice colors"):
-   - `--base`: page background
-   - `--ink`: body text
-   - `--muted`: secondary text and borders
-   - `--accent`: single genre-aware highlight
-   - `--night-base`: dark theme background
-   - `--night-ink`: dark theme body text
+4. **Palette** — Define a theme for DaisyUI using 4–6 named token roles:
+   - `base-100`: page background
+   - `base-content`: body text
+   - `muted`: secondary text and borders
+   - `accent`: single genre-aware highlight
+   - (optional) `base-200` / `base-300`: subtle surface variation for cards, navigation
 5. **Type system** — Define three roles:
    - Display: for site title, book titles, chapter headings
    - Reader body: for prose — must be a highly readable serif or CJK system stack
@@ -135,7 +134,7 @@ Default to calm. The reader page inherits these tokens.
 
 **Color Consistency Lock:** Once an accent color is chosen, it is used on the whole site. A warm-toned reader site does not suddenly get a blue chapter-nav CTA. Pick one accent, lock it, audit every component before shipping.
 
-**Page Theme Lock:** The site has one theme (light, dark, or system). Sections do not flip between modes. The only exception is the reader page offering light / sepia / dark themes as a user preference, controlled by CSS custom properties — not section-level overrides.
+**Page Theme Lock:** The site has one theme (light, dark, or system). Sections do not flip between modes. The only exception is the reader page offering light / sepia / dark themes as a user preference, controlled by DaisyUI `data-theme` — not section-level overrides.
 
 Avoid:
 - Cream + terracotta + giant serif as a default for every brief — this is the LLM default for reading apps.
@@ -194,12 +193,18 @@ Reader body typography matters more than display typography. Get body right befo
 
 The reader page requires three themes — light, sepia, dark — as user-controlled preferences, not OS-based switching. Discovery pages should support system dark mode via `prefers-color-scheme`.
 
-**Token strategy:** Use CSS custom properties for all color tokens. Swap the full token set under a `[data-theme]` attribute on `<html>` or the reader wrapper. Do not use Tailwind `dark:` classes for reader themes — they cannot handle three-way switching.
+**Token strategy:** Use DaisyUI theme tokens (`base-100`, `base-content`, `accent`, etc.) for all color decisions. Swap the full theme under a `[data-theme]` attribute on `<html>` or the reader wrapper. Do not use Tailwind `dark:` classes for reader themes — they cannot handle three-way switching.
 
-```css
-[data-theme="light"]  { --base: #f9f6f1; --ink: #1a1814; ... }
-[data-theme="sepia"]  { --base: #f2ead8; --ink: #3d3220; ... }
-[data-theme="dark"]   { --base: #141210; --ink: #e8e4de; ... }
+```js
+// tailwind.config.js
+plugins: [require('daisyui')],
+daisyui: {
+  themes: [
+    { light: { 'base-100': '#f9f6f1', 'base-content': '#1a1814' } },
+    { sepia: { 'base-100': '#f2ead8', 'base-content': '#3d3220' } },
+    { dark:  { 'base-100': '#141210', 'base-content': '#e8e4de' } },
+  ],
+}
 ```
 
 **Contrast mandate:** WCAG AA minimum for body text (4.5:1) across all three themes. Test each theme before shipping. Do not ship a theme you have only seen in one mode.
@@ -326,24 +331,16 @@ Run every item before delivering. If any item fails, the output is not done.
 - [ ] `letter-spacing` not applied to body or CJK text?
 - [ ] Italic descender clearance: `leading-[1.1]` min + `pb-1` for display italic with `y g j p q`?
 
-**Reader page (all tiers):**
+**Reader page:**
 - [ ] No JavaScript animation library active on the reader page?
 - [ ] No scroll effects, entrance transitions, or infinite loops in the prose column?
 - [ ] Previous / next chapter navigation present and working?
 - [ ] End-of-chapter "Next chapter" prompt visible at bottom of content?
 - [ ] Reader background is not pure `#fff` or `#000`?
 - [ ] Body text ≥ 16px mobile, contrast ≥ 4.5:1 against page background?
-
-**Reader page (Standard tier — check only if tier ≥ Standard):**
 - [ ] Dark mode toggle present and persists in `localStorage`?
 - [ ] Last visited chapter stored and surfaced on home/detail page?
-
-**Reader page (Full tier — check only if tier = Full):**
-- [ ] Font size control (≥ 4 steps) present?
-- [ ] Three themes (light / sepia / dark) implemented via CSS custom properties?
-- [ ] Reading progress indicator present and not distracting?
-- [ ] Chapter catalog drawer accessible from within the reader?
-- [ ] WCAG AA (4.5:1) verified across all three themes?
+- [ ] Three themes (light / sepia / dark) implemented via DaisyUI `data-theme`? (required; verify WCAG AA for each)
 
 **Copy and content:**
 - [ ] Zero em-dashes (`—` or `–`) anywhere visible to the reader?
@@ -364,4 +361,5 @@ Run every item before delivering. If any item fails, the output is not done.
 - [ ] `prefers-reduced-motion` respected for all motion above intensity 2?
 - [ ] `<html lang>` set to the correct locale?
 - [ ] Initial JS bundle under 200KB for a prototype?
+- [ ] DaisyUI used for reader themes and UI components (not a separate CSS custom property token system)?
 - [ ] Build errors and console errors absent on page load?

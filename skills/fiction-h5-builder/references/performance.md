@@ -52,7 +52,7 @@ Book covers are the heaviest assets on the home and detail pages.
 
 - Inline critical above-the-fold CSS (reader background, font size, body text color).
 - Tailwind: configure `content` paths correctly to eliminate unused utility classes.
-- Reader theme switching must use CSS custom property value updates, not class-swap-triggered reflows.
+- Reader theme switching must use DaisyUI `data-theme` value updates, not class-swap-triggered reflows.
 - Avoid layout-triggering animations (avoid animating `width`, `height`, `top`, `left`). Use `transform` and `opacity` only.
 
 ## Caching

@@ -44,11 +44,23 @@ Use when:
 
 ## Styling
 
-- Default: Tailwind CSS with a design token layer via CSS custom properties.
-- Alternative: vanilla CSS with CSS custom properties when minimizing dependencies.
-- Reader themes (light/sepia/dark) must use CSS custom property swaps, not class-based reflows.
+- Default: **Tailwind CSS + DaisyUI**. DaisyUI is a pure-CSS Tailwind plugin — zero JS runtime, no bundle impact.
+- Reader themes (light/sepia/dark) use DaisyUI's `data-theme` attribute on `<html>`. Define custom themes in `tailwind.config.js` under `daisyui.themes`.
+- Do not layer a separate CSS custom property token system on top of DaisyUI's theme tokens — use DaisyUI's `base-100`, `base-content`, etc. as the token layer.
 - Never use inline styles for design decisions.
 - Avoid CSS-in-JS runtimes (emotion, styled-components) unless the project already uses them.
+
+```js
+// tailwind.config.js
+plugins: [require('daisyui')],
+daisyui: {
+  themes: [
+    'light',
+    { sepia: { 'base-100': '#f5f0e8', 'base-content': '#3b2f1e' } },
+    'dark',
+  ],
+}
+```
 
 ## TypeScript
 

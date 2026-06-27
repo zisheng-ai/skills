@@ -89,10 +89,9 @@ Any of these is a quality gate failure:
 
 ## Dark Mode
 
-- Implement via CSS custom property swap on `[data-theme="dark"]` (see `reader-ux.md`).
+- Implement via DaisyUI `data-theme` on `<html>` (see `reader-ux.md`).
 - Check that all three themes pass WCAG AA contrast for body text AND metadata text.
 - Cover images should render clearly on both light and dark backgrounds — add a `1px` border or subtle shadow to covers on dark theme if the cover has a white or light edge.
-- Borders: swap from `--muted` light to a darker border token in dark mode.
 
 ## Animation and Transition
 
