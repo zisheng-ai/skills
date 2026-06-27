@@ -49,9 +49,11 @@ A site is not ready if any of these are true:
 - The primary value is generic text that could exist on thousands of similar sites.
 - The core site has no interactive utility, original data transformation, useful template, curated directory value, concrete checklist, tutorial depth, or decision support.
 - The content is mostly keyword-stuffed, copied, spun, or undifferentiated AI prose.
+- The Privacy Policy does not explicitly mention Google AdSense, cookies, and the Google Ads Settings opt-out link.
 - The site lacks an About page, Contact path, Privacy Policy, Terms, and clear authorship or site ownership.
 - The launch plan depends on purchased traffic packages, bot-like visits, click incentives, or traffic exchange networks.
-- Technical basics are missing: indexable pages, sitemap, robots file, canonical URLs where needed, descriptive titles, meta descriptions, internal links, mobile layout, and reasonable performance.
+- Technical basics are missing: indexable pages, sitemap.xml, robots.txt, canonical URLs, descriptive title tags (50–60 chars), meta descriptions (150–160 chars), schema markup, internal links, mobile layout, and Core Web Vitals within acceptable range.
+- The readiness audit has not been run, or it returned "not ready" or "needs revision" and those issues were not resolved.
 
 ## Output Contract
 
