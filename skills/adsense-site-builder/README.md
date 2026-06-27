@@ -1,36 +1,36 @@
 # AdSense Site Builder
 
-AdSense Site Builder is a single-entry skill for planning, building, auditing, and launching useful niche websites for AdSense readiness.
+AdSense Site Builder 是一个单一入口技能，用于规划、构建、审计并上线面向 AdSense 的实用利基网站。
 
-It is designed for builders who want to create small website assets with real search demand and real user value, instead of thin AI article sites or risky traffic schemes.
+它适合希望创建具有真实搜索需求和真实用户价值的小型网站资产的构建者，而不是做低质量 AI 文章站或依赖风险流量策略。
 
-## What It Builds
+## 可构建的网站类型
 
-This skill can help build several types of AdSense-oriented niche sites:
+该技能可帮助构建以下几类面向 AdSense 的利基网站：
 
-| Site Type | Best For | Example |
+| 网站类型 | 适用场景 | 示例 |
 | --- | --- | --- |
-| Tool site | calculators, generators, converters, checkers | salary calculator, JSON formatter, prompt generator |
-| Template library | copyable or downloadable reusable assets | resume templates, email templates, Notion templates |
-| Directory site | curated lists with filters and comparison fields | AI tools directory, SaaS alternatives, resource lists |
-| Comparison hub | decision support and product/method comparisons | X vs Y, best alternatives, best tools for a use case |
-| Checklist hub | procedural topics with steps and timelines | visa checklist, moving checklist, startup launch checklist |
-| Tutorial hub | step-by-step problem solving | coding errors, Excel formulas, software workflows |
-| Hybrid site | niches with multiple search intents | one primary tool plus guides, templates, and comparisons |
+| 工具站 | 计算器、生成器、转换器、检测器 | 工资计算器、JSON 格式化工具、提示词生成器 |
+| 模板库 | 可复制或可下载的复用资产 | 简历模板、邮件模板、Notion 模板 |
+| 目录站 | 带筛选和对比字段的精选列表 | AI 工具目录、SaaS 替代品、资源列表 |
+| 对比中心 | 决策支持和产品/方案对比 | X vs Y、最佳替代品、某场景最佳工具 |
+| 清单中心 | 带步骤和时间线的流程类主题 | 签证清单、搬家清单、创业上线清单 |
+| 教程中心 | 逐步解决问题 | 编程错误、Excel 公式、软件工作流 |
+| 混合站 | 包含多种搜索意图的利基 | 一个核心工具 + 指南、模板和对比 |
 
-## How It Works
+## 工作原理
 
-The skill runs a staged site-building pipeline:
+该技能按阶段运行站点构建流程：
 
-1. Validate niches with search demand and AdSense-safe potential.
-2. Plan keyword clusters and site structure.
-3. Design page models without thin programmatic SEO.
-4. Build the useful site experience.
-5. Add trust pages such as About, Contact, Privacy Policy, and Terms.
-6. Audit technical SEO and AdSense readiness.
-7. Create a safe launch plan for real user traffic.
+1. 验证具有搜索需求和 AdSense 安全潜力的利基。
+2. 规划关键词聚类和站点结构。
+3. 设计页面模型，避免低质量程序化 SEO。
+4. 构建有用的站点体验。
+5. 添加 About、Contact、Privacy Policy、Terms 等信任页面。
+6. 审计技术 SEO 和 AdSense 准备度。
+7. 制定面向真实用户的安全上线计划。
 
-The main workflow lives in `SKILL.md`. The staged submodules live in `references/`.
+主工作流在 `SKILL.md` 中。各阶段子模块在 `references/` 中。
 
 ```txt
 adsense-site-builder/
@@ -48,17 +48,29 @@ adsense-site-builder/
     distribution-launcher.md
 ```
 
-## Install
+## 安装
 
-Copy this folder into your local skills directory:
+使用 Vercel 的 `skills` CLI 安装：
 
 ```bash
-cp -R adsense-site-builder ~/.codex/skills/adsense-site-builder
+npx skills add zisheng-ai/skills --skill adsense-site-builder
 ```
 
-Then start a new session and ask the agent to use `adsense-site-builder`.
+或手动复制到本地 skills 目录：
 
-## General Prompt Template
+```bash
+# Claude Code
+mkdir -p ~/.claude/skills
+cp -R skills/adsense-site-builder ~/.claude/skills/adsense-site-builder
+
+# Codex
+mkdir -p ~/.codex/skills
+cp -R skills/adsense-site-builder ~/.codex/skills/adsense-site-builder
+```
+
+安装后，在新会话中让 agent 使用 `adsense-site-builder` 即可。
+
+## 通用 Prompt 模板
 
 ```txt
 Use adsense-site-builder to build an AdSense-ready niche website.
@@ -85,7 +97,7 @@ Constraints:
 - Do not recommend traffic packages, traffic exchanges, bots, incentivized clicks, or any invalid traffic tactic.
 ```
 
-## Batch Website Prompt
+## 批量建站 Prompt
 
 ```txt
 Use adsense-site-builder to generate 3 AdSense-ready niche websites.
@@ -110,7 +122,7 @@ Output:
 - Do not skip the readiness audit.
 ```
 
-## Tool Site Prompt
+## 工具站 Prompt
 
 ```txt
 Use adsense-site-builder to build a tool site.
@@ -136,7 +148,7 @@ Quality bar:
 - Do not create pages that only exist to target keywords.
 ```
 
-## Template Library Prompt
+## 模板库 Prompt
 
 ```txt
 Use adsense-site-builder to build a template library site.
@@ -161,7 +173,7 @@ Constraints:
 - Do not claim legal, medical, financial, or professional authority unless verified.
 ```
 
-## Directory Site Prompt
+## 目录站 Prompt
 
 ```txt
 Use adsense-site-builder to build a curated directory site.
@@ -188,7 +200,7 @@ Constraints:
 - Clearly mark unknown or unverified information.
 ```
 
-## Comparison Hub Prompt
+## 对比中心 Prompt
 
 ```txt
 Use adsense-site-builder to build a comparison hub.
@@ -215,7 +227,7 @@ Constraints:
 - Avoid affiliate-style over-optimization unless the user explicitly asks for affiliate monetization.
 ```
 
-## Checklist Hub Prompt
+## 清单中心 Prompt
 
 ```txt
 Use adsense-site-builder to build a checklist hub.
@@ -240,7 +252,7 @@ Constraints:
 - Mark items that users should verify with official sources.
 ```
 
-## Tutorial Hub Prompt
+## 教程中心 Prompt
 
 ```txt
 Use adsense-site-builder to build a tutorial hub.
@@ -265,7 +277,7 @@ Constraints:
 - Every tutorial must solve a concrete user problem.
 ```
 
-## Hybrid Site Prompt
+## 混合站 Prompt
 
 ```txt
 Use adsense-site-builder to build a hybrid niche site.
@@ -292,7 +304,7 @@ Quality bar:
 - The site must feel like one coherent product, not a random collection of articles.
 ```
 
-## Existing Site Audit Prompt
+## 现有站点审计 Prompt
 
 ```txt
 Use adsense-site-builder to audit an existing website for AdSense readiness.
@@ -311,7 +323,7 @@ Output:
 - Use a conservative verdict: ready, needs revision, or not ready.
 ```
 
-## Safe Traffic Prompt
+## 安全流量计划 Prompt
 
 ```txt
 Use adsense-site-builder to create a safe initial traffic plan for this niche website.
@@ -334,8 +346,8 @@ Do not recommend:
 - Any tactic intended to inflate ad impressions or clicks
 ```
 
-## Notes
+## 注意事项
 
-This skill does not guarantee AdSense approval. It is built to improve site quality, reduce low-value-content risk, and avoid unsafe traffic strategies.
+该技能不保证 AdSense 一定能通过。它的目标是提升站点质量、降低低价值内容风险、避免不安全的流量策略。
 
-Always review generated content, legal pages, factual claims, and policy-sensitive topics before publishing.
+发布前请务必人工审核生成内容、法律页面、事实性声明以及政策敏感主题。

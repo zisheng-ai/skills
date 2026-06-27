@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rtk ls *)",
+      "Bash(rtk read *)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "Bash(git mv *)",
+      "Bash(chmod +x *)",
+      "Bash(./skill.sh *)",
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(gh repo *)",
+      "Bash(gh api *)",
+      "Bash(gh search *)"
+    ]
+  }
+}
