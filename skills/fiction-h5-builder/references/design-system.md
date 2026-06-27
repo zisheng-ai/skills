@@ -134,7 +134,7 @@ Default to calm. The reader page inherits these tokens.
 
 **Color Consistency Lock:** Once an accent color is chosen, it is used on the whole site. A warm-toned reader site does not suddenly get a blue chapter-nav CTA. Pick one accent, lock it, audit every component before shipping.
 
-**Page Theme Lock:** The site has one theme (light, dark, or system). Sections do not flip between modes. The only exception is the reader page offering light / sepia / dark themes as a user preference, controlled by DaisyUI `data-theme` — not section-level overrides.
+**Page Theme Lock:** The site has one theme (light, dark, or system). Sections do not flip between modes. The only exception is the reader page offering light / dark themes as a user preference, controlled by DaisyUI `data-theme` — not section-level overrides. Add sepia only when explicitly requested.
 
 Avoid:
 - Cream + terracotta + giant serif as a default for every brief — this is the LLM default for reading apps.

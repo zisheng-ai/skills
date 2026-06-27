@@ -91,6 +91,8 @@ daisyui: {
 
 ## Font Size Implementation
 
+Use only when the brief explicitly asks for font size control.
+
 ```js
 const SIZES = [14, 16, 18, 20, 22]; // px
 let current = 2; // default index
@@ -129,7 +131,7 @@ function applySize(index) {
 
 ## Interaction Rules
 
-- All settings changes (theme, font size, density) must apply instantly with no delay.
+- All settings changes (theme, font size, density) apply instantly with no delay when those controls are present.
 - Preserve reader preferences in `localStorage` for prototypes; in a server-side user account for real products.
 - Preserve reading position in `localStorage` for prototypes; durable backend for real products.
 - Reader controls must be reachable with one thumb on mobile.

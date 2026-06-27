@@ -59,14 +59,20 @@ Any of these is a quality gate failure:
 - Locked chapters (if requested): lock icon, grayed text. Do not show paywall UI by default.
 
 ### Reader Settings Sheet
+
+Add only when the brief explicitly asks for font size, line height, or font family controls.
+
 - Trigger: settings icon in reader navigation.
 - Delivery: bottom sheet on mobile (slides up from bottom, `max-height: 60vh`), side drawer or inline panel on desktop.
 - Content order: theme picker, font size stepper, line height picker, optional font family picker.
-- Theme picker: 3 clearly labeled swatches (Light / Sepia / Dark). Not just color dots — include a label.
+- Theme picker: clearly labeled swatches (Light / Dark by default; Light / Sepia / Dark if sepia is enabled). Not just color dots — include a label.
 - Font size: stepper with A− / A+ buttons and current size label. Not a slider.
 - Dismiss: tap outside, swipe down, or explicit close button.
 
 ### Progress Indicator
+
+Add only when the brief explicitly asks for it.
+
 - Style: thin rail at the top or bottom of the reader viewport. 2–3px height. `--accent` color or `--muted`.
 - Update: on scroll, tied to scroll percentage within the chapter.
 - No numeric percentage label by default — the rail position is sufficient for reading.
@@ -90,7 +96,7 @@ Any of these is a quality gate failure:
 ## Dark Mode
 
 - Implement via DaisyUI `data-theme` on `<html>` (see `reader-ux.md`).
-- Check that all three themes pass WCAG AA contrast for body text AND metadata text.
+- Check that all enabled themes pass WCAG AA contrast for body text AND metadata text.
 - Cover images should render clearly on both light and dark backgrounds — add a `1px` border or subtle shadow to covers on dark theme if the cover has a white or light edge.
 
 ## Animation and Transition
