@@ -48,7 +48,7 @@ These phases are skipped entirely when the user starts from existing Markdown fi
 | --- | --- | --- |
 | 4. Stack | `references/tech-stack.md` | Chosen stack with one-line rationale |
 | 5. Design plan | `references/design-system.md` | Tone, palette, type system, layout concept, signature element |
-| 6. Data setup | `references/data-contract.md` | Loader plan (direct filesystem or JSON), realistic mock data |
+| 6. Data setup | `references/data-contract.md` | Loader plan (direct filesystem), realistic mock data |
 | 7. Build | `references/mobile-ui.md` + `references/reader-ux.md` | Working site with all required pages |
 | 8. Performance | `references/performance.md` | Core Web Vitals targets met, images optimized |
 | 9. QA | `references/qa-checklist.md` | Screenshots at required viewports, checklist passed |
@@ -146,7 +146,7 @@ Load references only when entering that phase. Do not preload all references at 
       chapter/[n]/
         page.tsx                # chapter reader: content + prev/next
   src/lib/
-    chapters.ts                 # oh-story-claudecode filesystem loader or JSON loader
+    chapters.ts                 # oh-story-claudecode filesystem loader
   src/components/
     BookCard.tsx
     ChapterNav.tsx
