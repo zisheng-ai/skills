@@ -24,7 +24,7 @@ Choose the pattern that best fits the niche. Do not default to a mini tool if a 
 
 ## Content Depth Standards
 
-These are the minimum content requirements for each page type. A page that does not meet these standards is thin and will not pass AdSense review or earn organic ranking.
+These are quality depth guidelines per page type. Google has no official word count minimum — "sufficient content" is the stated standard. The guidance below reflects what depth is typically needed to genuinely answer the user's question at each page type. A page that is thinner than these guidelines is almost always too shallow to satisfy users or earn ranking — but these are not AdSense policy numbers.
 
 ### Primary tool or resource page
 
@@ -39,7 +39,7 @@ The most important page on the site. It must:
 - Link to at least 3 related supporting guides.
 - Include a FAQ section with 5+ questions answered specifically (not generically).
 
-Minimum page length: 800 words of body content outside the interactive element.
+Depth guideline: 800+ words of body content outside the interactive element is typically needed to cover worked examples, edge cases, and FAQ at the depth users expect. Shorter pages are usually shallow.
 
 ### Supporting guide pages
 
@@ -52,7 +52,7 @@ Each guide must address exactly one search intent. It must:
 - Link back to the primary tool page and to 2–3 related guides.
 - End with a clear next action for the reader.
 
-Minimum page length: 700 words. Longer is appropriate for complex topics; shorter signals thin content.
+Depth guideline: 700+ words is typically needed to cover a topic at the depth users expect. Shorter guides are usually thin; longer is appropriate for complex topics.
 
 ### Template pages
 

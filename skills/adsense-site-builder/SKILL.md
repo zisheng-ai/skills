@@ -10,7 +10,7 @@ description: builds and audits adsense-ready niche websites from idea to launch.
 Every decision in this pipeline serves exactly two goals:
 
 **Goal 1 — Pass AdSense review on the first submission.**
-The site must have: real working utility, at least 15 complete pages of original content, a Privacy Policy that explicitly names Google AdSense and its cookies, a working About and Contact page, HTTPS, a submitted sitemap, pages indexed in Google Search Console, and no policy violations. These are not optional. Missing any single one causes rejection.
+The site must have: real working utility, sufficient original text-primary content with complete sentences (15+ complete pages is the practical safe threshold — Google has no stated minimum but "sufficient content" is the requirement), a Privacy Policy that explicitly names Google AdSense and its cookies, a working About and Contact page, HTTPS, a submitted sitemap, pages indexed in Google Search Console, and no policy violations. These are not optional. Missing any single one causes rejection.
 
 **Goal 2 — Earn compounding organic search traffic.**
 The same site, targeting low-competition long-tail keywords, with correct on-page SEO, schema markup, and an internal link architecture that builds topical authority over time. Organic traffic is how the site makes AdSense revenue after approval — and it is the only traffic source AdSense considers high-quality.
@@ -62,10 +62,13 @@ When the user asks to create multiple sites:
 A site is not ready to submit for AdSense if any of these are true:
 
 **Content:**
-- Fewer than 15 complete, indexable pages with distinct original content.
-- Any page consists of mostly headings, bullet lists, or undifferentiated AI prose.
+- Fewer than 15 complete, indexable pages with distinct original content. (Google's official standard is "sufficient content" with no stated minimum — 15 is the practical safe threshold; fewer than 10 is almost always insufficient.)
+- Content is primarily images, videos, or animations rather than text. Google's policy explicitly requires text-primary content.
+- Any page contains only headlines and bullet points without complete sentences and paragraphs. Google's policy explicitly requires complete sentences.
+- Any page consists of auto-generated content or content with no original information.
 - The primary tool, calculator, or interactive experience does not work or produces no useful output.
 - Any placeholder text ("Lorem ipsum", "Coming soon") exists on published pages.
+- Affiliate content makes up the majority of the site without adding substantial original value beyond the linked product pages.
 
 **Trust:**
 - Privacy Policy is missing, or does not explicitly mention Google AdSense, the DoubleClick cookie, and the Google Ads Settings opt-out link.

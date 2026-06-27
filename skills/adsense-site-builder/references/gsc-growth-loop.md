@@ -8,7 +8,9 @@ The organic growth loop is what converts a site that passed AdSense review into 
 
 ## Why This Loop Exists
 
-Google ranks sites that demonstrate consistent improvement and topical depth. A newly approved site ranks for a few long-tail terms. Running the GSC loop monthly:
+Google's Helpful Content Update (HCU) was permanently merged into the core ranking algorithm in March 2024. It is no longer a one-time event — content quality now continuously affects search visibility as a persistent ranking signal. Sites that stop improving after launch will plateau and eventually decline as the algorithm reassesses them alongside improving competitors.
+
+Running the GSC loop monthly:
 
 - Finds queries where the site already appears but ranks too low to get clicks (positions 8–20).
 - Identifies real user language that the site's content doesn't yet match.

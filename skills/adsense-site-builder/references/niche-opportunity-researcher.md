@@ -65,6 +65,7 @@ Avoid:
 - Topics that require proprietary data you cannot produce
 - Topics where the useful content is already locked behind free tools with strong brand moats (e.g., "YouTube thumbnail downloader" — saturated, low CPM)
 - Topics dependent on scraped third-party listings without a curation layer
+- Pure affiliate aggregators where the original content adds no value beyond a thin product roundup and outbound links. Google's AdSense policy states affiliate content must be a minor part of the site unless it adds substantial original value — sites that exist primarily to funnel affiliate clicks are a common rejection trigger.
 
 ---
 

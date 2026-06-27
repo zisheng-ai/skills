@@ -24,15 +24,31 @@ If any precondition is not met, note it in the report and do not recommend submi
 
 ### 1. Content Quality (blocking if failed)
 
+#### 1a. Google AdSense policy requirements
+
+The following checks reflect explicit language from Google's official AdSense approval page (support.google.com/adsense/answer/81904). Failing any of them is a policy violation, not just a quality concern.
+
 | Check | Pass Criteria |
 | --- | --- |
-| Minimum page count | At least 15 complete, indexable pages with distinct content |
-| Primary experience works | Main tool, calculator, template library, directory, or checklist functions correctly and produces real output |
-| No placeholder content | Zero "Lorem ipsum", "Coming soon", or blank sections on published pages |
-| No thin pages | No page is only headings, bullet lists, or generic AI prose without original information |
-| No copied content | Content is original — not scraped, spun, or mirrored from other sites |
-| No fabricated claims | No invented statistics, fake examples, or unverifiable facts |
-| Supporting pages are distinct | No two pages are near-identical with only a keyword swapped |
+| Site fully launched | The site is complete and live — not under construction, not a template shell. Google explicitly rejects sites that are still being built at application time. |
+| Content is primarily text | Pages must be primarily text-based, not mainly images, videos, Flash, or animations. Visual content can supplement text but must not replace it. |
+| Complete sentences and paragraphs | Pages must contain complete sentences and paragraphs — not only headlines, subheadings, bullet lists, or navigation menus. |
+| No auto-generated pages | No page is auto-generated or contains little to no original content. Google explicitly names this as a rejection cause. |
+| Affiliate content is minor or adds original value | If the site contains affiliate links or affiliate content, it represents a minor portion of the overall site or adds substantial original value beyond what the linked product page already provides. Google explicitly flags affiliate-heavy thin sites as a rejection reason. |
+
+#### 1b. Internal quality gates
+
+The following checks are not stated requirements in Google's official policy but reflect the practical standards that distinguish approvable sites from those that fail on "low value content." Google's stated standard is "sufficient content" — the thresholds below represent what that means in practice.
+
+| Check | Pass Criteria |
+| --- | --- |
+| Sufficient page count | Enough complete, indexable pages that the site clearly serves its stated purpose. 15+ pages is the practical safe threshold; fewer than 10 is almost always insufficient. Google has no official minimum number. |
+| Primary experience works | Main tool, calculator, template library, directory, or checklist functions correctly and produces real output. |
+| No placeholder content | Zero "Lorem ipsum", "Coming soon", or blank sections on published pages. |
+| No thin pages | No page consists only of headings, bullet lists, or undifferentiated text without original information or analysis. |
+| No copied content | Content is original — not scraped, spun, or mirrored from other sites. |
+| No fabricated claims | No invented statistics, fake examples, or unverifiable facts. |
+| Supporting pages are distinct | No two pages are near-identical with only a keyword swapped. |
 
 ### 2. Trust and Identity Pages (blocking if any are missing)
 
@@ -99,7 +115,8 @@ Blocking items (any failure = do not submit):
 - Contact page missing or non-functional
 - Primary experience broken or unfinished
 - Site on HTTP
-- Fewer than 15 complete pages
+- Insufficient page count (Google's standard is "sufficient content" — fewer than 10 complete, indexable pages is almost always insufficient; 15+ is the practical safe threshold)
+- Content is primarily images/videos, not text — or pages contain only headlines without complete sentences
 - Site not indexed in Google Search Console
 - Any banned category content present
 

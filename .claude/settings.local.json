@@ -39,7 +39,8 @@
       "WebFetch(domain:transparency.google)",
       "WebFetch(domain:blog.ad.plus)",
       "Bash(xargs -I{} sh -c 'echo \"=== {} ===\" && cat {}')",
-      "WebFetch(domain:developers.google.com)"
+      "WebFetch(domain:developers.google.com)",
+      "WebFetch(domain:seo.ai)"
     ],
     "defaultMode": "bypassPermissions"
   }
