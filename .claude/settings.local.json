@@ -38,7 +38,8 @@
       "WebFetch(domain:bloggingjoy.com)",
       "WebFetch(domain:transparency.google)",
       "WebFetch(domain:blog.ad.plus)",
-      "Bash(xargs -I{} sh -c 'echo \"=== {} ===\" && cat {}')"
+      "Bash(xargs -I{} sh -c 'echo \"=== {} ===\" && cat {}')",
+      "WebFetch(domain:developers.google.com)"
     ],
     "defaultMode": "bypassPermissions"
   }

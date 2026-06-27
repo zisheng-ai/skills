@@ -2,50 +2,79 @@
 
 ## Purpose
 
-This skill can generate a site from mock data, Markdown files, or an oh-story style writing directory. Treat oh-story as an upstream content source, not as a visible product concept.
+This skill can generate a site from mock data, Markdown files, or an oh-story writing directory. Treat oh-story as an upstream content source — never expose it as a visible product concept.
 
-`worldwonderer/oh-story-claudecode` creates filesystem-based novel projects. The H5 site must be able to load those generated novels directly when the user asks for integration.
+`worldwonderer/oh-story-claudecode` produces filesystem-based novel projects. The H5 site must be able to load those novels directly when the user asks for integration.
 
-## Recommended Models
+## Data Models
 
 ```ts
+type Language = "en" | "es" | "ja" | "ko" | "zh";
+
 type Book = {
   id: string;
   slug: string;
   title: string;
   author?: string;
-  language: "en" | "es" | "ja" | "ko";
+  language: Language;
   description: string;
-  cover?: string;
+  cover?: string;          // URL or relative path to cover image
   genres: string[];
   status: "ongoing" | "completed" | "hiatus";
   wordCount?: number;
+  chapterCount?: number;
   latestChapterId?: string;
-  updatedAt?: string;
+  updatedAt?: string;      // ISO 8601
+  featured?: boolean;      // true for the .active-book
+  sourceType?: "oh-story-long" | "oh-story-short" | "mock" | "cms";
+  sourcePath?: string;     // relative path to the book's source directory (oh-story only)
+};
+
+type Volume = {
+  id: string;
+  bookId: string;
+  order: number;
+  title: string;
 };
 
 type Chapter = {
   id: string;
   bookId: string;
+  volumeId?: string;       // optional arc/volume grouping
   order: number;
   title: string;
-  sourcePath?: string;
-  content: string;
+  language?: Language;     // per-chapter language (may differ from the book's language)
+  sourcePath?: string;     // relative path to source .md file
+  content: string;         // rendered body text (Markdown or HTML)
   wordCount?: number;
-  publishedAt?: string;
+  publishedAt?: string;    // ISO 8601
+  status?: "published" | "draft";
 };
 
 type ReadingProgress = {
   bookId: string;
   chapterId: string;
-  percent: number;
-  updatedAt: string;
+  scrollPercent: number;   // 0–1, position within the chapter
+  updatedAt: string;       // ISO 8601
+};
+
+// ParsedBook is what parse-oh-story.mjs outputs: a Book with chapters embedded inline.
+// Web apps typically split this into separate catalog and chapter routes at build time.
+type ParsedBook = Book & {
+  chapters: Chapter[];
+};
+
+// SiteData is the structure written by parse-oh-story.mjs (and consumed by static build steps).
+// At runtime, a web app may strip chapters out of each book and serve them from separate routes.
+type SiteData = {
+  generatedAt: string;     // ISO 8601
+  sourceRoot?: string;
+  activeBook?: string;     // sourcePath of the featured book
+  books: ParsedBook[];
 };
 ```
 
-## oh-story Mapping
-
-The upstream project documents these relevant structures:
+## oh-story Directory Structure
 
 Long-form project:
 
@@ -77,43 +106,44 @@ Short-form project:
 Active book pointer:
 
 ```text
-.active-book
+.active-book   # contains relative path, e.g. "长篇/我的小说"
 ```
 
-The `.active-book` file contains the relative path of the current active book, for example `长篇/我的小说`.
+## oh-story Field Mapping
 
 ```text
-正文/第001章_章名.md       -> Chapter.content/title/order
-短篇/{标题}/正文.md        -> one Book with one Chapter
-大纲/大纲.md              -> internal source only; not shown to readers by default
-设定/角色/*.md            -> internal source only; optional public character page if requested
-追踪/伏笔.md              -> internal source only
-追踪/时间线.md            -> internal source only
-封面 output               -> Book.cover
+正文/第001章_章名.md   →  Chapter { content, title, order }
+短篇/{title}/正文.md   →  Book (one chapter, status: "completed")
+大纲/大纲.md           →  internal only; not shown to readers
+设定/角色/*.md         →  internal only; optional public character page if user requests
+追踪/*.md              →  internal only
+封面 output            →  Book.cover
+.active-book           →  Book.featured = true, sort to first position
 ```
 
 ## Loader Requirements
 
 When implementing an oh-story loader:
 
-- Scan for directories containing `正文/` with chapter `.md` files.
-- Scan `短篇/*/正文.md` and create one-chapter books.
-- If `.active-book` exists, mark that book as featured or first in the home page.
-- Sort long-form chapters by numeric chapter number from filenames like `第001章_章名.md`.
-- Derive chapter titles from frontmatter first, then filename, then first heading.
-- Derive book title from frontmatter or directory name.
-- Keep `大纲/`, `设定/`, `追踪/`, `对标/`, and `拆文库/` out of reader pages by default.
-- Do not expose internal writing notes unless the user explicitly asks for public extras.
+- Scan for directories containing `正文/` with chapter `.md` files (long-form books).
+- Scan `短篇/*/正文.md` (short stories, one chapter each).
+- Sort long-form chapters by the numeric chapter number extracted from filenames (`第001章_章名.md` → order 1).
+- Derive chapter title: frontmatter `title` → first `# heading` in body → humanized filename.
+- Derive book title: frontmatter or directory name.
+- Mark the book at `.active-book` path as `featured: true` and sort it first.
+- Exclude `大纲/`, `设定/`, `追踪/`, `对标/`, `拆文库/` from all reader routes.
+- Do not expose writing notes unless the user explicitly asks for a public extras page.
+- Output: a single `site-data.json` conforming to `SiteData` above.
 
-Use `scripts/parse-oh-story.mjs` as a baseline parser when working in a Node-capable project. It uses only Node standard libraries and outputs site-ready JSON.
+Use `scripts/parse-oh-story.mjs` as the baseline parser for Node-capable projects (uses only Node standard library, no npm dependencies).
 
-## Markdown Frontmatter
+## Chapter Frontmatter Schema
 
-Prefer adding frontmatter to each chapter:
+Prefer this frontmatter in each chapter `.md`:
 
 ```md
 ---
-title: Chapter 1: The Night Ferry
+title: "Chapter 1: The Night Ferry"
 chapter: 1
 bookId: night-ferry
 language: en
@@ -122,12 +152,37 @@ publishedAt: 2026-06-23
 status: published
 ---
 
-Chapter text...
+Chapter prose starts here.
 ```
+
+Fields: `title` (string), `chapter` or `order` (number), `bookId` (string), `language` (Language), `wordCount` (number), `publishedAt` (ISO date string), `status` (`"published"` | `"draft"`).
+
+## Mock Data Requirements
+
+When generating a site without real content:
+
+- Use plausible book titles, authors, and chapter excerpts appropriate to the target language and genre.
+- Do not use lorem ipsum.
+- Include at least 2 books with at least 3 chapters each in the mock data.
+- Use realistic wordCount values (2000–5000 per chapter for web novel, 800–2000 for literary short chapters).
+- Include one book with `status: "completed"` and one with `status: "ongoing"`.
+
+English mock titles: `The Archive Beneath the Rain`, `Letters from the Meridian`, `What the Glass Remembers`
+Spanish mock titles: `La ciudad que olvidó sus nombres`, `El último tren de Medianoche`
+Japanese mock titles: `雨の記録者`, `夜の渡し舟`, `鏡の向こう側`
+Korean mock titles: `비의 기록자`, `밤의 나루터`, `거울 너머`
 
 ## Rendering Rules
 
-- Sanitize Markdown/HTML before rendering user-provided content.
-- Preserve paragraph breaks.
-- Avoid rendering author notes inside the main prose unless requested.
-- Keep internal outline/setting files out of reader routes by default.
+- Sanitize all Markdown/HTML before rendering user-provided content. Never render raw HTML from chapter files as trusted HTML without sanitization.
+- Preserve paragraph breaks (`\n\n` → `<p>` tags or double line break).
+- Do not render author notes (bracketed `【...】` or `（...）` prefixed with `作者`) inside the main prose column unless requested.
+- Exclude internal writing files from all reader-facing routes by default.
+- Handle missing or empty `content` gracefully: show "This chapter has no content yet." instead of a blank page.
+
+## Pagination and Loading
+
+- For static builds: generate one output file per chapter (HTML or JSON).
+- For client-side apps: fetch chapter content on demand when the reader enters the route.
+- Do not load all chapter content into a single bundle. A book with 100 chapters should not load all 100 on the home page.
+- Prefetch the next chapter's content when the reader reaches 80% scroll depth in the current chapter.

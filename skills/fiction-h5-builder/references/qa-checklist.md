@@ -1,70 +1,126 @@
 # QA Checklist
 
-## Build Checks
+Run this checklist before any final delivery. Do not skip sections for "simple" builds — each section catches a different class of failure.
 
-- Run available build/typecheck/lint commands.
-- Ensure routes work without console errors.
-- Verify static data loads before adding dynamic features.
+## Build and Technical Checks
+
+- [ ] Build completes without errors (`npm run build`, `yarn build`, or equivalent).
+- [ ] TypeScript passes with no errors (`tsc --noEmit`) if the project uses TypeScript.
+- [ ] Lint passes with no errors.
+- [ ] All routes respond without console errors on load.
+- [ ] All required pages exist: home/work list, book detail, reader.
+- [ ] Navigation between pages works in both directions (home → book → chapter → back).
+- [ ] Static data loads before any dynamic features are tested.
+- [ ] No `console.error` output in normal use.
 
 ## Mobile Screenshots
 
-Check at least:
+Capture at minimum:
 
-- 390 x 844 home/bookstore.
-- 390 x 844 book detail.
-- 390 x 844 reader.
-- 430 x 932 reader settings/catalog open.
+| Viewport | Page |
+| --- | --- |
+| 390 × 844 | Home / work list |
+| 390 × 844 | Book detail |
+| 390 × 844 | Chapter catalog |
+| 390 × 844 | Reader (default theme, default font size) |
+| 390 × 844 | Reader settings sheet open |
+| 430 × 932 | Reader (large screen mobile) |
+| 375 × 667 | Reader (small screen — iPhone SE) |
 
-Look for:
+Inspect each screenshot for:
 
-- Text clipping.
-- Bottom nav covering content.
-- Overcrowded cards.
-- Low contrast.
-- Controls too small to tap.
-- Reader line length and line-height.
+- [ ] Text clipping or overflow anywhere.
+- [ ] Bottom navigation bar covering body text.
+- [ ] Overcrowded or illegible book cards.
+- [ ] Low contrast text (body, metadata, labels).
+- [ ] Controls too small to tap (minimum 44×44px touch target).
+- [ ] Reader body line length comfortable for reading (not too wide, not too narrow).
+- [ ] Reader line height comfortable (not compressed, not double-spaced).
+- [ ] Safe-area insets respected at the bottom.
+- [ ] Cover images load and display correctly.
 
 ## Desktop Screenshots
 
-Check at least:
+Capture at minimum:
 
-- 1366 x 900 home/bookstore.
-- 1366 x 900 reader.
+| Viewport | Page |
+| --- | --- |
+| 1366 × 900 | Home / work list |
+| 1366 × 900 | Book detail |
+| 1366 × 900 | Reader |
+| 1440 × 900 | Reader (wide screen) |
 
-Look for:
+Inspect each screenshot for:
 
-- Phone layout awkwardly stretched.
-- Reader column too wide.
-- Empty whitespace without purpose.
-- Navigation too mobile-specific.
+- [ ] Not a stretched phone layout. Desktop has its own grid/column logic.
+- [ ] Reader column is not too wide. Max ~680px for Latin, ~600px for CJK.
+- [ ] Whitespace is purposeful, not just leftover gaps from mobile layout.
+- [ ] Navigation is horizontal, not a bottom bar.
+- [ ] Hover states visible on interactive elements.
+- [ ] Side catalog or settings panel renders correctly if implemented.
+
+## Theme Checks
+
+Check all three themes: Light, Sepia, Dark.
+
+- [ ] All themes pass WCAG AA (4.5:1) contrast for body text.
+- [ ] All themes pass WCAG AA (4.5:1) contrast for metadata text (`--muted` on `--base`).
+- [ ] No pure `#fff` or `#000` background in any default theme.
+- [ ] Theme switching is instant with no transition delay.
+- [ ] Saved theme preference persists after page reload.
+- [ ] Cover images are legible in dark theme (add a subtle border if the cover has a light edge).
+
+## Reader Controls
+
+- [ ] Font size: 4+ steps work without breaking layout.
+- [ ] Line height: options work and persist.
+- [ ] Theme: all 3 options work and persist.
+- [ ] Chapter catalog drawer opens and closes, lists all chapters, and navigates correctly.
+- [ ] Previous chapter link works at the start of a chapter.
+- [ ] Next chapter link works at the end of a chapter (and via the end-of-chapter prompt).
+- [ ] Progress indicator updates on scroll.
+- [ ] Reading position is saved and restored on return to the same chapter.
 
 ## Multilingual Checks
 
-Use sample titles and labels:
+Test with sample titles and labels in each target language.
 
-English:
-`The Archive Beneath the Rain`
+| Language | Sample title |
+| --- | --- |
+| English | `The Archive Beneath the Rain` |
+| Spanish | `La ciudad que olvidó sus nombres` |
+| Japanese | `雨の記録者` |
+| Korean | `비의 기록자` |
 
-Spanish:
-`La ciudad que olvidó sus nombres`
+For each language used:
+- [ ] `<html lang="xx">` is set correctly.
+- [ ] Book title does not overflow the card in the work list.
+- [ ] All navigation labels display correctly without clipping.
+- [ ] Reader body uses the correct system font stack for the language.
+- [ ] No garbled or missing CJK characters.
+- [ ] Line breaking is correct (no orphaned punctuation, no mid-word breaks in CJK).
 
-Japanese:
-`雨の記録者`
+## Accessibility Checks
 
-Korean:
-`비의 기록자`
+- [ ] All interactive controls use `<button>` or `<a>`, not `<div>` or `<span>`.
+- [ ] All icon-only buttons have an `aria-label`.
+- [ ] Focus outlines are visible on all keyboard-navigable elements.
+- [ ] Page navigation works with keyboard (Tab, Enter, Arrow keys).
+- [ ] Browser pinch-to-zoom is not disabled (`user-scalable=no` must not be present).
+- [ ] No motion in the reading surface (no scroll-triggered animations on content).
 
-Confirm:
+## Content and Copy Checks
 
-- Correct `lang`.
-- Labels wrap gracefully.
-- Book titles do not overflow cards.
-- Reader body uses language-appropriate font fallback.
+- [ ] No lorem ipsum anywhere.
+- [ ] No placeholder text ("Coming soon", "TODO", "[BOOK TITLE]") on any reader-visible page.
+- [ ] No reader-visible copy mentions AI, Markdown, oh-story, parser, prompt, or skill.
+- [ ] All empty states show a helpful message and a navigation affordance.
+- [ ] End-of-chapter state shows "Next: [Chapter Title]" and navigates correctly.
+- [ ] End-of-book state shows a completion message and links back to the book detail.
 
-## Reader Comfort Checks
+## Performance Spot Check
 
-- Light, sepia, and dark themes are readable.
-- Font size changes do not break layout.
-- Chapter catalog remains usable.
-- Progress is visible but not distracting.
-- Previous/next controls are obvious.
+- [ ] Initial page load on simulated Slow 3G in Chrome DevTools completes without blocking the first content paint for more than 3 seconds.
+- [ ] No uncompressed images over 200KB loaded on the home page.
+- [ ] Initial JS bundle is below 200KB gzipped (check in Network tab).
+- [ ] No external font CDN requests on the reader page unless explicitly required.
