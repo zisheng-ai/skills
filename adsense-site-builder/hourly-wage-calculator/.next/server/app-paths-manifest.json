@@ -1,0 +1,8 @@
+{
+  "/average-hourly-wages-by-industry/page": "app/average-hourly-wages-by-industry/page.js",
+  "/hourly-vs-salary/page": "app/hourly-vs-salary/page.js",
+  "/how-to-convert-salary-to-hourly/page": "app/how-to-convert-salary-to-hourly/page.js",
+  "/minimum-wage-to-annual-salary/page": "app/minimum-wage-to-annual-salary/page.js",
+  "/page": "app/page.js",
+  "/what-is-15-dollars-an-hour-annually/page": "app/what-is-15-dollars-an-hour-annually/page.js"
+}
