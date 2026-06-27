@@ -76,7 +76,7 @@ Load references only when entering that phase:
 
 - Use `niche-opportunity-researcher.md` to choose or validate niches.
 - Use `keyword-cluster-planner.md` to turn a niche into site architecture.
-- Use `programmatic-seo-architect.md` to define page templates and non-thin page variation.
+- Use `programmatic-seo-architect.md` to define page templates, non-thin page variation, and a deliberate visual direction.
 - Use `useful-site-builder.md` to implement the primary site experience.
 - Use `eeat-site-builder.md` to create trust and policy pages.
 - Use `adsense-readiness-auditor.md` before submission or after major changes.
