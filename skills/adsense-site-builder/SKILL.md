@@ -33,19 +33,19 @@ Run these phases in order unless the user explicitly starts from an existing art
 | Phase | Load Reference | Required Output | Timing |
 | --- | --- | --- | --- |
 | 1. niche validation | `references/niche-opportunity-researcher.md` | `outputs/niches.json` | before building |
-| 2. keyword and SEO planning | `references/keyword-cluster-planner.md` | `outputs/<site>/site-map.json` | before building |
+| 2. keyword and SEO planning | `references/keyword-cluster-planner.md` | `outputs/<site>/site-map.json` + `outputs/<site>/site-brief.md` (initialized) | before building |
 | 3. page model and visual design | `references/programmatic-seo-architect.md` | `outputs/<site>/page-model.md` | before building |
-| 4. site build | `references/useful-site-builder.md` | working site files + technical SEO files | build |
-| 5. trust pages | `references/eeat-site-builder.md` | trust pages | build |
-| 6. pre-launch distribution plan | `references/distribution-launcher.md` | `outputs/<site>/launch-plan.md` | **before go-live** |
-| 7. go-live + GSC setup | *(inline — see eeat-site-builder.md)* | site live, GSC registered, sitemap submitted | launch day |
-| 8. AdSense readiness audit | `references/adsense-readiness-auditor.md` | `outputs/<site>/adsense-readiness-report.md` | **2–4 weeks post-launch** |
-| 9. search growth loop | `references/gsc-growth-loop.md` | monthly query report + content update log | monthly, post-approval |
+| 4. site build + trust pages | `references/useful-site-builder.md` | working site files + trust pages + technical SEO files | build |
+| 5. pre-launch distribution plan | `references/distribution-launcher.md` | `outputs/<site>/launch-plan.md` | **before go-live** |
+| 6. go-live + GSC setup | `references/go-live.md` | site live, GSC registered, sitemap submitted | launch day |
+| 7. AdSense readiness audit | `references/adsense-readiness-auditor.md` | `outputs/<site>/adsense-readiness-report.md` | **2–4 weeks post-launch** |
+| 8. search growth loop | `references/gsc-growth-loop.md` | monthly query report + content update log | monthly, post-approval |
 
 **Phase sequencing rationale:**
-- Phase 6 (distribution plan) must be complete *before* go-live so the first 2–4 weeks of traffic are guided from day one. Preparing the plan after launch means the highest-leverage early period is wasted.
-- Phase 7 (go-live) executes the distribution plan immediately.
-- Phase 8 (audit) requires 2–4 weeks of real GSC data — indexing, impressions, crawl coverage. Run it only after that window passes. Do not submit AdSense the same day the site launches.
+- Trust pages are built in phase 4 alongside content pages — they are part of the site, not a separate step. Separating them created a hidden dependency where phase 4 could "complete" without the site being launchable.
+- Phase 5 (distribution plan) must be complete *before* go-live so the first 2–4 weeks of traffic are guided from day one. Preparing the plan after launch means the highest-leverage early period is wasted.
+- Phase 6 (go-live) executes the distribution plan immediately.
+- Phase 7 (audit) requires 2–4 weeks of real GSC data — indexing, impressions, crawl coverage. Run it only after that window passes. Do not submit AdSense the same day the site launches.
 
 ## Default Batch Workflow
 
@@ -110,10 +110,10 @@ Load references only when entering that phase. Do not preload.
 
 - `niche-opportunity-researcher.md` — find and validate the niche.
 - `keyword-cluster-planner.md` — build the site map and SEO foundation.
-- `programmatic-seo-architect.md` — define page templates and visual direction.
-- `useful-site-builder.md` — build the site, all technical SEO files, and ad placement structure.
-- `eeat-site-builder.md` — create trust pages; the Go-Live Setup section executes on launch day.
+- `programmatic-seo-architect.md` — define page templates and visual direction. Applies to all site types, not only programmatic ones.
+- `useful-site-builder.md` — build the site, trust and identity pages, all technical SEO files, and ad placement structure.
 - `distribution-launcher.md` — create the organic-first traffic plan **before go-live** so it executes from day one.
+- `go-live.md` — execute on launch day: submit sitemap, set up GSC, run Day 1 distribution action.
 - `adsense-readiness-auditor.md` — run the audit **2–4 weeks after go-live**, when GSC has real impression data.
 - `gsc-growth-loop.md` — run the monthly content iteration loop after AdSense approval.
 

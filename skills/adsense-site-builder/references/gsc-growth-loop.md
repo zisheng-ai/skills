@@ -1,6 +1,6 @@
 # GSC Growth Loop
 
-Use this reference during phase 9 — after AdSense is approved. Run this loop monthly to grow organic search traffic using real data from Google Search Console.
+Use this reference during phase 8 — after AdSense is approved. Run this loop monthly to grow organic search traffic using real data from Google Search Console.
 
 The organic growth loop is what converts a site that passed AdSense review into a site that earns consistent revenue. A site that stops improving after launch will plateau and eventually decline as competitors improve. This loop prevents that.
 

@@ -1,6 +1,6 @@
 # Distribution Launcher
 
-Use this reference during **phase 6 — before go-live**. The distribution plan must be ready before the site launches so the first 2–4 weeks of organic activity are guided from day one. Those weeks are when Google first crawls and indexes the site; real engagement signals during that period carry outsized weight.
+Use this reference during **phase 5 — before go-live**. The distribution plan must be ready before the site launches so the first 2–4 weeks of organic activity are guided from day one. Those weeks are when Google first crawls and indexes the site; real engagement signals during that period carry outsized weight.
 
 Do not create this plan after launch. A plan written after the fact describes what already happened, not what to do next.
 
@@ -147,6 +147,19 @@ Metrics to ignore before AdSense approval: raw pageviews, social impressions, fo
 | 8–10 | Find one or two Quora questions the site content directly answers. Write full answers and include the tool link as a resource. |
 | 11–12 | Record a 60-second screen demo of the primary tool. Post to YouTube Shorts with the target keyword in the title. |
 | 13–14 | Check GSC for early impressions. Note which queries are surfacing. Identify 1–2 supporting pages that should be written or improved based on real query data. |
+
+---
+
+## Completion Gate
+
+Before advancing to phase 7 (go-live), verify all of the following:
+
+- [ ] `outputs/<site-slug>/launch-plan.md` is written and complete — not the generic template, but adapted to this specific niche and audience.
+- [ ] The 14-Day Sequence is fully specified with concrete actions (not placeholders like "post somewhere relevant").
+- [ ] Every channel listed is from the Safe Channels section. No unsafe channels are in the plan.
+- [ ] All assets needed for Day 1 are either ready or explicitly listed as "to prepare before launch": Product Hunt description, screenshots, demo video script, community post draft.
+- [ ] Metrics to watch are defined with target ranges for this niche (not just copied from the template).
+- [ ] The plan does not rely on GA data if GA was not set up in phase 5 — revise metric tracking to use GSC data only if GA is absent.
 
 ---
 
