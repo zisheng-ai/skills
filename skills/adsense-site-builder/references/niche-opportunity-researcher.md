@@ -141,6 +141,25 @@ For the top 2–3 existing sites in the niche, run this assessment:
 
 Note: third-party traffic estimates are directional, not exact. Use them to understand *which sites are winning* and *why*, not to get precise visitor counts.
 
+### Capture the competitive brief (carry this forward to the build)
+
+The assessment above is wasted if it only feeds a go/no-go decision. Convert it into a **competitive brief** that the build phases consume directly. For each of the top 2–3 incumbents, record the specific weakness you observed and the concrete action that beats it. Every weakness must map to an action — a weakness with no action is just an observation.
+
+Map each weakness to the phase that acts on it. Use exactly one of these `acts_in_phase` tokens — they are a closed set the build phase matches on literally, so do not invent new values or use prose like "Phase 4":
+
+| Weakness type | Beat-it action | `acts_in_phase` |
+| --- | --- | --- |
+| Thin / shallow top page | Set a higher content-depth target for that page type; cover the sub-questions they skip | `build` |
+| Missing sub-topics / keyword gaps | Add the missing supporting-page angles to the cluster | `keywords` |
+| No interactive tool, only prose | Choose a tool/template primary asset that does the job better | `page_model` |
+| Poor Core Web Vitals / slow | Hold the performance budget so the site is measurably faster | `build` |
+| Outdated (2–4 yr old) content | Cover current data, recent changes, and the year explicitly | `build` |
+| Paywalled / sign-up-gated | Keep the equivalent value free and immediately usable | `build` |
+
+`acts_in_phase` is always one of `keywords` (acted on in phase 2), `page_model` (phase 3), or `build` (phase 4). Whichever phase it names, phase 4's completion gate is the final backstop that verifies the weakness was actually addressed — so an entry never silently drops even if an earlier phase missed it.
+
+Write the brief into `outputs/niches.json` as `competitive_brief` (schema below). If a niche is selected, this brief is the differentiation baseline the build is measured against — not optional flavor.
+
 ---
 
 ## Step 3: AdSense Policy Safety Assessment
@@ -249,6 +268,16 @@ Write `outputs/niches.json`:
       "supporting_page_count": 12
     },
     "supporting_page_angles": ["angle one", "angle two"],
+    "competitive_brief": [
+      {
+        "competitor": "incumbent-domain.com",
+        "rank_position": 1,
+        "weakness": "Top page is a 400-word article with no worked examples; data is from 2022",
+        "weakness_type": "thin | missing_subtopics | no_tool | poor_cwv | outdated | paywalled",
+        "beat_action": "Build a calculator with 3 worked examples and current-year data; target 800+ words of support",
+        "acts_in_phase": "build"
+      }
+    ],
     "adsense_policy_check": {
       "banned_category": false,
       "high_risk_category": false,
@@ -269,6 +298,8 @@ Write `outputs/niches.json`:
   }
 ]
 ```
+
+**`competitive_brief` field note:** other fields above show `a | b | c` to list allowed values, but `acts_in_phase` is matched literally by the phase-4 build gate, so its written value must be a single token — exactly one of `keywords`, `page_model`, or `build` — never the pipe string itself and never prose like `"Phase 4"`. `weakness_type` is descriptive (not dispatched on), so a single value from its list is enough but a near-synonym will not break the gate. When in doubt about which phase acts on a weakness, use `build`: phase 4 is the backstop and will catch it.
 
 ### Decision rules
 

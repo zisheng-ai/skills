@@ -6,6 +6,23 @@ Do not finish this phase until every item in the completion gate is checked. A p
 
 ---
 
+## Step 0: Load the competitive brief
+
+Before choosing a pattern or writing any page, read `competitive_brief` from this site's entry in `outputs/niches.json` (produced in phase 1). It is the differentiation baseline — the build's job is to be measurably better than the incumbents on the specific weaknesses recorded there.
+
+Turn the brief into a checklist before building. Iterate **every entry in the array** and account for each one — Phase 4 is the last build phase before launch, so it is the backstop for all of them regardless of `acts_in_phase`. Route each entry by its token to decide *where* to verify:
+
+- `acts_in_phase: "build"` — write down the concrete on-page requirement it imposes (e.g. "incumbent's top page has no worked examples → mine needs ≥ 3" or "incumbent's CWV is poor → hold LCP < 2.5s and ship a working tool they lack"), and fold it into the relevant page's content outline.
+- `acts_in_phase: "keywords"` — confirm the missing sub-topic / page angle made it into the phase 2 cluster and exists as a real page in the site map. If it did not, add the page now.
+- `acts_in_phase: "page_model"` — confirm the differentiating tool/asset is in the phase 3 page model and is actually being built. If it was dropped, build it now.
+- **Any other value, or a missing/empty `acts_in_phase`** — do not skip it. Treat it as `build` (handle it on-page here), and correct the brief entry's token so the record is clean. An unrecognized token is a defect to fix, never a reason to drop the entry.
+
+Every entry must end the phase in one of two states: **verified present and better than the incumbent**, or — only if genuinely out of scope — explicitly noted with a reason. An entry that is silently absent is a failed gate, not an acceptable omission.
+
+If `competitive_brief` is empty or absent (e.g. the user skipped phase 1), note that the build has no differentiation baseline and apply the content-depth standards below as the floor. Do not invent competitor weaknesses — build to the standards instead.
+
+---
+
 ## Site Patterns
 
 Choose the pattern that best fits the niche. Do not default to a mini tool if a richer pattern serves the user better.
@@ -325,6 +342,7 @@ Before advancing to phase 5, verify all of the following:
 
 **Content:**
 - [ ] Primary tool or resource works correctly. Tested with at least 3 input scenarios including an edge case.
+- [ ] Every entry in `competitive_brief` is accounted for — count the entries, not the tokens. Each is verified present and better than the incumbent on the relevant page, or explicitly noted as out of scope with a reason (or the brief was empty). Entries with an unknown/missing `acts_in_phase` were handled as `build`, not skipped. No entry is silently absent. The site beats the incumbents, not just matches them.
 - [ ] All 15+ pages are complete. No placeholder text.
 - [ ] Every page meets the content depth standard for its type.
 - [ ] No page exists only to target a keyword without adding value for the user.
