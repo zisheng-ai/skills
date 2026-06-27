@@ -152,7 +152,7 @@ Metrics to ignore before AdSense approval: raw pageviews, social impressions, fo
 
 ## Completion Gate
 
-Before advancing to phase 7 (go-live), verify all of the following:
+Before advancing to phase 6 (go-live), verify all of the following:
 
 - [ ] `outputs/<site-slug>/launch-plan.md` is written and complete — not the generic template, but adapted to this specific niche and audience.
 - [ ] The 14-Day Sequence is fully specified with concrete actions (not placeholders like "post somewhere relevant").
