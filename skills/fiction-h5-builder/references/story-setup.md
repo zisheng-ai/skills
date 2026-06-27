@@ -54,20 +54,11 @@ content/短篇/{短篇标题}/
 - Book root: `content/{书名}/` — use the book title as the directory name under `content/`
 - Short stories: always under `content/短篇/{短篇标题}/`
 
-## Active Book Pointer
-
-```
-.active-book   # file at project root, contains relative path e.g. "content/我的小说"
-```
-
-When a Next.js site co-locates with the writing directory, the site reads `.active-book` to determine which book's `正文/` to load. Multiple books can co-exist; only the active book is surfaced in the reader.
-
 ## What the Site Reads vs. Ignores
 
 | Directory | Reader sees it? |
 | --- | --- |
 | `正文/第NNN章_*.md` | Yes — chapter content |
-| `.active-book` | Yes — determines active book |
 | `public/covers/<书名>/封面/封面_v1.png` | Yes — served as `/covers/<书名>/封面/封面_v1.png` |
 | `设定/`, `大纲/`, `追踪/`, `对标/`, `参考资料/` | Never — writing internals |
 
@@ -82,5 +73,4 @@ When setting up a new project:
 3. Write `设定/角色/{主角名}.md` with role, motivation, voice notes.
 4. Write `大纲/大纲.md` with a 10–30 beat arc outline.
 5. Create `追踪/上下文.md` — starts empty; populated after each chapter.
-6. Write `.active-book` at the project root pointing to this book's directory (e.g. `content/我的小说`).
-7. If a reference book exists, run `/story-import` or manually create `对标/{书名}/` files.
+6. If a reference book exists, run `/story-import` or manually create `对标/{书名}/` files.

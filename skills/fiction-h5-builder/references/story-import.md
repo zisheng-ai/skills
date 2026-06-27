@@ -131,7 +131,6 @@ When the source is a single file with chapter markers:
 - [ ] `大纲/大纲.md` shows where the story is and what is planned next
 - [ ] `追踪/上下文.md` is ready to hand off to `/story-long-write`
 - [ ] `追踪/伏笔.md` captures all unresolved threads
-- [ ] `.active-book` created at project root pointing to `content/{书名}` if this is the active reading project
 - [ ] Analysis assets in `对标/` (not deleted — they feed future writing decisions)
 
 ## What Import Does Not Do

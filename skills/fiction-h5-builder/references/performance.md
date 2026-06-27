@@ -20,7 +20,7 @@ Book covers are the heaviest assets on the home and detail pages.
 - Target < 80KB per cover at display size (typically 160×240px on mobile).
 - Always set `width` and `height` on `<img>` to prevent CLS during load.
 - Use `loading="lazy"` for below-fold covers on the home page.
-- Use `fetchpriority="high"` on the first visible cover or the featured book cover.
+- Use `fetchpriority="high"` on the first visible cover image.
 - Prefer WebP with JPEG fallback via `<picture>`.
 - CSS cover placeholders are acceptable when no image is provided. They must use flat color or subtle texture, not heavy gradients or box shadows.
 

@@ -42,15 +42,12 @@ my-novel-site/
 │       └── {书名}/
 │           └── 封面/
 │               └── 封面_v1.png
-├── .active-book                  ← e.g. "content/我的小说"
 ├── content-collections.ts        ← collection definitions
 ├── src/
 │   ├── app/
 │   │   ├── page.tsx              ← chapter catalog
 │   │   └── reader/[chapter]/
 │   │       └── page.tsx          ← reader page with prev/next
-│   └── lib/
-│       └── active-book.ts        ← reads .active-book (one fs call, build-time only)
 └── tailwind.config.ts
 ```
 
@@ -113,18 +110,11 @@ export default withContentCollections(nextConfig)
 
 ```ts
 import { allChapters } from 'content-collections'
-import fs from 'fs'
-
-// Read active book at build time (one call, never at runtime)
-const activeBook = fs.existsSync('.active-book')
-  ? fs.readFileSync('.active-book', 'utf8').trim().replace('content/', '')
-  : null
 
 export async function generateStaticParams() {
-  const chapters = allChapters
-    .filter(ch => !activeBook || ch.bookSlug === activeBook)
+  return allChapters
     .sort((a, b) => a.order - b.order)
-  return chapters.map((_, i) => ({ chapter: String(i + 1) }))
+    .map((_, i) => ({ chapter: String(i + 1) }))
 }
 ```
 
@@ -152,7 +142,6 @@ type Book = {
   chapterCount?: number;
   latestChapterId?: string;
   updatedAt?: string;      // ISO 8601
-  featured?: boolean;      // true for the .active-book
   sourceType?: "fiction-long" | "fiction-short" | "cms";
   sourcePath?: string;     // relative path to the book's source directory
 };
@@ -216,12 +205,6 @@ Short-form project:
 └── 拆文库/
 ```
 
-Active book pointer:
-
-```text
-.active-book   # contains relative path, e.g. "content/我的小说"
-```
-
 ## Field Mapping
 
 ```text
@@ -231,7 +214,6 @@ Active book pointer:
 设定/角色/*.md         →  internal only; optional public character page if user requests
 追踪/*.md              →  internal only
 封面 output            →  Book.cover  (saved to public/covers/<书名>/封面/封面_v1.png, served as /covers/<书名>/封面/封面_v1.png)
-.active-book           →  Book.featured = true, sort to first position
 ```
 
 ## Chapter Frontmatter Schema

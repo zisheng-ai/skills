@@ -43,7 +43,7 @@ All writing phase outputs MUST be saved to the correct path under `content/` fro
 
 | Phase | Load Reference | Required Output |
 | --- | --- | --- |
-| 0. Project setup | `references/story-setup.md` | Directory structure, naming conventions, `.active-book` |
+| 0. Project setup | `references/story-setup.md` | Directory structure, naming conventions |
 | 1. Write long-form | `references/story-long-write.md` | Chapters in `正文/第NNN章_章名.md`, updated `追踪/` |
 | 1. Write short-form | `references/story-short-write.md` | `正文.md`, `设定.md`, `小节大纲.md` |
 | 2. Import manuscript | `references/story-import.md` | Split chapters, `设定/`, `大纲/`, `追踪/` reconstructed |
@@ -157,7 +157,6 @@ Load references only when entering that phase. Do not preload all references at 
         page.tsx                # chapter reader: content + prev/next
   content-collections.ts          # collection schema definitions
   src/lib/
-    active-book.ts              # reads .active-book (build-time only)
   src/components/
     BookCard.tsx
     ChapterNav.tsx
