@@ -26,11 +26,11 @@ Add only when explicitly requested:
 | --- | --- |
 | Font size | ≥ 4 steps (e.g. 14/16/18/20px) |
 | Line height / density | ≥ 2 options: "Compact" and "Comfortable" |
-| Theme | Light, Sepia/Paper, Dark/Night via DaisyUI themes |
-| Chapter catalog | Drawer or slide-in, accessible from the reader |
-| Reading progress | Visible but not distracting |
-| Resume scroll position | Per-chapter scroll restoration |
-| Immersive mode | Chrome-hidden reading mode |
+| Theme | Light / Sepia / Dark via DaisyUI themes | Only when explicitly requested |
+| Chapter catalog | Drawer or slide-in, accessible from the reader | Only when explicitly requested |
+| Reading progress | Visible but not distracting | Only when explicitly requested |
+| Resume scroll position | Per-chapter scroll restoration | Only when explicitly requested |
+| Immersive mode | Chrome-hidden reading mode | Only when explicitly requested |
 
 ## Default Typography
 
@@ -62,7 +62,7 @@ If implementing an immersive (chrome-hidden) reading mode:
 
 ## Theme Implementation
 
-Use DaisyUI's `data-theme` attribute on `<html>` to switch themes. Define light, sepia, and dark themes in `tailwind.config.js`.
+Use DaisyUI's `data-theme` attribute on `<html>` to switch themes. The default reader provides **light and dark**. Add **sepia** only when the brief explicitly asks for it.
 
 ```js
 // tailwind.config.js
@@ -73,12 +73,6 @@ daisyui: {
       light: {
         'base-100': '#f9f6f1',
         'base-content': '#1a1814',
-      },
-    },
-    {
-      sepia: {
-        'base-100': '#f2ead8',
-        'base-content': '#3d3220',
       },
     },
     {

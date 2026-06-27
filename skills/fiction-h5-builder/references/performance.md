@@ -6,7 +6,7 @@ Slow page loads lose readers before the first chapter. Fiction reading sites hav
 
 | Metric | Target | Notes |
 | --- | --- | --- |
-| LCP | < 2.5s | First meaningful content on mobile 3G |
+| LCP | < 2.5s | Largest contentful paint at the 75th percentile of real users (Google "good" threshold; > 4s is "poor"). On a fiction site the LCP element is usually the first cover image or the chapter's opening heading. |
 | INP | < 200ms | Reader controls (theme switch, font size) must be instant |
 | CLS | < 0.1 | Font loading and image loading must not cause visible layout shifts |
 | TTFB | < 600ms | For server-rendered routes |
@@ -27,8 +27,9 @@ Book covers are the heaviest assets on the home and detail pages.
 ## Fonts
 
 - Prefer system font stacks for body text. Do not load a web font for body reading — system stacks render faster and are often better for CJK.
-- If a display font is loaded from a CDN (for titles or the site logo), use `font-display: swap` and add `<link rel="preconnect">` to the font CDN origin.
-- Subset any loaded font to the characters actually used (Latin, CJK range as appropriate).
+- On Next.js, load any display font (titles, logo) via `next/font` instead of a CDN `<link>`. `next/font` self-hosts Google Fonts as static assets served from your own deployment domain — the browser never requests Google at runtime, so no `preconnect` is needed and there is no third-party dependency or GDPR exposure. A failed font download fails the build rather than silently falling back to the Google CDN.
+- `font-display: swap` alone does **not** prevent layout shift — the swap from fallback to web font still moves text and counts against CLS. To actually hold CLS near zero, use `next/font` (it applies a size-adjusted fallback metric automatically) or define a fallback with matching `size-adjust`/`ascent-override`. Do not claim swap "fixes" CLS.
+- Subset any loaded font to the characters actually used (Latin, CJK range as appropriate). `next/font` with `subsets: ['latin']` handles this.
 - Never load a CJK web font for body text on mobile. The system stack (Hiragino, Yu Mincho, Noto) is always faster and equally good.
 - If a custom reader font is offered as a setting, load it lazily only when the reader selects it.
 
@@ -39,6 +40,15 @@ Book covers are the heaviest assets on the home and detail pages.
 - For SPA/Next.js: lazy-load chapter content when entering the reader route. Do not prefetch every chapter at book-detail load time.
 - Prefetch only the next chapter when the reader reaches 80% of the current chapter.
 - Avoid loading the full book catalog on a chapter reader page.
+
+### Next.js App Router prefetch behavior
+
+Chapter navigation is the hot path; lean on the framework's native prefetching rather than rolling your own.
+
+- **Statically rendered chapter routes** (the `generateStaticParams` + SSG path this skill recommends) are fully prefetched by `<Link>` when they enter the viewport, and cached client-side for ~5 minutes by default. This is what makes prev/next feel instant — no extra code needed.
+- **Dynamically rendered chapter routes** are *not* prefetched at all unless a `loading.js` boundary exists, in which case only the shell up to that boundary is prefetched. If your reader must be dynamic, add a `loading.tsx` so the layout/skeleton still prefetches. Prefer SSG to avoid this entirely.
+- **Sibling navigation** (chapter N → N+1) reuses the shared parent layout and only fetches the changed leaf segment. Keep the reader chrome (header, nav, settings) in a parent `layout.tsx` so it is not re-fetched on every page turn.
+- Next.js maintains a prioritized prefetch queue: links in the viewport first, then links showing hover/touch intent, and links scrolled off-screen are discarded rather than queued forever. A book-detail page with hundreds of chapter links therefore will not thrash the network — but still avoid rendering a 1000-link catalog without virtualization.
 
 ## JavaScript Bundle
 

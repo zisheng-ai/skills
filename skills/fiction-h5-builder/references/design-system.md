@@ -191,7 +191,9 @@ Reader body typography matters more than display typography. Get body right befo
 
 ## Dark Mode Protocol
 
-The reader page requires three themes — light, sepia, dark — as user-controlled preferences, not OS-based switching. Discovery pages should support system dark mode via `prefers-color-scheme`.
+The reader page requires a dark mode toggle as a user-controlled preference, not OS-based switching. Discovery pages should support system dark mode via `prefers-color-scheme`.
+
+The default implementation provides **light and dark** themes via DaisyUI. Add a third **sepia** theme only when the brief explicitly asks for it.
 
 **Token strategy:** Use DaisyUI theme tokens (`base-100`, `base-content`, `accent`, etc.) for all color decisions. Swap the full theme under a `[data-theme]` attribute on `<html>` or the reader wrapper. Do not use Tailwind `dark:` classes for reader themes — they cannot handle three-way switching.
 
@@ -201,13 +203,12 @@ plugins: [require('daisyui')],
 daisyui: {
   themes: [
     { light: { 'base-100': '#f9f6f1', 'base-content': '#1a1814' } },
-    { sepia: { 'base-100': '#f2ead8', 'base-content': '#3d3220' } },
     { dark:  { 'base-100': '#141210', 'base-content': '#e8e4de' } },
   ],
 }
 ```
 
-**Contrast mandate:** WCAG AA minimum for body text (4.5:1) across all three themes. Test each theme before shipping. Do not ship a theme you have only seen in one mode.
+**Contrast mandate:** WCAG AA minimum for body text (4.5:1) across all enabled themes. Test each theme before shipping. Do not ship a theme you have only seen in one mode.
 
 **No pure extremes:** Off-black and off-white only. `#000000` and `#ffffff` kill depth and are banned in all themes.
 
@@ -340,7 +341,8 @@ Run every item before delivering. If any item fails, the output is not done.
 - [ ] Body text ≥ 16px mobile, contrast ≥ 4.5:1 against page background?
 - [ ] Dark mode toggle present and persists in `localStorage`?
 - [ ] Last visited chapter stored and surfaced on home/detail page?
-- [ ] Three themes (light / sepia / dark) implemented via DaisyUI `data-theme`? (required; verify WCAG AA for each)
+- [ ] Light and dark themes implemented via DaisyUI `data-theme`? (required; verify WCAG AA for each)
+- [ ] Sepia theme added only if the brief explicitly asks for it?
 
 **Copy and content:**
 - [ ] Zero em-dashes (`—` or `–`) anywhere visible to the reader?
