@@ -2,6 +2,16 @@
 
 Use this reference during phase 1 to find niches with real search demand, concrete user utility, and a clear path through AdSense policy review.
 
+## The Opportunity Formula
+
+Before looking at any niche, anchor every evaluation to this formula:
+
+**Website opportunity = search demand × low competition × real value you can build × monetizable × sustainable to update and distribute**
+
+All five factors multiply — a zero in any one factor kills the opportunity regardless of how strong the others are. Do not start with "what should I write?" Start with: **which type of person has a stable recurring problem? How do they search for it? Are current results satisfying them? Can you do it better?**
+
+---
+
 ## Inputs
 
 - Target language and country or market
@@ -62,13 +72,73 @@ Avoid:
 
 Before scoring, confirm there is real search demand for each candidate. A niche with no search signal is not viable regardless of how useful the site could be.
 
-Check all three signals:
+### Three-signal demand check
+
+All three must pass:
 
 1. **Google autocomplete** — the seed keyword appears as an autocomplete suggestion (not just a longer phrase you invented).
 2. **At least one existing result in the top 5** that has clear engagement — comments, backlinks, or a high word count on the topic. This proves the market exists.
 3. **Supporting keyword set** — you can name at least 8–10 supporting page topics, each with its own search intent. A niche with only 1–2 keyword angles cannot support a site.
 
 Reject candidates that fail any of these three checks.
+
+### Keyword metrics: five dimensions
+
+For each candidate that passes the three-signal check, assess the keyword space on these five dimensions:
+
+| Dimension | What to measure | Tool |
+| --- | --- | --- |
+| **Search Volume** | Monthly searches for the primary keyword | Google Keyword Planner (free), Ahrefs, Semrush |
+| **Keyword Difficulty (KD)** | Ranking difficulty 0–100 | Ahrefs KD, Semrush KD — for new sites, target ≤ 30 on supporting pages |
+| **CPC** | Advertiser cost per click | Google Keyword Planner — higher CPC = higher advertiser demand = higher CPM after AdSense approval |
+| **SERP Quality** | How good are the current top 10 results? | Manual search — see signals below |
+| **Long-tail Depth** | Can this expand into 20+ page topics? | Autocomplete, PAA, Semrush related keywords |
+
+**Volume guidance:** Too low (<200/mo for the primary keyword) means no traffic ceiling. Too high (>50k/mo for a new site) usually means entrenched competitors. Sweet spot for a new AdSense site: 1k–20k/mo for the primary keyword, with dozens of long-tail variations.
+
+**CPC as a CPM proxy:** AdSense RPM in a niche roughly correlates with CPC in that niche. CPC > $1 suggests real advertiser competition. CPC < $0.20 suggests thin advertiser demand even if approval is straightforward.
+
+### Free tool workflow
+
+Use this sequence — stop when you have enough signal:
+
+1. **Google autocomplete** — type the seed keyword, read suggestions. Each suggestion is a real recurring search.
+2. **People Also Ask** — shows question-form long-tail keywords worth their own FAQ pages.
+3. **Related Searches** — at the bottom of the SERP, shows adjacent keyword clusters.
+4. **Google Keyword Planner** (free with any Google Ads account) — search volume ranges, CPC, related keyword ideas.
+5. **Google Trends** — confirm the trend is stable or rising. Compare 2–3 candidates on the same chart to pick the strongest.
+6. **Ahrefs free Keyword Explorer or Semrush free tier** — KD score, top pages, and related keywords. Use the free daily queries strategically for final candidate selection.
+
+### SERP quality signals: when to compete
+
+Search the primary keyword. Look at the top 10 results. These signals indicate a gap worth entering:
+
+**Green signals (proceed):**
+- Forum threads, Reddit posts, or Quora answers in the top 5 — these rank because nothing better exists
+- Content from 2–4 years ago with no recent updates
+- Pages with poor UX: walls of text, no interactive element, slow load
+- No dedicated tool page — only articles trying to explain something a calculator or generator would handle better
+- Thin content: pages under 500 words ranking for a query that deserves depth
+
+**Red signals (avoid or be very selective):**
+- Established brands (Wikipedia, government sites, large media) in positions 1–3 with exact-match content
+- Multiple well-funded SaaS products with free tools that already solve the problem
+- Content from the last 6 months that is high-quality and interactive
+- Keyword is so specific that the top result already perfectly satisfies it
+
+### Competitor analysis
+
+For the top 2–3 existing sites in the niche, run this assessment:
+
+| Signal | Tool | What you're looking for |
+| --- | --- | --- |
+| Estimated traffic and sources | Similarweb (free tier) | Is the site growing? Does it rely on organic search or paid traffic? |
+| Top pages by traffic | Ahrefs free / Semrush free | Which pages drive their traffic? Are those pages replicable or improvable? |
+| Keyword gaps | Semrush Keyword Gap | Keywords the competitors rank for that you could target with better content |
+| Technical quality | PageSpeed Insights | Are their Core Web Vitals poor? A fast, well-structured site can outrank a slow incumbent. |
+| Content depth | Manual review | Do their top pages actually answer the user's question, or do they skirt around it? |
+
+Note: third-party traffic estimates are directional, not exact. Use them to understand *which sites are winning* and *why*, not to get precise visitor counts.
 
 ---
 

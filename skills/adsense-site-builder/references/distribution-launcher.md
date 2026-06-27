@@ -1,6 +1,8 @@
 # Distribution Launcher
 
-Use this reference during phase 7 to create an organic-first traffic plan that brings real users and builds the engagement signals AdSense reviewers look for.
+Use this reference during **phase 6 — before go-live**. The distribution plan must be ready before the site launches so the first 2–4 weeks of organic activity are guided from day one. Those weeks are when Google first crawls and indexes the site; real engagement signals during that period carry outsized weight.
+
+Do not create this plan after launch. A plan written after the fact describes what already happened, not what to do next.
 
 The goal is **real users with genuine interest** — not raw pageview counts. AdSense evaluates traffic quality. Sites with high bounce rates, sub-10-second sessions, and zero return visits are at higher risk of rejection or policy violations after approval.
 
@@ -10,11 +12,13 @@ The goal is **real users with genuine interest** — not raw pageview counts. Ad
 
 New sites need a sequenced approach. Do not try every channel at once.
 
-**Week 1–2 (pre-AdSense submission):** seed search indexing and establish one community presence.
+**Day 1 (go-live):** submit sitemap to GSC, request indexing for homepage and primary tool page, execute the first distribution action (Product Hunt launch or first community post).
 
-**Week 3–4 (during review period):** build the first backlinks through directory submissions and genuine community participation.
+**Week 1–2:** seed search indexing and establish presence in one relevant community. Prioritize channels that bring users who will actually use the tool.
 
-**Month 2+ (after approval):** layer in content repurposing and paid if appropriate.
+**Week 3–4 (during GSC wait period):** build the first backlinks through directory submissions and genuine community participation. These weeks are also when to record the tool demo video.
+
+**After AdSense approval (month 2+):** layer in content repurposing, Pinterest if relevant, and paid if appropriate.
 
 ---
 

@@ -1,6 +1,6 @@
 # AdSense Readiness Auditor
 
-Use this reference during phase 6 before recommending AdSense submission. The two goals are: (1) pass the review on the first attempt, (2) maintain account health after approval.
+Use this reference during phase 8 — after the site has been live for 2–4 weeks — before recommending AdSense submission. The two goals are: (1) pass the review on the first attempt, (2) maintain account health after approval.
 
 Do not recommend submission unless every blocking item passes. "Needs revision" is always better than a rejected or suspended account.
 

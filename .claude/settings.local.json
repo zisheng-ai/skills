@@ -11,7 +11,27 @@
       "WebFetch(domain:www.npmjs.com)",
       "Bash(gh repo *)",
       "Bash(gh api *)",
-      "Bash(gh search *)"
+      "Bash(gh search *)",
+      "Skill(codex:setup)",
+      "Bash(rtk grep *)",
+      "Skill(deep-research)",
+      "Workflow(deep-research)",
+      "WebFetch(domain:support.google.com)",
+      "WebFetch(domain:www.adpushup.com)",
+      "WebFetch(domain:www.panstag.com)",
+      "WebFetch(domain:monetizationguy.com)",
+      "WebFetch(domain:www.paulteitelman.com)",
+      "WebFetch(domain:coalitiontechnologies.com)",
+      "WebFetch(domain:crowdo.net)",
+      "WebFetch(domain:www.amsive.com)",
+      "WebFetch(domain:impact.com)",
+      "WebFetch(domain:www.ranktracker.com)",
+      "WebFetch(domain:genieegroup.com)",
+      "WebFetch(domain:blog.google)",
+      "WebFetch(domain:adsenseaudit.net)",
+      "WebFetch(domain:hastewire.com)",
+      "WebFetch(domain:adstimate.com)",
+      "WebFetch(domain:toolpod.dev)"
     ]
   }
 }

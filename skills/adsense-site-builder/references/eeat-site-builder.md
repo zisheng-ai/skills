@@ -70,6 +70,23 @@ Every trust page must:
 
 ---
 
+## Go-Live Setup
+
+After trust pages are complete, set up the tools needed for organic growth and AdSense submission timing.
+
+### Google Search Console
+
+1. Add the site as a property in Google Search Console using the domain verification method (preferred) or the HTML tag method.
+2. Submit `sitemap.xml` immediately after the site goes live.
+3. Use the URL Inspection tool to request indexing for the homepage and primary tool page.
+4. Wait 2–4 weeks before running the AdSense readiness audit. Phase 8 requires real GSC impressions and indexed pages before it can return a meaningful verdict.
+
+### Google Analytics (optional but recommended)
+
+Add GA4 to track real user engagement metrics (session duration, return visitors, tool completion events). These signals confirm real user behavior to Google and help identify which pages need improvement.
+
+---
+
 ## Output
 
 Create the pages in the site project. Add a checklist to `outputs/<site-slug>/site-brief.md`:

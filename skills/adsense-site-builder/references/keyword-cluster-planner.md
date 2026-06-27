@@ -16,6 +16,22 @@ Use keyword difficulty estimates from Ahrefs (free tier), Semrush, or Google's k
 
 ---
 
+## Keyword Type Classification
+
+Before building the site map, classify keywords by type. This drives page structure, content depth requirements, and internal linking logic.
+
+| Type | Examples | Search intent | Best page format |
+| --- | --- | --- | --- |
+| **Tool keywords** | "hourly rate calculator", "JSON formatter", "prompt generator" | Do — user wants to use something | Interactive tool page |
+| **Template keywords** | "invoice template", "email template for job offer", "notion project tracker" | Get — user wants a ready-made asset | Copyable/downloadable template page |
+| **Tutorial keywords** | "how to calculate freelance rate", "how to fix CORS error in Next.js" | Learn — user wants step-by-step guidance | How-to guide with numbered steps |
+| **Comparison keywords** | "Notion vs Obsidian", "best tools for freelancers", "X alternatives" | Decide — user is choosing between options | Comparison page with criteria and verdict |
+| **Question keywords** | "what should I charge as a freelancer?", "is X free?" | Understand — user wants a quick answer | FAQ entry or short answer page with schema |
+
+Every site should have a mix. Tool + template keywords drive the primary asset. Tutorial + question keywords drive the supporting pages. Comparison keywords target users in a decision phase with higher advertiser CPC.
+
+---
+
 ## Required Page Clusters
 
 Build the site map in this order, because each layer supports the next:
@@ -180,3 +196,5 @@ Write `outputs/<site-slug>/site-map.json`:
 ```
 
 If the map cannot reach 10 meaningful supporting pages, return to phase 1 and choose a better niche.
+
+**Start small principle:** Launch with 10–20 high-quality pages, not 100 thin ones. Google rewards depth and engagement. A site with 15 complete, useful pages that users actually finish reading will rank faster and pass AdSense review more reliably than a site with 200 shallow pages that users bounce from in 8 seconds. Scale page count only after the first pages show real GSC impressions and user engagement.

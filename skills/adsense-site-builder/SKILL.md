@@ -5,59 +5,87 @@ description: builds and audits adsense-ready niche websites from idea to launch.
 
 # AdSense Site Builder
 
-## Overview
+## Two Core Goals
 
-Use this skill as the single entrypoint for building AdSense-ready niche websites. Treat the referenced files as staged submodules: load only the reference needed for the current phase, produce its required handoff artifact, then advance to the next phase.
+Every decision in this pipeline serves exactly two goals:
+
+**Goal 1 — Pass AdSense review on the first submission.**
+The site must have: real working utility, at least 15 complete pages of original content, a Privacy Policy that explicitly names Google AdSense and its cookies, a working About and Contact page, HTTPS, a submitted sitemap, pages indexed in Google Search Console, and no policy violations. These are not optional. Missing any single one causes rejection.
+
+**Goal 2 — Earn compounding organic search traffic.**
+The same site, targeting low-competition long-tail keywords, with correct on-page SEO, schema markup, and an internal link architecture that builds topical authority over time. Organic traffic is how the site makes AdSense revenue after approval — and it is the only traffic source AdSense considers high-quality.
+
+These goals are not in tension. The qualities that pass AdSense — real utility, original content, clear identity, technical correctness, real users — are identical to the signals that earn organic ranking. Build for real users first. Both goals follow.
 
 ## Operating Principles
 
-- Build websites for real users first, monetization second.
-- Prefer useful tools, templates, directories, comparison hubs, checklists, tutorials, calculators, generators, and explainers over generic article farms.
-- Reject tactics that depend on traffic exchanges, bot traffic, paid traffic packages, forced ad interactions, or thin AI-generated pages.
-- Keep every output inspectable: write assumptions, inputs, quality gates, and next actions into project files.
-- Do not mark a site ready until it has clear utility, trustworthy identity pages, technical SEO basics, and a safe distribution plan.
+- Real user utility is the only moat. A site a user would bookmark, share, or return to will pass review and rank. A site that exists only for keywords will fail both.
+- Prefer interactive tools, template libraries, directories, comparison hubs, checklists, and tutorial hubs over generic article farms.
+- Never recommend traffic exchanges, bot traffic, paid traffic packages, forced ad interactions, or thin AI-generated pages.
+- Keep every output inspectable: write assumptions, inputs, quality gates, and next steps into project files.
+- Do not mark a site ready until it has real utility, complete trust pages, technical SEO basics, and a safe launch plan.
+- The readiness audit is a hard gate, not a formality. Do not advance to submission if the audit returns "not ready" or "needs revision" without resolving the issues first.
 
 ## Site Building Pipeline
 
 Run these phases in order unless the user explicitly starts from an existing artifact.
 
-| Phase | Load Reference | Required Output |
-| --- | --- | --- |
-| 1. niche validation | `references/niche-opportunity-researcher.md` | `outputs/niches.json` |
-| 2. keyword and site planning | `references/keyword-cluster-planner.md` | `outputs/<site>/site-map.json` |
-| 3. site model design | `references/programmatic-seo-architect.md` | `outputs/<site>/page-model.md` |
-| 4. useful site build | `references/useful-site-builder.md` | working site/app files |
-| 5. trust and policy pages | `references/eeat-site-builder.md` | about/contact/privacy/terms/author pages |
-| 6. readiness audit | `references/adsense-readiness-auditor.md` | `outputs/<site>/adsense-readiness-report.md` |
-| 7. launch planning | `references/distribution-launcher.md` | `outputs/<site>/launch-plan.md` |
+| Phase | Load Reference | Required Output | Timing |
+| --- | --- | --- | --- |
+| 1. niche validation | `references/niche-opportunity-researcher.md` | `outputs/niches.json` | before building |
+| 2. keyword and SEO planning | `references/keyword-cluster-planner.md` | `outputs/<site>/site-map.json` | before building |
+| 3. page model and visual design | `references/programmatic-seo-architect.md` | `outputs/<site>/page-model.md` | before building |
+| 4. site build | `references/useful-site-builder.md` | working site files + technical SEO files | build |
+| 5. trust pages | `references/eeat-site-builder.md` | trust pages | build |
+| 6. pre-launch distribution plan | `references/distribution-launcher.md` | `outputs/<site>/launch-plan.md` | **before go-live** |
+| 7. go-live + GSC setup | *(inline — see eeat-site-builder.md)* | site live, GSC registered, sitemap submitted | launch day |
+| 8. AdSense readiness audit | `references/adsense-readiness-auditor.md` | `outputs/<site>/adsense-readiness-report.md` | **2–4 weeks post-launch** |
+| 9. search growth loop | `references/gsc-growth-loop.md` | monthly query report + content update log | monthly, post-approval |
+
+**Phase sequencing rationale:**
+- Phase 6 (distribution plan) must be complete *before* go-live so the first 2–4 weeks of traffic are guided from day one. Preparing the plan after launch means the highest-leverage early period is wasted.
+- Phase 7 (go-live) executes the distribution plan immediately.
+- Phase 8 (audit) requires 2–4 weeks of real GSC data — indexing, impressions, crawl coverage. Run it only after that window passes. Do not submit AdSense the same day the site launches.
 
 ## Default Batch Workflow
 
 When the user asks to create multiple sites:
 
-1. Ask only for missing hard constraints: target language, country/market, preferred tech stack, and batch size. If the user does not answer, default to English, United States/global, static Next.js or Astro, and 3 sites.
-2. Generate at least 3x more niche candidates than the requested number of sites.
-3. Score and select the strongest candidates before creating any site files.
-4. Choose the right site pattern for each candidate: tool site, template library, directory, comparison hub, checklist hub, tutorial hub, or hybrid.
-5. For each selected site, create a folder with planning artifacts, source files, and audit reports.
-6. Stop or revise when any phase fails a quality gate. Do not continue by silently lowering the bar.
+1. Ask only for missing hard constraints: target language, country/market, preferred tech stack, and batch size. Default: English, United States, static Next.js or Astro, 3 sites.
+2. Generate at least 3× more niche candidates than the final batch size before scoring any.
+3. Score and select the strongest candidates. Choose the right site pattern for each.
+4. For each site, run the full pipeline and produce all artifacts.
+5. Stop or revise when any phase fails a quality gate. Never lower the bar silently.
 
 ## Quality Gates
 
-A site is not ready if any of these are true:
+A site is not ready to submit for AdSense if any of these are true:
 
-- The primary value is generic text that could exist on thousands of similar sites.
-- The core site has no interactive utility, original data transformation, useful template, curated directory value, concrete checklist, tutorial depth, or decision support.
-- The content is mostly keyword-stuffed, copied, spun, or undifferentiated AI prose.
-- The Privacy Policy does not explicitly mention Google AdSense, cookies, and the Google Ads Settings opt-out link.
-- The site lacks an About page, Contact path, Privacy Policy, Terms, and clear authorship or site ownership.
-- The launch plan depends on purchased traffic packages, bot-like visits, click incentives, or traffic exchange networks.
-- Technical basics are missing: indexable pages, sitemap.xml, robots.txt, canonical URLs, descriptive title tags (50–60 chars), meta descriptions (150–160 chars), schema markup, internal links, mobile layout, and Core Web Vitals within acceptable range.
-- The readiness audit has not been run, or it returned "not ready" or "needs revision" and those issues were not resolved.
+**Content:**
+- Fewer than 15 complete, indexable pages with distinct original content.
+- Any page consists of mostly headings, bullet lists, or undifferentiated AI prose.
+- The primary tool, calculator, or interactive experience does not work or produces no useful output.
+- Any placeholder text ("Lorem ipsum", "Coming soon") exists on published pages.
+
+**Trust:**
+- Privacy Policy is missing, or does not explicitly mention Google AdSense, the DoubleClick cookie, and the Google Ads Settings opt-out link.
+- About page is missing.
+- Contact page is missing or non-functional.
+
+**Technical:**
+- Site is on HTTP. HTTPS is required.
+- sitemap.xml does not exist or is not submitted to Google Search Console.
+- Pages are not indexed in GSC, or GSC shows zero impressions.
+- Title tags exceed 60 characters or are missing.
+- Schema markup is absent from the primary tool and FAQ pages.
+- Core Web Vitals: LCP > 4s on mobile.
+
+**Safety:**
+- Any banned category content (adult, gambling, weapons, drugs, hate, piracy) exists anywhere.
+- The launch plan recommends traffic exchanges, bots, or incentivized clicks.
+- The readiness audit returned "not ready" or "needs revision" and issues were not resolved.
 
 ## Output Contract
-
-Use this structure unless the user provides a repository convention:
 
 ```txt
 outputs/
@@ -68,28 +96,24 @@ outputs/
     page-model.md
     adsense-readiness-report.md
     launch-plan.md
+    gsc-report.md         ← added by phase 9, monthly post-approval
 ```
 
-For actual web projects, follow the user's repository structure. If starting from scratch, create a separate app folder for each site and keep `outputs/<site-slug>/` as the planning and audit record.
+For actual web projects, follow the user's repository structure. Keep `outputs/<site-slug>/` as the planning and audit record regardless.
 
 ## Reference Loading
 
-Load references only when entering that phase:
+Load references only when entering that phase. Do not preload.
 
-- Use `niche-opportunity-researcher.md` to choose or validate niches.
-- Use `keyword-cluster-planner.md` to turn a niche into site architecture.
-- Use `programmatic-seo-architect.md` to define page templates, non-thin page variation, and a deliberate visual direction.
-- Use `useful-site-builder.md` to implement the primary site experience.
-- Use `eeat-site-builder.md` to create trust and policy pages.
-- Use `adsense-readiness-auditor.md` before submission or after major changes.
-- Use `distribution-launcher.md` after the site passes readiness checks.
+- `niche-opportunity-researcher.md` — find and validate the niche.
+- `keyword-cluster-planner.md` — build the site map and SEO foundation.
+- `programmatic-seo-architect.md` — define page templates and visual direction.
+- `useful-site-builder.md` — build the site, all technical SEO files, and ad placement structure.
+- `eeat-site-builder.md` — create trust pages; the Go-Live Setup section executes on launch day.
+- `distribution-launcher.md` — create the organic-first traffic plan **before go-live** so it executes from day one.
+- `adsense-readiness-auditor.md` — run the audit **2–4 weeks after go-live**, when GSC has real impression data.
+- `gsc-growth-loop.md` — run the monthly content iteration loop after AdSense approval.
 
 ## Safe Traffic Rule
 
-Recommend traffic sources that create real user intent: organic search, community answers, directories, newsletters, short educational videos, Pinterest for visual topics, and small paid tests only when they target legitimate users. Do not recommend traffic packages, bots, automated browsing, ad-click incentives, or anything designed to manipulate ad impressions or clicks.
-
-## Example Request
-
-> Build 3 English niche websites for AdSense readiness.
-
-Run the full pipeline. Produce niche candidates, select 3, choose the right site pattern for each, build useful pages or tools, create supporting pages, run readiness audits, and generate launch plans. Do not use unsafe traffic tactics.
+Organic search, community answers, directories, newsletters, short educational demos, and Pinterest for visual niches are the only channels worth recommending before AdSense approval. Small paid search tests are acceptable after GSC shows real query intent. Never recommend traffic packages, bots, automated browsing, click incentives, or anything that inflates impressions or clicks artificially.
