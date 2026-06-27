@@ -44,30 +44,72 @@ my-novel-site/
 └── tailwind.config.ts
 ```
 
-**`lib/chapters.ts` baseline:**
+**`lib/chapters.ts` baseline — handles both long-form and short-form, respects `.active-book`:**
 
 ```ts
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 
-const ZHENGWEN = path.join(process.cwd(), '我的小说/正文')
+const ROOT = process.cwd()
+const IGNORED = new Set(['src', 'node_modules', 'public', '.next', '.git', 'out'])
+
+// Resolve the book root directory.
+// Priority: .active-book pointer → first dir containing 正文/ → ROOT fallback
+function resolveBookDir(): string {
+  const activeBookFile = path.join(ROOT, '.active-book')
+  if (fs.existsSync(activeBookFile)) {
+    const rel = fs.readFileSync(activeBookFile, 'utf8').trim()
+    return path.join(ROOT, rel)
+  }
+  // Scan one level for a directory that contains 正文/ or 短篇/
+  for (const entry of fs.readdirSync(ROOT, { withFileTypes: true })) {
+    if (!entry.isDirectory() || entry.name.startsWith('.') || IGNORED.has(entry.name)) continue
+    const candidate = path.join(ROOT, entry.name)
+    if (fs.existsSync(path.join(candidate, '正文')) ||
+        fs.existsSync(path.join(candidate, '短篇'))) return candidate
+  }
+  return ROOT
+}
+
+function resolveChapterFiles(): string[] {
+  const bookDir = resolveBookDir()
+
+  const zhengwenDir = path.join(bookDir, '正文')
+  if (fs.existsSync(zhengwenDir)) {
+    // Long-form: bookDir/正文/第NNN章_章名.md
+    return fs.readdirSync(zhengwenDir)
+      .filter(f => f.endsWith('.md'))
+      .sort()
+      .map(f => path.join(zhengwenDir, f))
+  }
+
+  const duanpianDir = path.join(bookDir, '短篇')
+  if (fs.existsSync(duanpianDir)) {
+    // Short-form: bookDir/短篇/{title}/正文.md — each title becomes one chapter
+    return fs.readdirSync(duanpianDir)
+      .map(title => path.join(duanpianDir, title, '正文.md'))
+      .filter(p => fs.existsSync(p))
+      .sort()
+  }
+
+  return []
+}
 
 export function getChapters() {
-  return fs.readdirSync(ZHENGWEN)
-    .filter(f => f.endsWith('.md'))
-    .sort()
-    .map((f, i) => ({ slug: String(i + 1), file: f }))
+  return resolveChapterFiles().map((file, i) => ({ slug: String(i + 1), file }))
 }
 
 export function getChapter(slug: string) {
   const chapters = getChapters()
   const cur = chapters[Number(slug) - 1]
-  const { content, data } = matter(
-    fs.readFileSync(path.join(ZHENGWEN, cur.file), 'utf8')
-  )
+  const { content, data } = matter(fs.readFileSync(cur.file, 'utf8'))
+  const isLong = path.basename(path.dirname(cur.file)) === '正文'
+  const fallback = isLong
+    ? path.basename(cur.file, '.md').replace(/^第\d+章_?/, '')
+    : path.basename(path.dirname(cur.file))
   return {
-    title: data.title ?? cur.file.replace(/\.md$/, ''),
+    title: (data.title as string | undefined) ?? fallback,
     content,
     prev: chapters[Number(slug) - 2]?.slug ?? null,
     next: chapters[Number(slug)]?.slug ?? null,
@@ -75,10 +117,14 @@ export function getChapter(slug: string) {
 }
 ```
 
-- Only reads `.md` files from `正文/`. All other oh-story-claudecode directories are invisible to the reader.
-- Chapter order derives from filename sort (`第001章` → `第002章`). No metadata file needed.
-- Chapter title: frontmatter `title` → filename (with leading number and underscores stripped).
-- `prev` / `next` are null at boundaries — the reader page disables the corresponding nav button.
+- Reads `.active-book` first to find the book directory (e.g., `长篇/我的小说`).
+- Falls back to scanning for the first top-level directory containing `正文/` or `短篇/`.
+- Long-form: `<bookDir>/正文/第NNN章_*.md`, sorted by filename.
+- Short-form: `<bookDir>/短篇/*/正文.md`, one chapter per story title directory.
+- `src/`, `node_modules/`, `public/`, `.next/`, `.git/`, `out/` are always skipped during scan.
+- All oh-story-claudecode internals (`大纲/`, `设定/`, `追踪/`, `拆文库/`) never appear in reader routes.
+- Chapter title: frontmatter `title` → stripped filename (long-form) or parent dir name (short-form).
+- `prev` / `next` are null at boundaries.
 
 ## Data Models
 

@@ -1,11 +1,14 @@
 ---
 name: fiction-h5-builder
-description: build, redesign, or review reader-facing fiction H5 websites and responsive web novel templates. use when the user asks for a mobile-first fiction reading site, web novel H5, work list/detail/catalog/reader pages, markdown or oh-story-claudecode generated chapters, multilingual reading sites in english/spanish/japanese/korean, or a simple fiction site for social traffic campaigns. do not use for authoring workflows, creative writing, story generation, creator dashboards, ranking systems, bookshelf platforms, or reader community features unless the user explicitly asks for those.
+description: write fiction and build the reading site end-to-end. use when the user asks to write a novel or short story (长篇小说, 短篇小说, write chapters, continue writing, story setup, import a manuscript, review prose, remove AI flavor), or asks for a mobile-first fiction reading site, web novel H5, work list/detail/catalog/reader pages, markdown or oh-story-claudecode generated chapters, multilingual reading sites in english/spanish/japanese/korean, or a simple fiction site for social traffic campaigns. do not use for creator dashboards, ranking systems, bookshelf platforms, or reader community features unless the user explicitly asks for those.
 ---
 
 # Fiction H5 Builder
 
-## Two Core Goals
+## Three Core Goals
+
+**Goal 0 — Produce quality fiction content.**
+Write chapters that readers want to keep reading. Every sentence serves emotion, plot, or character. Remove AI flavor before publishing. Quality prose is the prerequisite for everything else.
 
 **Goal 1 — Deliver a real reading product.**
 The site must load fast, read comfortably on mobile, and get out of the reader's way. Discovery pages exist to bring readers to chapters. The chapter page is where users stay or leave.
@@ -38,18 +41,31 @@ Default to **Minimal** unless the brief explicitly asks for more. State the chos
 
 ## Build Pipeline
 
-Run these phases in order unless the user starts from an existing artifact.
+### Writing phases (optional — run only when the user asks to write content)
 
 | Phase | Load Reference | Required Output |
 | --- | --- | --- |
-| 1. Tier + stack | `references/tech-stack.md` | Chosen tier and stack with one-line rationale |
-| 2. Design plan | `references/design-system.md` | Tone, palette, type system, layout concept, signature element |
-| 3. Data setup | `references/data-contract.md` | Loader plan (direct filesystem or JSON), realistic mock data |
-| 4. Build | `references/mobile-ui.md` + `references/reader-ux.md` | Working site with all required pages |
-| 5. Performance | `references/performance.md` | Core Web Vitals targets met, images optimized |
-| 6. QA | `references/qa-checklist.md` | Screenshots at required viewports, checklist passed |
+| 0. Project setup | `references/story-setup.md` | Directory structure, naming conventions, `.active-book` |
+| 1. Write long-form | `references/story-long-write.md` | Chapters in `正文/第NNN章_章名.md`, updated `追踪/` |
+| 1. Write short-form | `references/story-short-write.md` | `正文.md`, `设定.md`, `小节大纲.md` |
+| 2. Import manuscript | `references/story-import.md` | Split chapters, `设定/`, `大纲/`, `追踪/` reconstructed |
+| 3. Cover (optional) | `references/story-cover.md` + `references/cover-styles.md` | Cover image in `covers/<书名>/封面/封面_v1.png` |
+| 4. Quality pass | `references/story-review.md` + `references/story-deslop.md` | Review report, prose with AI flavor removed |
 
-Optional phases (load only when the brief requires):
+These phases are skipped entirely when the user starts from existing Markdown files.
+
+### Site build phases (always run for publishing)
+
+| Phase | Load Reference | Required Output |
+| --- | --- | --- |
+| 4. Tier + stack | `references/tech-stack.md` | Chosen tier and stack with one-line rationale |
+| 5. Design plan | `references/design-system.md` | Tone, palette, type system, layout concept, signature element |
+| 6. Data setup | `references/data-contract.md` | Loader plan (direct filesystem or JSON), realistic mock data |
+| 7. Build | `references/mobile-ui.md` + `references/reader-ux.md` | Working site with all required pages |
+| 8. Performance | `references/performance.md` | Core Web Vitals targets met, images optimized |
+| 9. QA | `references/qa-checklist.md` | Screenshots at required viewports, checklist passed |
+
+Optional site build phases (load only when the brief requires):
 - `references/internationalization.md` — when target language is not the build default
 - `references/product-surface.md` — when IA or URL structure needs formal documentation
 
@@ -86,6 +102,7 @@ Do not deliver a build if any of these are true.
 
 ## Non-Negotiables
 
+- Writing internals (`大纲/`, `设定/`, `追踪/`, `对标/`, `参考资料/`, `拆文库/`) are never exposed in reader routes, reader-facing URLs, or site navigation. Build the site as if those directories do not exist.
 - Reader-facing only by default: no AI labels, writing workflow panels, or "generated by" branding.
 - Mobile is the primary target. Desktop must have its own layout logic — not a stretched phone screen.
 - Required pages: home / book list, book detail with chapter list, chapter reader.
@@ -111,6 +128,16 @@ These apply regardless of tier — fast loading is a product requirement for soc
 
 Load references only when entering that phase. Do not preload all references at the start.
 
+**Writing references (load only for content authoring tasks):**
+- `story-setup.md` — project directory initialization and naming conventions.
+- `story-long-write.md` — long-form chapter writing pipeline, context handoff.
+- `story-short-write.md` — short-form story pipeline, emotion-first structure.
+- `story-import.md` — import and split an existing manuscript into project structure.
+- `story-review.md` — multi-perspective structural and prose review.
+- `story-deslop.md` — AI-flavor detection and removal (7 gates).
+- `story-cover.md` + `cover-styles.md` — cover generation via GPT-Image-2 or Claude image generation.
+
+**Site build references (load for publishing tasks):**
 - `tech-stack.md` — choose the implementation stack before writing any code.
 - `design-system.md` — plan design identity before building any UI.
 - `data-contract.md` — define data models and oh-story-claudecode loader.
