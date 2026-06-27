@@ -32,7 +32,14 @@
       "WebFetch(domain:hastewire.com)",
       "WebFetch(domain:adstimate.com)",
       "WebFetch(domain:toolpod.dev)",
-      "Bash(rtk npx *)"
-    ]
+      "Bash(rtk npx *)",
+      "WebFetch(domain:monetizehelper.com)",
+      "WebFetch(domain:www.stackedbuddy.com)",
+      "WebFetch(domain:bloggingjoy.com)",
+      "WebFetch(domain:transparency.google)",
+      "WebFetch(domain:blog.ad.plus)",
+      "Bash(xargs -I{} sh -c 'echo \"=== {} ===\" && cat {}')"
+    ],
+    "defaultMode": "bypassPermissions"
   }
 }
