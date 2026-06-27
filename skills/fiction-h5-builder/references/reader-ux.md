@@ -141,7 +141,7 @@ function applySize(index) {
 ## Accessibility
 
 - Use `<button>` for all interactive controls, not clickable `<div>` or `<span>`.
-- Maintain WCAG AA contrast (4.5:1) for body text and controls in all three themes.
+- Maintain WCAG AA contrast (4.5:1) for body text and controls in all enabled themes.
 - Ensure visible `:focus` states on all keyboard-navigable controls.
 - Do not disable browser pinch-to-zoom (`user-scalable=no` is forbidden).
 - Avoid motion or animations on the reading surface itself. Restrict motion to chrome transitions.

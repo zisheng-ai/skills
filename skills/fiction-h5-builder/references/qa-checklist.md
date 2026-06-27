@@ -21,7 +21,7 @@ Capture at minimum:
 | --- | --- |
 | 390 × 844 | Home / work list |
 | 390 × 844 | Book detail |
-| 390 × 844 | Chapter catalog |
+| 390 × 844 | Book detail (scrolled to chapter list) |
 | 390 × 844 | Reader (default theme, default font size) |
 | 390 × 844 | Reader settings sheet open |
 | 430 × 932 | Reader (large screen mobile) |
@@ -61,10 +61,11 @@ Inspect each screenshot for:
 
 ## Theme Checks
 
-Check all three themes: Light, Sepia, Dark.
+Check all enabled themes (Light and Dark are required; Sepia is optional and only tested if implemented).
 
-- [ ] All themes pass WCAG AA (4.5:1) contrast for body text.
-- [ ] All themes pass WCAG AA (4.5:1) contrast for metadata text (`--muted` on `--base`).
+- [ ] Light and Dark themes pass WCAG AA (4.5:1) contrast for body text.
+- [ ] Light and Dark themes pass WCAG AA (4.5:1) contrast for metadata text (`--muted` on `--base`).
+- [ ] If Sepia is implemented, it passes WCAG AA for body and metadata text.
 - [ ] No pure `#fff` or `#000` background in any default theme.
 - [ ] Theme switching is instant with no transition delay.
 - [ ] Saved theme preference persists after page reload.
@@ -72,14 +73,20 @@ Check all three themes: Light, Sepia, Dark.
 
 ## Reader Controls
 
-- [ ] Font size: 4+ steps work without breaking layout.
-- [ ] Line height: options work and persist.
-- [ ] Theme: all 3 options work and persist.
-- [ ] Chapter catalog drawer opens and closes, lists all chapters, and navigates correctly.
+### Required (always check)
+
 - [ ] Previous chapter link works at the start of a chapter.
 - [ ] Next chapter link works at the end of a chapter (and via the end-of-chapter prompt).
-- [ ] Progress indicator updates on scroll.
+- [ ] Dark mode toggle switches between Light and Dark themes and persists.
 - [ ] Reading position is saved and restored on return to the same chapter.
+
+### Optional (check only if implemented)
+
+- [ ] Font size: 4+ steps work without breaking layout.
+- [ ] Line height: options work and persist.
+- [ ] Sepia theme: works and persists.
+- [ ] Chapter catalog drawer opens and closes, lists all chapters, and navigates correctly.
+- [ ] Progress indicator updates on scroll.
 
 ## Multilingual Checks
 
