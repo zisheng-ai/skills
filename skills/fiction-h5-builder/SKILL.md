@@ -1,9 +1,9 @@
 ---
-name: novel-h5-builder
+name: fiction-h5-builder
 description: build, redesign, or review lightweight reader-facing novel h5 websites and responsive web novel templates. use when the user asks for a mobile-first fiction reading site, simple web novel h5, work list/detail/catalog/reader pages, markdown or oh-story generated chapters, multilingual novel sites in english/spanish/japanese/korean, or a polished reading experience that also adapts to desktop. do not use for authoring workflows, creative writing, story generation, creator dashboards, ranking systems, or bookshelf products unless the user explicitly asks for those.
 ---
 
-# Novel H5 Builder
+# Fiction H5 Builder
 
 ## Overview
 
