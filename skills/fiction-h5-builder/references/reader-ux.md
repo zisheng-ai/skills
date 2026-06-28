@@ -4,19 +4,47 @@
 
 The reader is the product. Optimize for long sessions, low fatigue, and fast return to the current chapter. Every interaction in the reader must serve the reading act or stay out of the way.
 
+**Ease of reading over visual precision.** If a choice makes prose harder to track, it is wrong regardless of how it looks in a screenshot. The chapter page must feel as effortless to read as a well-formatted paperback — generous body size, ample line-height, neutral background, no chrome competing for attention.
+
 ## Required Reader Controls
 
-The default reader ships with a focused set of controls. Add font size, density, catalog drawer, or progress indicator only when the brief explicitly asks for them.
+The default reader ships with a focused set of controls. Add font size, density, or reading progress indicator only when the brief explicitly asks for them. Table of contents is always required.
 
 | Control | Requirement | Notes |
 | --- | --- | --- |
-| Previous / next chapter | Required | Always visible; must work at end of chapter content |
+| Previous / next chapter | Required | Always visible; must work at end of chapter content; see **Navigation Button Size** below |
+| Table of contents | Required | "Table of contents" button in reader nav; links to or opens the chapter catalog |
+| Book cover header | Required | Small cover thumbnail in the reader header above the chapter title; omit if no cover image exists |
 | End-of-chapter prompt | Required | Clear "Next chapter" CTA at bottom of content |
 | Keyboard prev/next | Required on desktop | `←` / `→` arrow keys |
 | Error / empty states | Required | See Error States section |
 | Dark mode toggle | Required | DaisyUI `data-theme` swap; persists in `localStorage` |
 | Resume last chapter | Required | Store last visited chapter slug in `localStorage`; restore on home/detail page |
 | Tap zones (mobile) | Recommended | Left/right 15% tap zones for prev/next |
+
+## Navigation Button Size
+
+Prev/next buttons must be large and easy to hit — they are the primary action on the page. Small or cramped nav buttons are a quality gate failure.
+
+- **Minimum height:** 60px on mobile, 64px on desktop.
+- **Font size:** 17–19px. Never below 16px.
+- **Font weight:** 700–800.
+- **Border radius:** 16–18px.
+- **Layout:** 2-column grid — TOC/Prev on the left, Next on the right. Next gets the wider column and the primary color fill. Prev/TOC gets a white or neutral fill with a clear border.
+- On mobile at ≤ 640px: maintain at least 60px height; reduce font to 17px if needed.
+
+Example layout (end of chapter):
+
+```
+[ Table of contents ]  [ Next chapter → ]
+   (neutral, outlined)    (primary, filled, wider)
+```
+
+When both Prev and Next exist:
+
+```
+[ ← Prev ]  [ Table of contents ]  [ Next → ]
+```
 
 ## Optional Enhancements
 
@@ -26,20 +54,34 @@ Add only when explicitly requested:
 | --- | --- |
 | Font size | ≥ 4 steps (e.g. 14/16/18/20px) |
 | Line height / density | ≥ 2 options: "Compact" and "Comfortable" |
-| Theme | Light / Sepia / Dark via DaisyUI themes | Only when explicitly requested |
-| Chapter catalog | Drawer or slide-in, accessible from the reader | Only when explicitly requested |
-| Reading progress | Visible but not distracting | Only when explicitly requested |
-| Resume scroll position | Per-chapter scroll restoration | Only when explicitly requested |
-| Immersive mode | Chrome-hidden reading mode | Only when explicitly requested |
+| Theme | Light / Sepia / Dark via DaisyUI themes |
+| Reading progress | Visible but not distracting |
+| Resume scroll position | Per-chapter scroll restoration |
+| Immersive mode | Chrome-hidden reading mode |
+
+## Never Add Without Explicit Request
+
+These features add UI complexity and distract from reading. Omit by default:
+
+- Favorites / bookmarks
+- Social sharing buttons
+- Comment sections
+- User accounts / login
+- Bookshelf or reading list management
+- Search
+- Ranking or recommendation widgets
+- Payment or chapter-lock UI
 
 ## Default Typography
 
 Use conservative defaults. Readers should not need to adjust settings to find a comfortable starting point.
 
-- Latin body size: 17–19px on mobile, 18–20px on desktop.
+- **Body font stack (English / Latin):** `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif`. No external webfont required — the system stack renders crisply at any DPI and loads instantly.
+- **CJK body font stack:** `"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif`.
+- Latin body size: 18–19px on mobile, 19–20px on desktop.
 - CJK body size: 17–20px on mobile, 18–21px on desktop.
-- Latin line-height: 1.65–1.85.
-- Japanese/Korean line-height: 1.75–2.0.
+- Latin line-height: 1.9–2.1 (generous — easier to track across the line).
+- Japanese/Korean line-height: 1.85–2.0.
 - Paragraph spacing: `1em` top margin between paragraphs. Enough to separate beats without the double-spaced blog-style gap.
 - Max line length: 32–38em for Latin prose; narrower for CJK (28–34em) to avoid very long line scanning.
 

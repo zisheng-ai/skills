@@ -2,6 +2,18 @@
 
 Run this checklist before any final delivery. Do not skip sections for "simple" builds — each section catches a different class of failure.
 
+## Pre-Build Gate
+
+Run these checks before writing any site code. If any fails, complete the writing phase first — do not proceed.
+
+- [ ] Each book has at least one chapter file in `content/{book-title}/chapters/`.
+- [ ] `outline/outline.md` exists and contains a real arc outline (not empty or stub-only).
+- [ ] `world/worldbuilding.md` exists and describes the world, genre, and tone.
+- [ ] `tracking/context.md` exists and reflects the last written chapter.
+- [ ] Cover image generated for each book: `public/covers/{book-title}/cover/cover_v1.png`.
+- [ ] Site logo generated: `public/logo.svg`.
+- [ ] Favicon generated: `public/favicon-32x32.png`.
+
 ## Build and Technical Checks
 
 - [ ] Build completes without errors (`npm run build`, `yarn build`, or equivalent).

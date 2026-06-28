@@ -73,4 +73,17 @@ When setting up a new project:
 3. Write `world/characters/{protagonist-name}.md` with role, motivation, voice notes.
 4. Write `outline/outline.md` with a 10–30 beat arc outline.
 5. Create `tracking/context.md` — starts empty; populated after each chapter.
-6. If a reference book exists, run `/story-import` or manually create `reference/{book-title}/` files.
+6. Create `tracking/threads.md`, `tracking/timeline.md`, `tracking/character-status.md` — start empty.
+7. If a reference book exists, run `/story-import` or manually create `reference/{book-title}/` files.
+
+## Pre-Site-Build Gate
+
+Before moving to the site build phases, verify:
+
+- [ ] `chapters/` has at least one `.md` chapter file.
+- [ ] `outline/outline.md` is non-empty.
+- [ ] `world/worldbuilding.md` is non-empty.
+- [ ] `tracking/context.md` has been populated after the last written chapter.
+- [ ] `/story-cover` has been run: `public/covers/{book-title}/cover/cover_v1.png`, `public/logo.svg`, `public/favicon-32x32.png` all exist.
+
+These are hard requirements — site build is blocked until all pass.
