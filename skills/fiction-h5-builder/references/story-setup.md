@@ -76,14 +76,26 @@ When setting up a new project:
 6. Create `tracking/threads.md`, `tracking/timeline.md`, `tracking/character-status.md` — start empty.
 7. If a reference book exists, run `/story-import` or manually create `reference/{book-title}/` files.
 
+## Initial Site Launch Requirement
+
+When building a fiction site from scratch, repeat the initialization checklist for **at least 5 books** before moving to site build. A site with 1–4 books is not launchable — it does not look like a real platform.
+
+Each book must reach 中篇 level before site build:
+- ≥ 10 chapters per book
+- ≥ 2,000 Chinese characters or 1,500 English words per chapter
+
+Run `/story-cover` once after all books are written. It generates covers for every book plus the site logo and favicon in one pass.
+
 ## Pre-Site-Build Gate
 
-Before moving to the site build phases, verify:
+Before moving to the site build phases, verify all of these for the full book list:
 
-- [ ] `chapters/` has at least one `.md` chapter file.
-- [ ] `outline/outline.md` is non-empty.
-- [ ] `world/worldbuilding.md` is non-empty.
-- [ ] `tracking/context.md` has been populated after the last written chapter.
-- [ ] `/story-cover` has been run: `public/covers/{book-title}/cover/cover_v1.png`, `public/logo.svg`, `public/favicon-32x32.png` all exist.
+- [ ] `content/` has ≥ 5 book directories.
+- [ ] Each book has ≥ 10 chapters in `chapters/`.
+- [ ] Each chapter is ≥ 2,000 characters / 1,500 words.
+- [ ] `outline/outline.md` is non-empty for each book.
+- [ ] `world/worldbuilding.md` is non-empty for each book.
+- [ ] `tracking/context.md` populated for each book.
+- [ ] `/story-cover` has been run: `public/covers/{book-title}/cover/cover_v1.png` for every book, `public/logo.svg`, `public/favicon-32x32.png` all exist.
 
 These are hard requirements — site build is blocked until all pass.

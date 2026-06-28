@@ -132,3 +132,44 @@ public/covers/{book-title}/cover/cover_v1.prompt.txt ← prompt used (for iterat
 ```
 
 All assets live in `public/` inside the project. No CDN or external upload required. The site builder reads `Book.cover` as `/covers/{book-title}/cover/cover_v1.png` (URL path, served from `public/`).
+
+---
+
+## Site Logo and Favicon
+
+Phase 3 requires generating all three assets before site build: cover images, site logo, and favicon. Run these steps after cover generation is complete. Codex is the primary method for all three — never skip to placeholder.
+
+### Logo (`public/logo.svg`)
+
+1. Delegate to Codex via `codex-plugin-cc`. Prompt:
+   ```
+   SVG logo for a fiction reading site. Genre: {genre}. Style: {one-word visual tone}.
+   Single motif, clean lines, works on both light and dark backgrounds.
+   Output as inline SVG, no external references, no raster images embedded.
+   ```
+2. Save result to `public/logo.svg`.
+3. Fallback (Codex unavailable): use Claude Code's native SVG generation with the same prompt.
+
+### Favicon (`public/favicon-32x32.png`)
+
+1. Delegate to Codex via `codex-plugin-cc`. Prompt:
+   ```
+   Favicon icon, 32×32px, single high-contrast motif simplified from the site logo.
+   Must be readable at 16px. Solid background, no text.
+   ```
+2. Save 32×32 PNG to `public/favicon-32x32.png`.
+3. Generate 180×180 version for `public/apple-touch-icon.png` using the same motif.
+4. Fallback: Claude Code native image generation.
+
+Wire up in `src/app/layout.tsx`:
+
+```ts
+export const metadata: Metadata = {
+  icons: {
+    icon: '/favicon-32x32.png',
+    apple: '/apple-touch-icon.png',
+  },
+}
+```
+
+**Never ship without all three assets generated. Placeholder = blocked build.**
