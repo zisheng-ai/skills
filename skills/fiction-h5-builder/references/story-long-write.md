@@ -22,7 +22,45 @@ Load only if needed:
   reference/{book-title}/techniques.md  — only if a reference technique is needed
 ```
 
+## Parallel Writing (default for new books)
+
+Use this flow whenever writing ≥ 2 chapters from scratch. Single-chapter incremental additions use the sequential process below.
+
+### Step 1 — Expand outline beats
+
+Before spawning any agents, expand `outline/outline.md` so every chapter has a concrete beat entry:
+
+```
+Ch-NNN: [primary emotion] | hook: {1-sentence} | turn: {what changes} | hook-out: {open question}
+```
+
+All chapters must have this before any parallel writing starts. The beat entries replace `tracking/context.md` as the coordination signal during parallel writing.
+
+### Step 2 — Spawn one Agent per chapter (model: haiku)
+
+Spawn all chapter agents concurrently. Each agent receives:
+- Its own beat entry from the outline
+- `world/worldbuilding.md`
+- Only the character files for characters appearing in that chapter
+- The previous chapter's hook-out line (from the outline beat, not from `tracking/context.md`)
+
+Each agent writes to `content/{book-title}/chapters/ch-NNN-{title}.md` and returns its own hook-out line.
+
+### Step 3 — Continuity pass
+
+After all chapter agents complete, do a single sequential pass:
+1. Read chapters in order; verify hook-out of chapter N matches the opening of chapter N+1.
+2. Fix any continuity breaks inline.
+3. Write `tracking/context.md` from the final chapter's ending.
+4. Update `tracking/threads.md`, `tracking/timeline.md`, `tracking/character-status.md`.
+
+### Multiple books in parallel
+
+Spawn one top-level Agent per book. Each book agent runs its own Steps 1–3 independently. Books share no state and can complete in any order.
+
 ## Single Chapter Writing Process
+
+Use this for adding one chapter to an existing book (incremental update only).
 
 1. Read `tracking/context.md` — know the exact last beat.
 2. Read the chapter's outline entry in `outline/outline.md`.

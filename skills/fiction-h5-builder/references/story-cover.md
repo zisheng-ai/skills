@@ -6,20 +6,30 @@ Load this reference when the user asks to generate a novel cover (封面, /story
 
 ## Phase 3 Entry Check
 
-Before generating any cover, verify Codex is available via Bash:
+Before generating any cover, verify the `codex@openai-codex` plugin is installed and enabled:
 
 ```bash
-which codex >/dev/null 2>&1 && echo "CODEX_OK" || echo "CODEX_MISSING"
+claude plugin list 2>/dev/null | grep -A3 "codex@openai-codex" | grep "Status:" || echo "PLUGIN_MISSING"
 ```
 
-- If `CODEX_MISSING`: stop immediately and output:
+- If the output shows `Status: ✔ enabled`: proceed to B1/B2/B3.
+- If the output shows `Status: ✘ disabled`: enable it silently without prompting the user:
+  ```bash
+  claude plugin enable codex@openai-codex
   ```
-  ERROR: Phase 3 (Cover) requires Codex CLI on PATH.
-  Install: npm install -g @openai/codex — then re-enter Phase 3.
+  Then rerun the check.
+- If the output shows `PLUGIN_MISSING` (plugin not installed): install it silently without prompting the user:
+  ```bash
+  claude plugin marketplace add openai/codex-plugin-cc && claude plugin install codex@openai-codex && claude plugin enable codex@openai-codex
   ```
-- If `CODEX_OK`: proceed to B1/B2/B3.
+  Then rerun the check.
+- If after installation/enable the plugin is still not enabled, **log a warning and skip Phase 3**. Do not block the rest of the pipeline. Output:
+  ```
+  WARNING: Codex plugin could not be enabled. Skipping cover generation.
+  Re-enter Phase 3 later after installing/enabling codex@openai-codex.
+  ```
 
-If a cover generation call fails at runtime (Codex auth error or unavailable), stop the batch and report the error. Do not fall back to any other image generation method.
+Do not fall back to any other image generation method.
 
 ## Modes
 
@@ -66,18 +76,17 @@ For each book in `BOOKS`:
 1. Read `content/{book-title}/world/worldbuilding.md` to extract genre and tone.
 2. Run genre detection (Step 1.5 below) to select cover style.
 3. Build the cover prompt (Step 2 below) substituting the book's title, genre, and characters.
-4. **Call Codex** via `codex-plugin-cc`. Save output to `public/covers/{book-title}/cover/cover_v1.png`.
+4. **Call Codex** via the `codex@openai-codex` plugin. Save output to `public/covers/{book-title}/cover/cover_v1.png`.
 5. Log: `✓ {book-title} — cover saved`.
 
-If Codex is unavailable, stop the batch and tell the user: "Cover generation requires Codex (`codex-plugin-cc`). Please ensure Codex is running and retry." Do not fall back to any other method.
+If the Codex plugin is unavailable or a single cover call fails, log the failure for that book and continue with the remaining books. Do not block the rest of the pipeline. After Phase 3 completes, report which covers were skipped so they can be regenerated later.
 
 ### Batch completion checklist
 
-Before handing off to Pre-Build Gate:
+- [ ] Covers exist for as many books as possible.
+- [ ] Any failed/skipped covers are logged with the book title and error reason.
 
-- [ ] `public/covers/{book-title}/cover/cover_v1.png` exists for every book in `BOOKS`
-
-Any missing cover is a Pre-Build Gate failure — fix before starting Phase 5 (Stack). Site logo and favicon are generated later in Phase 6 (Design plan) — do not block on them here.
+Missing covers are not a hard blocker for site build — the site can use CSS placeholders during development. Re-run Phase 3 later when the Codex plugin is fully available. Site logo and favicon are generated in Phase 6 (Design plan) — do not block on them here.
 
 ---
 
@@ -87,11 +96,11 @@ Use for adding one book to an already-launched site. Skip logo and favicon steps
 
 ## Generation Method
 
-**Codex via `codex-plugin-cc` — the only accepted method.**
+**Codex via the `codex@openai-codex` Claude Code plugin — preferred method.**
 
-Call Codex image generation with the prompt from Step 2. Save the result to `public/covers/{book-title}/cover/cover_v1.png`. No API key needed.
+Delegate the cover generation task to Codex using the plugin. Codex will use its built-in `imagegen` capability with the prompt from Step 2. Save the result to `public/covers/{book-title}/cover/cover_v1.png`.
 
-If `codex-plugin-cc` is unavailable, stop and tell the user. Do not degrade to Claude native image generation, GPT-Image-2, or any other method. Cover images must be AI-generated via Codex — CSS placeholders are never acceptable as a final output.
+If the plugin is unavailable or the call fails, skip this cover and continue. Do not degrade to Claude native image generation, GPT-Image-2, or any other method during the main pipeline. A skipped cover can be retried later by re-entering Phase 3. CSS placeholders are acceptable only during development, never as a final launch asset.
 
 ## Environment Variables
 
@@ -138,12 +147,26 @@ Offer 2–3 composition variants (close-up portrait / full body / pure scene) on
 
 ## Step 3 — Call Codex
 
-Invoke `codex-plugin-cc` with the prompt from Step 2. Save the returned image to:
+Use the installed `codex@openai-codex` plugin to delegate cover generation to Codex. Codex will use its built-in `imagegen` capability to produce the cover.
 
+Preferred invocation (when `codex-companion.mjs` is available):
+
+```bash
+node "$HOME/.claude/plugins/cache/openai-codex/codex/1.0.4/scripts/codex-companion.mjs" task \
+  "Generate a 1024x1536 portrait PNG book cover for a Chinese web novel. Title: '{book-title}'. Author: '{pen-name}'. Genre/style: {genre-style}. {prompt-body}. Save the final image to {BOOK_DIR}/cover/cover_v1.png and also write the exact prompt used to {BOOK_DIR}/cover/cover_v1.prompt.txt." \
+  --write
 ```
-public/covers/{book-title}/cover/cover_v1.png
-public/covers/{book-title}/cover/cover_v1.prompt.txt  ← save the prompt used
+
+If the exact path to `codex-companion.mjs` differs in this environment, locate it with:
+
+```bash
+find "$HOME/.claude/plugins/cache/openai-codex" -name codex-companion.mjs | head -1
 ```
+
+Codex may return the image directly or write it to a temporary cache path. After the task completes:
+1. Verify `{BOOK_DIR}/cover/cover_v1.png` exists and has portrait dimensions near 1024x1536.
+2. If Codex wrote the image to a different path, copy it to `{BOOK_DIR}/cover/cover_v1.png`.
+3. Save the prompt text to `{BOOK_DIR}/cover/cover_v1.prompt.txt`.
 
 If the call fails, log the error and stop. Do not silently substitute a placeholder.
 

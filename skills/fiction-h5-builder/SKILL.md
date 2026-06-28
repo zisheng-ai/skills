@@ -47,26 +47,38 @@ All writing phase outputs MUST be saved to the correct path under `content/` fro
 | 1a. Write (long-form) | `references/story-long-write.md` | Chapters in `chapters/ch-NNN-{title}.md`, updated `tracking/` |
 | 1b. Write (short-form) | `references/story-short-write.md` | `prose.md`, `setup.md`, `beat-outline.md` |
 | 2. Import manuscript | `references/story-import.md` | Split chapters, `world/`, `outline/`, `tracking/` reconstructed |
-| 3. Cover | `references/story-cover.md` + `references/cover-styles.md` | Cover image `public/covers/{book-title}/cover/cover_v1.png` — required for every book, no exceptions |
+| 3. Cover | `references/story-cover.md` + `references/cover-styles.md` | Cover image `public/covers/{book-title}/cover/cover_v1.png` for each book; skipped covers are retried later |
 | 4. Quality pass | `references/story-review.md` + `references/story-deslop.md` | Review report, prose with AI flavor removed |
 
 Phase 1a and 1b are mutually exclusive — run the one that matches the project type, skip the other. These phases are skipped entirely when the user starts from existing Markdown files.
 
-### Pre-Build Gate
+### Parallel Pipeline
 
-All of the following must be true before starting Phase 5. If any check fails, return to the appropriate writing phase.
+Writing and site build run on two independent tracks that start together after Phase 0:
+
+| Track | Phases | Can start when |
+| --- | --- | --- |
+| Writing | 1 → 2 → 3 → 4 | Phase 0 complete |
+| Site setup | 5 → 6 → 7 | Phase 0 complete |
+| Site build | 8 → 9 → 10 | Track "Site setup" complete AND ≥ 1 book with ≥ 10 chapters exists |
+
+Do not wait for all books to finish before starting Phase 5. Do not wait for site setup to finish before continuing to write. Add books to `content/` incrementally as they are completed — the site builder picks them up automatically.
+
+### Pre-Launch Gate
+
+All of the following must be true before go-live (after Phase 10 QA passes). These are launch requirements, not build-start requirements.
 
 | Check | Required location |
 | --- | --- |
-| `content/` has ≥ N book directories, where N = user-specified count or 5 if not specified (initial site launch) | `content/{book-title}/` per book |
+| `content/` has ≥ 5 book directories | `content/{book-title}/` per book |
 | Each book has ≥ 10 chapters (中篇 minimum) | `content/{book-title}/chapters/` |
 | Each chapter is ≥ 2,000 Chinese characters or 1,500 English words | writing phase 1 |
 | `outline/outline.md` exists and is non-empty | writing phase 0 or import |
 | `world/worldbuilding.md` exists and is non-empty | writing phase 0 or import |
 | `tracking/context.md` exists | writing phase 1 or import |
-| Cover image generated for each book | `public/covers/{book-title}/cover/cover_v1.png` |
+| Cover image generated for each book before launch | `public/covers/{book-title}/cover/cover_v1.png` |
 
-If any book is missing a cover image, load `references/story-cover.md` and execute cover generation immediately — do not prompt the user to run a command. Do not start site build until all checks pass.
+If any book is missing a cover image at launch time, load `references/story-cover.md` and execute cover generation immediately — do not prompt the user.
 
 ### Site build phases (always run for publishing)
 
@@ -87,16 +99,30 @@ For review and redesign tasks, start at the relevant phase and load only the ref
 
 ## Environment Prerequisites
 
-This skill requires Claude Code and Codex. Before doing anything else, run this check via Bash:
+This skill requires Claude Code with the `codex@openai-codex` plugin (from `openai/codex-plugin-cc`). Before doing anything else, run this check via Bash:
 
 ```bash
-which codex >/dev/null 2>&1 && codex --version && echo "CODEX_OK" || echo "CODEX_MISSING"
+claude plugin list 2>/dev/null | grep -A3 "codex@openai-codex" | grep "Status:" || echo "PLUGIN_MISSING"
 ```
 
-- If output contains `CODEX_MISSING`: stop immediately and output:
+- If the output shows `Status: ✔ enabled`: proceed.
+- If the output shows `Status: ✘ disabled`: enable it silently without prompting the user:
+  ```bash
+  claude plugin enable codex@openai-codex
   ```
-  ERROR: fiction-h5-builder requires Codex CLI on PATH.
-  Install: npm install -g @openai/codex
+  Then rerun the check.
+- If the output shows `PLUGIN_MISSING` (plugin not installed): install it silently without prompting the user:
+  ```bash
+  claude plugin marketplace add openai/codex-plugin-cc && claude plugin install codex@openai-codex && claude plugin enable codex@openai-codex
+  ```
+  Then rerun the check.
+- If after installation/enable the plugin is still not enabled, stop immediately and output:
+  ```
+  ERROR: fiction-h5-builder requires the Codex Claude Code plugin.
+  Install/enable manually:
+    claude plugin marketplace add openai/codex-plugin-cc
+    claude plugin install codex@openai-codex
+    claude plugin enable codex@openai-codex
   Then re-invoke from a Claude Code session.
   ```
 - If the Bash tool itself is unavailable (not a Claude Code session): stop immediately and output:
@@ -104,7 +130,9 @@ which codex >/dev/null 2>&1 && codex --version && echo "CODEX_OK" || echo "CODEX
   ERROR: fiction-h5-builder requires Claude Code. Re-invoke from a Claude Code session.
   ```
 
-Do not proceed to any phase until all checks pass. Do not attempt workarounds.
+Phase 3 re-verifies the plugin, auto-enables/installs it if needed, and can skip cover generation if the plugin remains unavailable; see `references/story-cover.md`.
+
+Do not proceed to any phase until the base environment check passes. Phase 3 may be skipped if the Codex plugin cannot be enabled. Do not attempt workarounds.
 
 ## Phase Execution Protocol
 
@@ -124,11 +152,14 @@ Execute phases one at a time. Track progress with the best mechanism available i
 
 | Parallel-safe pairs | Notes |
 | --- | --- |
-| Phase 3 covers across multiple books | Generate all book covers in one batch (B1–B3 loop), not one-at-a-time |
+| Writing track (1–4) + Site setup track (5–7) | Both start after Phase 0; fully independent — no shared state |
+| Multiple books (Phase 1) | Spawn one Agent per book; all books write concurrently |
+| Chapters within a book (Phase 1) | Expand outline beats first, then spawn one Agent per chapter; run a continuity pass after all finish |
 | Phase 6 (Design) + Phase 7 (Data setup) | Design tokens and data schema are independent; can draft both in one turn |
+| Phase 3 covers across multiple books | Generate all book covers in one batch (B1–B3 loop), not one-at-a-time |
 | Phase 9 (Performance) + Phase 10 (QA) | Performance audit and visual QA can run in parallel passes |
 
-Sequential dependencies that cannot be parallelized: 0→1→2→3→4 (writing must precede site build); 5→6 (stack must be chosen before design); 7→8 (data model must be defined before building pages).
+Sequential dependencies that cannot be parallelized: 0 → (writing track AND site setup track); within writing: outline expansion → parallel chapter writing → continuity pass → cover; within site: 5→6→7→8 (with ≥1 complete book as gate for Phase 8); 8→9→10.
 
 **Model selection:**
 
@@ -171,12 +202,12 @@ Do not deliver a build if any of these are true.
 - Any reader-visible copy mentions AI, Markdown, parser, prompt, skill, or generation.
 
 **Content completeness:**
-- Site launches with fewer than N books (N = user-specified count, default 5).
+- Site launches with fewer than 5 books.
 - Any book has fewer than 10 chapters (not 中篇 level).
 - Any chapter is under 2,000 Chinese characters or 1,500 English words.
 - `outline/outline.md` is missing or empty for any published book.
 - `world/worldbuilding.md` is missing or empty for any published book.
-- Cover image is missing for any book in the reader.
+- Cover image is missing for any book in the reader at launch time. (Development preview may use CSS placeholders; final launch requires real covers.)
 - `public/logo.svg` is the default Next.js placeholder or missing.
 - `public/favicon-32x32.png` is the default Next.js favicon or missing.
 
@@ -221,7 +252,7 @@ Load references only when entering that phase. Do not preload all references at 
 - `story-import.md` — import and split an existing manuscript into project structure.
 - `story-review.md` — multi-perspective structural and prose review.
 - `story-deslop.md` — AI-flavor detection and removal (7 gates).
-- `story-cover.md` + `cover-styles.md` — cover generation via Codex (`codex-plugin-cc`).
+- `story-cover.md` + `cover-styles.md` — cover generation via the `codex@openai-codex` Claude Code plugin.
 
 **Site build references (load for publishing tasks):**
 - `tech-stack.md` — choose the implementation stack before writing any code.
@@ -254,7 +285,7 @@ Load references only when entering that phase. Do not preload all references at 
     covers/                     # optional: cover images
 ```
 
-Cover images (`public/covers/{book-title}/cover/cover_v1.png`) are generated in Phase 3 — one per book, no exceptions. Site logo (`public/logo.svg`) and favicon (`public/favicon-32x32.png`) are generated in Phase 6 (Design plan) as site-level assets. During development only, CSS placeholders are acceptable — never ship without real assets.
+Cover images (`public/covers/{book-title}/cover/cover_v1.png`) are generated in Phase 3 when the Codex plugin is available — one per book. Site logo (`public/logo.svg`) and favicon (`public/favicon-32x32.png`) are generated in Phase 6 (Design plan) as site-level assets. During development only, CSS placeholders are acceptable — never ship without real assets.
 
 For a review or redesign task, the output is a findings report and patch set, not a full scaffold.
 

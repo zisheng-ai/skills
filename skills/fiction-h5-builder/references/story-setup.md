@@ -2,6 +2,15 @@
 
 Load this reference when the user asks to set up a new writing project or initialize a fiction project directory.
 
+## Project Root Directory
+
+Before creating any files, determine where the project lives:
+
+- **Default**: create a new folder named after the site/project in the current working directory. Example: if the project is called "幻夜书阁", create `./幻夜书阁/` and work inside it.
+- **Exception**: if the user explicitly says to use the current directory (e.g. "就在这里", "in this folder", "current directory"), skip folder creation and treat `.` as the project root.
+
+Never write files directly into the current directory unless the user explicitly requests it.
+
 ## Project Directory Structure
 
 Long-form novel (长篇) — place under `content/{book-title}/`:
@@ -76,19 +85,19 @@ When setting up a new project:
 6. Create `tracking/threads.md`, `tracking/timeline.md`, `tracking/character-status.md` — start empty.
 7. If a reference book exists, run `/story-import` or manually create `reference/{book-title}/` files.
 
-## Initial Site Launch Requirement
+## Writing Target
 
-When building a fiction site from scratch, repeat the initialization checklist for **at least 5 books** before moving to site build. A site with 1–4 books is not launchable — it does not feel like a complete reading site.
+When building a fiction site from scratch, write **N books** in total, where N is the user-specified count (default 5 if not specified). Writing and site build run in parallel — site setup (stack, design, data) starts immediately after Phase 0 and does not wait for books to be written.
 
-Each book must reach 中篇 level before site build:
+Each book must reach 中篇 level before it can be included in the site build:
 - ≥ 10 chapters per book
 - ≥ 2,000 Chinese characters or 1,500 English words per chapter
 
-Run `/story-cover` once after all books are written. It generates covers for every book plus the site logo and favicon in one pass.
+Run `/story-cover` to generate covers. This can run incrementally as books are completed, or in one batch before launch.
 
-## Pre-Site-Build Gate
+## Pre-Launch Gate
 
-Before moving to the site build phases, verify all of these for the full book list:
+Verify all of the following before go-live:
 
 - [ ] `content/` has ≥ 5 book directories.
 - [ ] Each book has ≥ 10 chapters in `chapters/`.
