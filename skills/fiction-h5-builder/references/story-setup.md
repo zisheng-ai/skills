@@ -78,7 +78,7 @@ When setting up a new project:
 
 ## Initial Site Launch Requirement
 
-When building a fiction site from scratch, repeat the initialization checklist for **at least 5 books** before moving to site build. A site with 1–4 books is not launchable — it does not look like a real platform.
+When building a fiction site from scratch, repeat the initialization checklist for **at least 5 books** before moving to site build. A site with 1–4 books is not launchable — it does not feel like a complete reading site.
 
 Each book must reach 中篇 level before site build:
 - ≥ 10 chapters per book

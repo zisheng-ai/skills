@@ -8,7 +8,7 @@ Load this reference when the user asks to write a short story (短篇) or flash 
 2. **One twist, total commitment**: Every line of setup exists for the twist. No sub-plots, no world-building.
 3. **Every sentence earns its place**: If a sentence doesn't advance plot, build toward the twist, or raise emotion — cut it.
 4. **Opening 3 sentences are everything**: Hook or lose the reader. Ending creates shareability.
-5. **Default first-person**: `我` creates the strongest reader identification for web fiction platforms.
+5. **Default first-person**: `我` creates the strongest reader identification in web fiction.
 
 ## Emotion Targets
 
