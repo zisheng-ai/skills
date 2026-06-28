@@ -134,14 +134,30 @@ Do not proceed to any phase until the base environment check passes. Phase 3 and
 
 Execute phases one at a time. Track progress with the best mechanism available in the current environment:
 
-**If `TaskCreate` / `TaskUpdate` are available** (Claude Code): use them. Create all phase tasks at session start (`pending`), flip to `in_progress` when entering a phase, `completed` when done. Use `TaskGet` on re-entry to restore state. This gives the native Claude Code task list UI.
+**If `TaskCreate` / `TaskUpdate` are available** (Claude Code): use them. Create tasks only for the phases that will actually run in this session. Do not create tasks for phases outside the current scope.
 
-**If those tools are not available** (other agents / API): print a compact text progress block at each phase boundary instead:
+Scope-to-phase mapping:
+
+| User intent | Phases to track |
+| --- | --- |
+| "Write a novel" / "Continue writing" / `/story-long-write` | 0, 1a, (4 if requested) |
+| "Write a short story" / `/story-short-write` | 0, 1b, (4 if requested) |
+| "Generate covers" / `/story-cover` | 3 only |
+| "Import manuscript" / `/story-import` | 2 only |
+| "Review prose" / `/story-review` | 4 only |
+| "Build the site" / full pipeline | 0–10 |
+
+Flip a task to `in_progress` when entering that phase and `completed` when done. Use `TaskGet` on re-entry to restore state.
+
+**Phase numbering convention:**
+- Full pipeline (0–10): use numbered phases in task titles and progress output, e.g. "Phase 3: Cover".
+- Single-function triggers (`/story-cover`, `/story-import`, `/story-review`, etc.): do not use phase numbers. Use descriptive task titles such as "Cover Generation", "Manuscript Import", or "Prose Review".
+
+**If those tools are not available** (other agents / API): print a compact text progress block only when a phase runs. For `/story-cover`, output something like:
 
 ```
-[ Fiction H5 Builder — Phase 2 / 10 ]
-✓ 0 Setup  ✓ 1b Write  ▶ 2 Import  ○ 3 Cover  ○ 4 Quality
-○ 5 Stack  ○ 6 Design  ○ 7 Data  ○ 8 Build  ○ 9 Perf  ○ 10 QA
+[ Fiction H5 Builder — Cover Generation ]
+▶ Cover
 ```
 
 **Parallelism:** Some phases can run concurrently — do not force sequential execution when parallel work is safe.

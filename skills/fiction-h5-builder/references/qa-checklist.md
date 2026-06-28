@@ -20,7 +20,7 @@ If any launch asset is missing, attempt to generate it automatically (Phase 3 / 
 
 ## Automated Verification (run without user input)
 
-Run the build and start the production server, then verify routes programmatically. The default stack is Next.js; adapt the command names if the project uses a different package manager or script names.
+Run the build and start the production server, then verify routes programmatically. The stack is fixed to Next.js (see `tech-stack.md`). Use the project's package manager (npm/yarn/pnpm) and script names as needed.
 
 ```bash
 set -e
