@@ -169,16 +169,20 @@ Reader body typography matters more than display typography. Get body right befo
 
 ## Site Logo and Favicon
 
-Never use placeholder text, generic emoji, or external icon libraries as the site logo or favicon. Always generate real assets.
+Never use placeholder text, generic emoji, or external icon libraries as the site logo or favicon. Always generate real assets for launch.
+
+**Parallel generation:** Generate the logo and favicon in parallel using the `codex@openai-codex` plugin. Both assets are independent and can be produced in one batch call to Codex.
 
 **Logo:**
-- Generate SVG logo via Codex (`codex-plugin-cc`). If Codex is unavailable, stop and tell the user — do not fall back to any other method.
+- Generate SVG logo via the `codex@openai-codex` Claude Code plugin. Codex will produce `public/logo.svg`.
+- If Codex is unavailable or the generation fails, log a warning and continue. Use a minimal inline SVG placeholder during development, but never ship the default Next.js logo or a missing logo in production.
 - The logo should reflect the book's genre and visual tone (see `cover-styles.md` for genre references).
 - Default placement: top-left of the nav header. Render as an inline SVG or `<img>` tag pointing to `/logo.svg` in `public/`.
 - Output path: `public/logo.svg`
 
 **Favicon:**
-- Generate favicon via Codex (`codex-plugin-cc`). If Codex is unavailable, stop and tell the user — do not fall back to any other method.
+- Generate favicon via the `codex@openai-codex` Claude Code plugin. Codex will produce the favicon assets.
+- If Codex is unavailable or the generation fails, log a warning and continue. Use a simple generated placeholder during development, but never ship the default Next.js favicon in production.
 - The favicon should be a simplified version of the logo — single motif, high contrast, readable at 16px.
 - Output paths: `public/favicon-32x32.png`, `public/apple-touch-icon.png`, `public/favicon.ico` (convert from 32×32 PNG).
 - Wire up in `src/app/layout.tsx` via Next.js metadata:
@@ -192,7 +196,7 @@ export const metadata: Metadata = {
 }
 ```
 
-**Never ship a site with the default Next.js favicon or a missing logo.**
+**Never ship a site with the default Next.js favicon or a missing logo.** Development previews may use placeholders; launch requires real assets.
 
 ---
 

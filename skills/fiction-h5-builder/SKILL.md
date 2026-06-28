@@ -89,7 +89,7 @@ If any book is missing a cover image at launch time, load `references/story-cove
 | 7. Data setup | `references/data-contract.md` | Loader plan (direct filesystem) |
 | 8. Build | `references/ui-components.md` + `references/reader-ux.md` | Working site with all required pages |
 | 9. Performance | `references/performance.md` | Core Web Vitals targets met, images optimized |
-| 10. QA | `references/qa-checklist.md` | Screenshots at required viewports, checklist passed |
+| 10. QA | `references/qa-checklist.md` | Automated QA pass; screenshots captured programmatically and surfaced only on failure |
 
 Optional site build phases (load only when the brief requires):
 - `references/internationalization.md` — when target language is not the build default
@@ -99,7 +99,7 @@ For review and redesign tasks, start at the relevant phase and load only the ref
 
 ## Environment Prerequisites
 
-This skill requires Claude Code with the `codex@openai-codex` plugin (from `openai/codex-plugin-cc`). Before doing anything else, run this check via Bash:
+This skill requires Claude Code. The `codex@openai-codex` plugin (from `openai/codex-plugin-cc`) is needed for Phase 3 cover generation and Phase 6 logo/favicon generation, but the pipeline can continue without it. Before doing anything else, run this check via Bash:
 
 ```bash
 claude plugin list 2>/dev/null | grep -A3 "codex@openai-codex" | grep "Status:" || echo "PLUGIN_MISSING"
@@ -116,14 +116,10 @@ claude plugin list 2>/dev/null | grep -A3 "codex@openai-codex" | grep "Status:" 
   claude plugin marketplace add openai/codex-plugin-cc && claude plugin install codex@openai-codex && claude plugin enable codex@openai-codex
   ```
   Then rerun the check.
-- If after installation/enable the plugin is still not enabled, stop immediately and output:
+- If after installation/enable the plugin is still not enabled, log a warning and continue. Phase 3 and Phase 6 will skip asset generation and use placeholders. Output:
   ```
-  ERROR: fiction-h5-builder requires the Codex Claude Code plugin.
-  Install/enable manually:
-    claude plugin marketplace add openai/codex-plugin-cc
-    claude plugin install codex@openai-codex
-    claude plugin enable codex@openai-codex
-  Then re-invoke from a Claude Code session.
+  WARNING: Codex plugin could not be enabled. Cover/logo/favicon generation will be skipped.
+  Re-run Phase 3 / Phase 6 later after installing/enabling codex@openai-codex.
   ```
 - If the Bash tool itself is unavailable (not a Claude Code session): stop immediately and output:
   ```
@@ -132,7 +128,7 @@ claude plugin list 2>/dev/null | grep -A3 "codex@openai-codex" | grep "Status:" 
 
 Phase 3 re-verifies the plugin, auto-enables/installs it if needed, and can skip cover generation if the plugin remains unavailable; see `references/story-cover.md`.
 
-Do not proceed to any phase until the base environment check passes. Phase 3 may be skipped if the Codex plugin cannot be enabled. Do not attempt workarounds.
+Do not proceed to any phase until the base environment check passes. Phase 3 and Phase 6 may be skipped if the Codex plugin cannot be enabled. Do not attempt workarounds.
 
 ## Phase Execution Protocol
 
@@ -171,11 +167,11 @@ Site build phases (5–10) carry no model override and inherit the session model
 
 **Rules (apply in both modes):**
 - **Within a phase: act autonomously.** Invoke all required tools (image generation, file writes, bash commands) without asking the user. Never surface a "please run X" or "待处理" prompt mid-phase — just do it.
-- **Between phases: pause and confirm.** Only stop to ask the user at phase boundaries, after summarizing what was produced.
+- **Between phases: summarize and continue.** At each phase boundary, print a one-line summary of what was produced and move to the next phase. Do not wait for user confirmation unless the user explicitly says to pause.
 - Parallel-safe phases may be executed in the same turn — announce both at the start and summarize both at the end.
-- Sequential phases still require a user confirmation between them.
+- Sequential phases run back-to-back without pausing for confirmation.
 - Load each phase's reference file only when entering that phase.
-- If a phase is skipped, mark it done with a note explaining why, then pause.
+- If a phase is skipped, mark it done with a note explaining why, then continue.
 - On re-entry, restore or reprint current state before proceeding.
 
 ## Quality Gates
@@ -208,8 +204,8 @@ Do not deliver a build if any of these are true.
 - `outline/outline.md` is missing or empty for any published book.
 - `world/worldbuilding.md` is missing or empty for any published book.
 - Cover image is missing for any book in the reader at launch time. (Development preview may use CSS placeholders; final launch requires real covers.)
-- `public/logo.svg` is the default Next.js placeholder or missing.
-- `public/favicon-32x32.png` is the default Next.js favicon or missing.
+- `public/logo.svg` is the default Next.js placeholder or missing at launch time. (Development preview may use a placeholder; final launch requires a real generated logo.)
+- `public/favicon-32x32.png` is the default Next.js favicon or missing at launch time. (Development preview may use a placeholder; final launch requires a real generated favicon.)
 
 **Technical:**
 - Build errors or console errors exist on page load.
@@ -261,7 +257,7 @@ Load references only when entering that phase. Do not preload all references at 
 - `ui-components.md` — visual and component quality floor during build.
 - `reader-ux.md` — chapter page UX requirements during build.
 - `performance.md` — Core Web Vitals, loading strategy, image optimization.
-- `qa-checklist.md` — final QA and screenshot verification.
+- `qa-checklist.md` — final automated QA and screenshot verification (failures only).
 - `product-surface.md` — IA and URL structure (optional, load when needed).
 - `internationalization.md` — language and font decisions (optional, load when needed).
 

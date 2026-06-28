@@ -38,25 +38,32 @@ All chapters must have this before any parallel writing starts. The beat entries
 
 ### Step 2 — Spawn one Agent per chapter (model: haiku)
 
-Spawn all chapter agents concurrently. Each agent receives:
-- Its own beat entry from the outline
-- `world/worldbuilding.md`
-- Only the character files for characters appearing in that chapter
-- The previous chapter's hook-out line (from the outline beat, not from `tracking/context.md`)
+Spawn all chapter agents concurrently. To avoid redundant file reads, read shared context once in the main context and pass it into each agent's prompt:
+
+- **Read once, share with every agent:**
+  - `world/worldbuilding.md`
+  - Full expanded `outline/outline.md` (with beat entries for all chapters)
+- **Read once, shard per agent:**
+  - `world/characters/{character-name}.md` — only for characters appearing in that chapter
+- **Coordination signal:** each agent receives the previous chapter's hook-out line from the outline beat.
 
 Each agent writes to `content/{book-title}/chapters/ch-NNN-{title}.md` and returns its own hook-out line.
 
-### Step 3 — Continuity pass
+Use a **single batch Agent call** when the environment supports it (e.g. one Agent invocation carrying the whole chapter list), otherwise spawn individual Agents per chapter. Either way, all chapters must be produced in parallel, not sequentially.
+
+### Step 3 — Lightweight continuity pass
 
 After all chapter agents complete, do a single sequential pass:
 1. Read chapters in order; verify hook-out of chapter N matches the opening of chapter N+1.
-2. Fix any continuity breaks inline.
+2. Fix only continuity breaks — do not rewrite prose for style.
 3. Write `tracking/context.md` from the final chapter's ending.
 4. Update `tracking/threads.md`, `tracking/timeline.md`, `tracking/character-status.md`.
 
+Keep this pass minimal. Do not run a full quality rewrite here; that is Phase 4.
+
 ### Multiple books in parallel
 
-Spawn one top-level Agent per book. Each book agent runs its own Steps 1–3 independently. Books share no state and can complete in any order.
+Spawn one top-level Agent per book. Pass only that book's `world/`, `outline/`, and character files so each agent starts with a minimal context. Books share no state and can complete in any order.
 
 ## Single Chapter Writing Process
 

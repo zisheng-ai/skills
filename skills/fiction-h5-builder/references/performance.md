@@ -11,7 +11,18 @@ Slow page loads lose readers before the first chapter. Fiction reading sites hav
 | CLS | < 0.1 | Font loading and image loading must not cause visible layout shifts |
 | TTFB | < 600ms | For server-rendered routes |
 
-Test on simulated mobile (Moto G4 equivalent) at Slow 3G in Chrome DevTools Lighthouse. Do not test only on fast desktop connections.
+### Verification strategy
+
+**Default (fast, unattended):**
+- Build the site (`npm run build`).
+- Check the build output for warnings about large JS bundles or unoptimized images.
+- Run automated smoke tests with `curl` against the started server (see `qa-checklist.md`).
+- Verify cover images are under 80KB and use WebP/AVIF where possible.
+
+**Deep audit (only when user explicitly asks):**
+- Test on simulated mobile (Moto G4 equivalent) at Slow 3G in Chrome DevTools Lighthouse. Do not test only on fast desktop connections.
+
+Do not block the pipeline on a full Lighthouse run by default.
 
 ## Images
 

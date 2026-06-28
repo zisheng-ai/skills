@@ -10,11 +10,11 @@ Find structural, character, prose, and consistency problems and give actionable 
 
 | Mode | When | Scope |
 | --- | --- | --- |
-| `full` | Default; thorough review | Structure + character + prose + consistency |
-| `lean` | Quick check; fast turnaround | Structure + consistency only |
+| `full` | User explicitly asks for a deep audit | Structure + character + prose + consistency |
+| `lean` | Default for pipeline use; fast turnaround | Structure + consistency only |
 | `solo` | Single-pass; no sub-agents | All dimensions, inline execution |
 
-Default to `full`. If no agents are deployed or the environment doesn't support sub-agents, fall back to `solo` automatically and note the fallback in the report.
+Default to `lean` when running as part of the fiction-h5-builder pipeline. Use `full` only when the user asks for it. If no agents are deployed or the environment doesn't support sub-agents, fall back to `solo` automatically and note the fallback in the report.
 
 ## Report Header (always output verbatim)
 

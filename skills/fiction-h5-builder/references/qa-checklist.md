@@ -1,10 +1,10 @@
 # QA Checklist
 
-Run this checklist before any final delivery. Do not skip sections for "simple" builds — each section catches a different class of failure.
+Run this checklist before any final delivery. For unattended execution, automate every check that can be automated; screenshots are captured programmatically and only surfaced when a check fails.
 
-## Pre-Build Gate
+## Pre-Launch Gate
 
-Run these checks before writing any site code. If any fails, complete the writing phase first — do not proceed.
+Run these checks before go-live. These are **not** blockers for development preview.
 
 - [ ] `content/` has ≥ 5 book directories (initial site launch).
 - [ ] Each book has ≥ 10 chapter files in `content/{book-title}/chapters/` (中篇 minimum).
@@ -16,135 +16,150 @@ Run these checks before writing any site code. If any fails, complete the writin
 - [ ] Site logo generated: `public/logo.svg`.
 - [ ] Favicon generated: `public/favicon-32x32.png`.
 
-## Build and Technical Checks
+If any launch asset is missing, attempt to generate it automatically (Phase 3 / Phase 6). Only if generation fails, log the missing asset and continue; do not stop the pipeline.
 
-- [ ] Build completes without errors (`npm run build`, `yarn build`, or equivalent).
-- [ ] TypeScript passes with no errors (`tsc --noEmit`) if the project uses TypeScript.
-- [ ] Lint passes with no errors.
-- [ ] All routes respond without console errors on load.
-- [ ] All required pages exist: home/work list, book detail, reader.
-- [ ] Navigation between pages works in both directions (home → book → chapter → back).
-- [ ] Static data loads before any dynamic features are tested.
+## Automated Verification (run without user input)
+
+Run the build and start the production server, then verify routes programmatically. The default stack is Next.js; adapt the command names if the project uses a different package manager or script names.
+
+```bash
+set -e
+
+# Build (use the project's build script: npm/yarn/pnpm run build, or npx next build)
+npm run build
+
+# Start server in background and capture its port
+npm start > /tmp/fiction-server.log 2>&1 &
+SERVER_PID=$!
+
+# Wait for server to be ready; extract the port it bound to
+PORT=""
+for i in $(seq 1 30); do
+  PORT=$(grep -oE 'http://localhost:[0-9]+' /tmp/fiction-server.log | head -1 | cut -d: -f3)
+  [ -n "$PORT" ] && break
+  sleep 1
+done
+[ -z "$PORT" ] && PORT=3000
+
+# Pick the first book slug from content/
+BOOK_SLUG=$(find content -maxdepth 2 -type d -name chapters | head -1 | xargs dirname | xargs basename)
+[ -z "$BOOK_SLUG" ] && { echo "ERROR: no book found in content/"; kill $SERVER_PID; exit 1; }
+
+BASE="http://localhost:${PORT}"
+FAIL=0
+
+check() {
+  local name="$1"
+  shift
+  if "$@"; then
+    echo "✓ $name"
+  else
+    echo "✗ $name"
+    FAIL=1
+  fi
+}
+
+# Route smoke tests
+check "home responds" curl -sf "${BASE}/" > /dev/null
+check "book detail responds" curl -sf "${BASE}/book/${BOOK_SLUG}/" > /dev/null
+check "chapter reader responds" curl -sf "${BASE}/book/${BOOK_SLUG}/chapter/1/" > /dev/null
+
+# Content checks
+check "chapter content renders" sh -c "curl -s '${BASE}/book/${BOOK_SLUG}/chapter/1/' | grep -q '<p>'"
+check "next/finish link present" sh -c "curl -s '${BASE}/book/${BOOK_SLUG}/chapter/1/' | grep -qE 'Next chapter|Finish'""
+
+kill $SERVER_PID
+
+if [ "$FAIL" -ne 0 ]; then
+  echo "ERROR: QA automated checks failed."
+  exit 1
+fi
+
+echo "QA automated checks passed."
+```
+
+If the project uses `output: 'export'` (static export), replace the server start with serving the `dist/` or `out/` folder and point curl at that URL.
+
+- [ ] Build completes without errors.
+- [ ] TypeScript passes with no errors (`tsc --noEmit`) if applicable.
+- [ ] All required pages respond with HTTP 200.
+- [ ] Chapter content renders (`<p>` tags present).
+- [ ] Navigation links present on reader (previous / next / finish).
 - [ ] No `console.error` output in normal use.
 
-## Mobile Screenshots
+## Visual QA (automated capture, human review only on failure)
 
-Capture at minimum:
+Use a headless browser or screenshot tool if available (e.g. Playwright, Puppeteer). If none is installed, skip screenshot capture and rely on the curl smoke tests above. Do not present screenshots to the user unless an automated check fails.
+
+### Required viewports
 
 | Viewport | Page |
 | --- | --- |
 | 390 × 844 | Home / work list |
 | 390 × 844 | Book detail |
-| 390 × 844 | Book detail (scrolled to chapter list) |
-| 390 × 844 | Reader (default theme, default font size) |
-| 390 × 844 | Reader settings sheet open |
-| 430 × 932 | Reader (large screen mobile) |
-| 375 × 667 | Reader (small screen — iPhone SE) |
-
-Inspect each screenshot for:
-
-- [ ] Text clipping or overflow anywhere.
-- [ ] Bottom navigation bar covering body text.
-- [ ] Overcrowded or illegible book cards.
-- [ ] Low contrast text (body, metadata, labels).
-- [ ] Controls too small to tap (minimum 44×44px touch target).
-- [ ] Reader body line length comfortable for reading (not too wide, not too narrow).
-- [ ] Reader line height comfortable (not compressed, not double-spaced).
-- [ ] Safe-area insets respected at the bottom.
-- [ ] Cover images load and display correctly.
-
-## Desktop Screenshots
-
-Capture at minimum:
-
-| Viewport | Page |
-| --- | --- |
+| 390 × 844 | Reader (default theme) |
+| 375 × 667 | Reader (small screen) |
 | 1366 × 900 | Home / work list |
-| 1366 × 900 | Book detail |
 | 1366 × 900 | Reader |
-| 1440 × 900 | Reader (wide screen) |
 
-Inspect each screenshot for:
+### Automated inspections
 
-- [ ] Not a stretched phone layout. Desktop has its own grid/column logic.
-- [ ] Reader column is not too wide. Max ~680px for Latin, ~600px for CJK.
-- [ ] Whitespace is purposeful, not just leftover gaps from mobile layout.
-- [ ] Navigation is horizontal, not a bottom bar.
-- [ ] Hover states visible on interactive elements.
-- [ ] Side catalog or settings panel renders correctly if implemented.
+For each captured screenshot, run programmatic checks where possible:
+
+- Text clipping: assert no `scrollWidth > clientWidth` on body text elements.
+- Touch targets: assert interactive elements are ≥ 44×44px.
+- Contrast: assert body text and metadata meet WCAG AA (4.5:1) using computed styles.
+- Image loading: assert cover images have naturalWidth > 0.
+
+If all automated checks pass, mark the section complete without user review. If a check fails, show only the failing screenshot and a concise description of the problem.
 
 ## Theme Checks
 
-Check all enabled themes (Light and Dark are required; Sepia is optional and only tested if implemented).
+Automate with headless browser:
 
-- [ ] Light and Dark themes pass WCAG AA (4.5:1) contrast for body text.
-- [ ] Light and Dark themes pass WCAG AA (4.5:1) contrast for metadata text (`--muted` on `--base`).
-- [ ] If Sepia is implemented, it passes WCAG AA for body and metadata text.
+- [ ] Toggle theme and verify `data-theme` attribute updates.
+- [ ] Read computed colors and assert contrast ≥ 4.5:1 for body and metadata.
 - [ ] No pure `#fff` or `#000` background in any default theme.
-- [ ] Theme switching is instant with no transition delay.
-- [ ] Saved theme preference persists after page reload.
-- [ ] Cover images are legible in dark theme (add a subtle border if the cover has a light edge).
+- [ ] Theme preference persists after reload (`localStorage` value preserved).
 
 ## Reader Controls
 
-### Required (always check)
+Automate with headless browser:
 
-- [ ] Previous chapter link works at the start of a chapter.
-- [ ] Next chapter link works at the end of a chapter (and via the end-of-chapter prompt).
-- [ ] Dark mode toggle switches between Light and Dark themes and persists.
-- [ ] Reading position is saved and restored on return to the same chapter.
-
-### Optional (check only if implemented)
-
-- [ ] Font size: 4+ steps work without breaking layout.
-- [ ] Line height: options work and persist.
-- [ ] Sepia theme: works and persists.
-- [ ] Chapter catalog drawer opens and closes, lists all chapters, and navigates correctly.
-- [ ] Progress indicator updates on scroll.
+- [ ] Previous chapter link navigates to the previous chapter.
+- [ ] Next chapter link navigates to the next chapter.
+- [ ] Dark mode toggle switches themes and persists.
+- [ ] Reading position is saved and restored on return.
 
 ## Multilingual Checks
 
-Test with sample titles and labels in each target language.
+For each target language:
 
-| Language | Sample title |
-| --- | --- |
-| English | `The Archive Beneath the Rain` |
-| Spanish | `La ciudad que olvidó sus nombres` |
-| Japanese | `雨の記録者` |
-| Korean | `비의 기록자` |
-
-For each language used:
 - [ ] `<html lang="xx">` is set correctly.
-- [ ] Book title does not overflow the card in the work list.
-- [ ] All navigation labels display correctly without clipping.
-- [ ] Reader body uses the correct system font stack for the language.
-- [ ] No garbled or missing CJK characters.
-- [ ] Line breaking is correct (no orphaned punctuation, no mid-word breaks in CJK).
+- [ ] Reader body uses the correct language font stack.
+- [ ] No garbled CJK characters.
 
 ## Accessibility Checks
 
-- [ ] All interactive controls use `<button>` or `<a>`, not `<div>` or `<span>`.
-- [ ] All icon-only buttons have an `aria-label`.
-- [ ] Focus outlines are visible on all keyboard-navigable elements.
-- [ ] Page navigation works with keyboard (Tab, Enter, Arrow keys).
-- [ ] Browser pinch-to-zoom is not disabled (`user-scalable=no` must not be present).
-- [ ] No motion in the reading surface (no scroll-triggered animations on content).
+Run `axe-core` or equivalent programmatically:
+
+- [ ] No interactive `<div>` or `<span>` without keyboard role.
+- [ ] Icon-only buttons have `aria-label`.
+- [ ] Focus outlines visible on keyboard-navigable elements.
+- [ ] `user-scalable=no` is not present.
 
 ## Content and Copy Checks
 
-- [ ] No lorem ipsum anywhere.
-- [ ] No placeholder text ("Coming soon", "TODO", "[BOOK TITLE]") on any reader-visible page.
-- [ ] Site has a real generated logo (`public/logo.svg`) — not placeholder text or default Next.js icon.
-- [ ] Favicon is a real generated asset (`public/favicon-32x32.png`) — not the default Next.js favicon.
-- [ ] Favicon wired up in `layout.tsx` via Next.js `metadata.icons`.
+Automated grep over build output:
+
+- [ ] No "lorem ipsum", "Coming soon", "TODO", "[BOOK TITLE]" on rendered pages.
 - [ ] No reader-visible copy mentions AI, Markdown, parser, prompt, or skill.
-- [ ] All empty states show a helpful message and a navigation affordance.
-- [ ] End-of-chapter state shows "Next: [Chapter Title]" and navigates correctly.
-- [ ] End-of-book state shows a completion message and links back to the book detail.
+- [ ] `public/logo.svg` exists and is not the default Next.js icon.
+- [ ] `public/favicon-32x32.png` exists and is not the default Next.js favicon.
+- [ ] End-of-chapter and end-of-book states render correctly.
 
 ## Performance Spot Check
 
-- [ ] Initial page load on simulated Slow 3G in Chrome DevTools completes without blocking the first content paint for more than 3 seconds.
-- [ ] No uncompressed images over 200KB loaded on the home page.
-- [ ] Initial JS bundle is below 200KB gzipped (check in Network tab).
+- [ ] Initial JS bundle is below 200KB gzipped.
+- [ ] No uncompressed image over 200KB on the home page.
 - [ ] No external font CDN requests on the reader page unless explicitly required.

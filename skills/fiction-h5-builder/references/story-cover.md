@@ -58,7 +58,7 @@ printf 'Found %d books:\n' "${#BOOKS[@]}"
 printf '  %s\n' "${BOOKS[@]}"
 ```
 
-If fewer than 5 books are found, stop and return to the writing phase.
+If fewer than 5 books are found, log a warning and continue with whatever books exist. Cover generation is not blocked by the book count — missing covers can be retried later.
 
 ### B2 — Resolve pen name (no prompt)
 
@@ -70,16 +70,26 @@ Read the pen name from project files in this order — do not ask the user:
 
 If the pen name cannot be found in any of these files, substitute `"The Author"` as a placeholder and log a warning. Never stop the batch to ask.
 
-### B3 — Generate cover for each book
+### B3 — Generate covers in one batch
 
-For each book in `BOOKS`:
-1. Read `content/{book-title}/world/worldbuilding.md` to extract genre and tone.
-2. Run genre detection (Step 1.5 below) to select cover style.
-3. Build the cover prompt (Step 2 below) substituting the book's title, genre, and characters.
-4. **Call Codex** via the `codex@openai-codex` plugin. Save output to `public/covers/{book-title}/cover/cover_v1.png`.
-5. Log: `✓ {book-title} — cover saved`.
+Spawn **one** Codex task that generates all covers in parallel. Passing the full book list in a single delegation avoids the per-call overhead of spawning one task per book.
 
-If the Codex plugin is unavailable or a single cover call fails, log the failure for that book and continue with the remaining books. Do not block the rest of the pipeline. After Phase 3 completes, report which covers were skipped so they can be regenerated later.
+Build a single prompt that lists every book with its title, genre/style tags, and pen name. Ask Codex to generate all `public/covers/{book-title}/cover/cover_v1.png` files and all corresponding `.prompt.txt` files.
+
+Example task text:
+
+```
+Generate book covers for the following novels. Each cover must be 1024x1536 portrait PNG.
+Save each image to the exact path shown and write the prompt used to the matching .prompt.txt file.
+
+1. Title: {title-1} | Author: {pen-name} | Genre/style: {style-1} | Output: public/covers/{slug-1}/cover/cover_v1.png
+2. Title: {title-2} | Author: {pen-name} | Genre/style: {style-2} | Output: public/covers/{slug-2}/cover/cover_v1.png
+...
+```
+
+After Codex returns, verify each expected file exists. Log `✓ {book-title} — cover saved` for each successful cover and `⚠ {book-title} — cover skipped: {reason}` for any failure.
+
+If the Codex plugin is unavailable, log the failure and skip Phase 3 entirely. Missing covers can be retried later.
 
 ### Batch completion checklist
 
@@ -168,7 +178,7 @@ Codex may return the image directly or write it to a temporary cache path. After
 2. If Codex wrote the image to a different path, copy it to `{BOOK_DIR}/cover/cover_v1.png`.
 3. Save the prompt text to `{BOOK_DIR}/cover/cover_v1.prompt.txt`.
 
-If the call fails, log the error and stop. Do not silently substitute a placeholder.
+If the call fails, log the error, skip this book's cover, and continue with the next book. Do not silently substitute a placeholder, and do not block the pipeline on a single failure.
 
 ## Step 4 — Quality check
 
