@@ -1,6 +1,8 @@
 # Story Cover
 
-Load this reference when the user asks to generate a novel cover (封面, /story-cover, cover generation).
+Load this reference when the user asks to generate a novel cover (封面, /story-cover, cover generation), or when Phase 3 of the pipeline is entered.
+
+**Execution principle: invoke tools directly. Never surface a "please run X" prompt to the user mid-phase. Call the image generation tool, write the file, log the result — then move on.**
 
 ## Modes
 
@@ -31,10 +33,15 @@ printf '  %s\n' "${BOOKS[@]}"
 
 If fewer than 5 books are found, stop and return to the writing phase.
 
-### B2 — Collect site-level info once
+### B2 — Resolve pen name (no prompt)
 
-Ask once (do not repeat per book):
-- **Author pen name** — appears on every cover
+Read the pen name from project files in this order — do not ask the user:
+
+1. `src/lib/books.ts` → first book's `author` field
+2. Any `content/{book}/world/worldbuilding.md` → first "Author" line
+3. Any `content/{book}/tracking/context.md` → first "Pen name" line
+
+If the pen name cannot be found in any of these files, substitute `"The Author"` as a placeholder and log a warning. Never stop the batch to ask.
 
 ### B3 — Generate cover for each book
 
@@ -83,10 +90,16 @@ Use Steps 3–3.5 below only when the user explicitly requests GPT-Image-2 and p
 | `BOOK_DIR` | Yes | — | Output directory, e.g. `./public/covers/{book-title}` |
 | `REF_IMAGE` | No | — | Local path or URL for image-to-image mode |
 
-## Step 1 — Collect required info
+## Step 1 — Resolve required info (no prompt)
 
 Must have before proceeding: **book title**, **author pen name**, **BOOK_DIR**.
-If any is missing, ask once — do not fabricate.
+
+Derive all three from project files:
+- **Book title**: directory name under `content/`
+- **Pen name**: see B2 resolution order above (`books.ts` → worldbuilding → context → placeholder)
+- **BOOK_DIR**: `public/covers/{book-title}/`
+
+Do not ask the user. Do not fabricate values that cannot be derived.
 
 Cover ratio: **2:3 portrait** (`1024x1536`). This is the standard for self-hosted reading sites.
 
