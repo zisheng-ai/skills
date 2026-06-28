@@ -79,7 +79,7 @@ If Codex is not authenticated, log the failure and skip Phase 3 entirely. Missin
 - [ ] Covers exist for as many books as possible.
 - [ ] Any failed/skipped covers are logged with the book title and error reason.
 
-Missing covers are not a hard blocker for site build — the site can use CSS placeholders during development. Re-run Phase 3 later when the Codex plugin is fully available. Site logo and favicon are generated in Phase 6 (Design plan) — do not block on them here.
+Missing covers are not a hard blocker for site build — the site can use CSS placeholders during development. Re-run Phase 3 later when Codex is available. Site logo and favicon are generated in Phase 6 (Design plan) — do not block on them here.
 
 ---
 
@@ -89,13 +89,9 @@ Use for adding one book to an already-launched site. Skip logo and favicon steps
 
 ## Generation Method
 
-**Codex via the `codex@openai-codex` Claude Code plugin — preferred method.**
+Call `codex-companion.mjs task` directly with `--fresh` and an explicit `image_gen` instruction. Do not read files or search the filesystem. After the call completes, extract the base64 image from the Codex session log and write it to disk (see Step 3 for full commands).
 
-Delegate the cover generation task to Codex using the plugin. Codex has a built-in `image_gen` tool. To avoid the slow exploration phase, each task prompt must explicitly instruct Codex to use `image_gen` directly and forbid file reads / filesystem searches.
-
-Save the result to `public/covers/{book-title}/cover/cover_v1.png`.
-
-If the plugin is unavailable or the call fails, skip this cover and continue. Do not degrade to Claude native image generation, GPT-Image-2, or any other method during the main pipeline. A skipped cover can be retried later by re-entering Phase 3. CSS placeholders are acceptable only during development, never as a final launch asset.
+If Codex is not authenticated or the call fails, skip this cover and continue. CSS placeholders are acceptable only during development, never as a final launch asset.
 
 ## Environment Variables
 
