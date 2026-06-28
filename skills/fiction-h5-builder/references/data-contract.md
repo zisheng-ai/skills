@@ -45,9 +45,11 @@ my-novel-site/
 ├── content-collections.ts        ← collection definitions
 ├── src/
 │   ├── app/
-│   │   ├── page.tsx              ← chapter catalog
-│   │   └── reader/[chapter]/
-│   │       └── page.tsx          ← reader page with prev/next
+│   │   ├── page.tsx                     ← home: book list
+│   │   └── book/[slug]/
+│   │       ├── page.tsx                 ← book detail + chapter list
+│   │       └── chapter/[n]/
+│   │           └── page.tsx             ← reader page with prev/next
 └── tailwind.config.ts
 ```
 
@@ -106,15 +108,31 @@ const nextConfig = { /* ... */ }
 export default withContentCollections(nextConfig)
 ```
 
-**Usage in pages:**
+**Usage in pages (`app/book/[slug]/chapter/[n]/page.tsx`):**
 
 ```ts
+import { notFound } from 'next/navigation'
 import { allChapters } from 'content-collections'
 
+// Generates one static page per chapter across all books
 export async function generateStaticParams() {
-  return allChapters
+  return allChapters.map(ch => ({
+    slug: ch.bookSlug,
+    n: String(ch.order),
+  }))
+}
+
+// Resolve prev/next within the same book
+export default function ChapterPage({ params }: { params: { slug: string; n: string } }) {
+  const bookChapters = allChapters
+    .filter(ch => ch.bookSlug === params.slug)
     .sort((a, b) => a.order - b.order)
-    .map((_, i) => ({ chapter: String(i + 1) }))
+  const idx = bookChapters.findIndex(ch => String(ch.order) === params.n)
+  if (idx === -1) notFound()
+  const chapter = bookChapters[idx]
+  const prev = bookChapters[idx - 1] ?? null
+  const next = bookChapters[idx + 1] ?? null
+  // ...render
 }
 ```
 
@@ -246,7 +264,7 @@ Fields: `title` (string), `chapter` or `order` (number), `bookId` (string), `lan
 
 ## Pagination and Loading
 
-- For co-located Next.js projects: use `generateStaticParams` with `getChapters()` to pre-render each chapter at build time. One route per chapter, zero runtime filesystem reads.
+- Use `generateStaticParams` returning `{ slug, n }` pairs to pre-render every chapter of every book at build time. One static page per chapter, zero runtime filesystem reads.
 - For client-side apps: fetch chapter content on demand when the reader enters the route.
 - Do not load all chapter content into a single bundle. A book with 100 chapters should not load all 100 on the home page.
 - Prefetch the next chapter's content when the reader reaches 80% scroll depth in the current chapter.

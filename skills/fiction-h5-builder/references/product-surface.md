@@ -46,14 +46,14 @@ A complete lightweight fiction H5 template has exactly these pages:
 /                          # home / work list
 /book/[slug]               # book detail
 /book/[slug]/chapters      # chapter catalog (optional separate page)
-/book/[slug]/chapter/[id]  # reader
+/book/[slug]/chapter/[n]  # reader
 ```
 
 For static builds, use this structure as file paths:
 ```
 index.html
 book/[slug]/index.html
-book/[slug]/chapter/[id]/index.html
+book/[slug]/chapter/[n]/index.html
 ```
 
 Avoid query-string-based routing for primary navigation — it breaks deep-linking and browser history.
