@@ -4,6 +4,23 @@ Load this reference when the user asks to generate a novel cover (封面, /story
 
 **Execution principle: invoke tools directly. Never surface a "please run X" prompt to the user mid-phase. Call the image generation tool, write the file, log the result — then move on.**
 
+## Phase 3 Entry Check
+
+Before generating any cover, verify Codex is available via Bash:
+
+```bash
+which codex >/dev/null 2>&1 && echo "CODEX_OK" || echo "CODEX_MISSING"
+```
+
+- If `CODEX_MISSING`: stop immediately and output:
+  ```
+  ERROR: Phase 3 (Cover) requires Codex CLI on PATH.
+  Install: npm install -g @openai/codex — then re-enter Phase 3.
+  ```
+- If `CODEX_OK`: proceed to B1/B2/B3.
+
+If a cover generation call fails at runtime (Codex auth error or unavailable), stop the batch and report the error. Do not fall back to any other image generation method.
+
 ## Modes
 
 | Mode | When to use | What it generates |
@@ -49,10 +66,10 @@ For each book in `BOOKS`:
 1. Read `content/{book-title}/world/worldbuilding.md` to extract genre and tone.
 2. Run genre detection (Step 1.5 below) to select cover style.
 3. Build the cover prompt (Step 2 below) substituting the book's title, genre, and characters.
-4. **Delegate to Codex** via `codex-plugin-cc`. Save output to `public/covers/{book-title}/cover/cover_v1.png`.
+4. **Call Codex** via `codex-plugin-cc`. Save output to `public/covers/{book-title}/cover/cover_v1.png`.
 5. Log: `✓ {book-title} — cover saved`.
 
-If Codex is unavailable, fall back to Claude Code native image generation for that book. Continue to the next book regardless — log failures and fix at the end, do not stop the batch.
+If Codex is unavailable, stop the batch and tell the user: "Cover generation requires Codex (`codex-plugin-cc`). Please ensure Codex is running and retry." Do not fall back to any other method.
 
 ### Batch completion checklist
 
@@ -70,25 +87,17 @@ Use for adding one book to an already-launched site. Skip logo and favicon steps
 
 ## Generation Method
 
-**Primary — Codex via `codex-plugin-cc` (no API key needed):**
-Delegate image generation to Codex using the `codex-plugin-cc` plugin installed in this environment. Build the prompt using Steps 1–2 below, then invoke Codex image generation. Save the result to `public/covers/{book-title}/cover/cover_v1.png`.
+**Codex via `codex-plugin-cc` — the only accepted method.**
 
-**Secondary — Claude native image generation:**
-Use Claude's built-in image generation tool directly if `codex-plugin-cc` is unavailable. Build the same prompt from Steps 1–2 and call the image generation tool.
+Call Codex image generation with the prompt from Step 2. Save the result to `public/covers/{book-title}/cover/cover_v1.png`. No API key needed.
 
-**Fallback — GPT-Image-2 via API (requires `GPT_IMAGE_API_KEY`):**
-Use Steps 3–3.5 below only when the user explicitly requests GPT-Image-2 and provides the key.
+If `codex-plugin-cc` is unavailable, stop and tell the user. Do not degrade to Claude native image generation, GPT-Image-2, or any other method. Cover images must be AI-generated via Codex — CSS placeholders are never acceptable as a final output.
 
 ## Environment Variables
 
-| Variable | Required | Default | Notes |
-|---|---|---|---|
-| `GPT_IMAGE_API_KEY` | No (GPT-Image-2 fallback only) | — | OpenAI or compatible proxy key; not needed for primary Codex/Claude paths |
-| `GPT_IMAGE_BASE_URL` | No | `https://api.openai.com/v1` | Override for proxy |
-| `GPT_IMAGE_MODEL` | No | `gpt-image-2` | Override only for testing |
-| `GPT_IMAGE_SIZE` | No | `1024x1536` | Target ratio hint — many proxies ignore it; Step 3.5 crops to exact size |
-| `BOOK_DIR` | Yes | — | Output directory, e.g. `./public/covers/{book-title}` |
-| `REF_IMAGE` | No | — | Local path or URL for image-to-image mode |
+| Variable | Required | Notes |
+|---|---|---|
+| `BOOK_DIR` | Yes | Output directory, e.g. `./public/covers/{book-title}` |
 
 ## Step 1 — Resolve required info (no prompt)
 
@@ -127,58 +136,16 @@ keep title and author name inside the central safe area (inner ~85%), no waterma
 Title font styles and author name styles are in `references/cover-styles.md` per genre.
 Offer 2–3 composition variants (close-up portrait / full body / pure scene) on first generation.
 
-## Step 3 — Call the API
+## Step 3 — Call Codex
 
-`gpt-image-2` always returns base64. Do NOT include `response_format` in the request body.
+Invoke `codex-plugin-cc` with the prompt from Step 2. Save the returned image to:
 
-### Text-to-image (default — no REF_IMAGE set)
-
-```bash
-set -euo pipefail
-: "${GPT_IMAGE_API_KEY:?Set GPT_IMAGE_API_KEY first}"
-: "${PROMPT:?Set PROMPT first}"
-BASE_URL="${GPT_IMAGE_BASE_URL:-https://api.openai.com/v1}"
-MODEL="${GPT_IMAGE_MODEL:-gpt-image-2}"
-SIZE="${GPT_IMAGE_SIZE:-1024x1536}"
-BOOK_DIR="${BOOK_DIR:?Set BOOK_DIR first}"
-
-mkdir -p "$BOOK_DIR/cover"
-i=1; while [ -f "$BOOK_DIR/cover/cover_v${i}.png" ]; do i=$((i+1)); done
-OUT="$BOOK_DIR/cover/cover_v${i}.png"
-RESP=$(mktemp); trap 'rm -f "$RESP"' EXIT
-
-BODY=$(jq -n --arg m "$MODEL" --arg p "$PROMPT" --arg s "$SIZE" \
-  '{model:$m,prompt:$p,size:$s}')
-
-curl -fsS --max-time 180 --retry 2 --retry-delay 5 \
-  "$BASE_URL/images/generations" \
-  -H "Authorization: Bearer $GPT_IMAGE_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d "$BODY" > "$RESP"
-
-jq -e '.error' "$RESP" >/dev/null 2>&1 && { jq '.error' "$RESP" >&2; exit 1; }
-jq -er '.data[0].b64_json // empty' "$RESP" | base64 --decode > "$OUT"
-[ -s "$OUT" ] || { echo "empty output" >&2; exit 1; }
-printf '%s\n' "$PROMPT" > "${OUT%.png}.prompt.txt"
-file "$OUT"; ls -lt "$BOOK_DIR/cover/"
+```
+public/covers/{book-title}/cover/cover_v1.png
+public/covers/{book-title}/cover/cover_v1.prompt.txt  ← save the prompt used
 ```
 
-### Image-to-image (REF_IMAGE is set)
-
-Uses `/v1/images/edits` with `multipart/form-data`. Replace the curl call above with:
-
-```bash
-REF_LOCAL="$REF_IMAGE"
-case "$REF_IMAGE" in http://*|https://*)
-  REF_TMP=$(mktemp); curl -fsSL --max-time 60 -o "$REF_TMP" "$REF_IMAGE"; REF_LOCAL="$REF_TMP" ;;
-esac
-
-curl -fsS --max-time 240 --retry 2 --retry-delay 5 \
-  "$BASE_URL/images/edits" \
-  -H "Authorization: Bearer $GPT_IMAGE_API_KEY" \
-  --form-string "model=$MODEL" --form-string "size=$SIZE" --form-string "prompt=$PROMPT" \
-  -F "image=@$REF_LOCAL" > "$RESP"
-```
+If the call fails, log the error and stop. Do not silently substitute a placeholder.
 
 ## Step 4 — Quality check
 
@@ -195,10 +162,10 @@ If unsatisfied: adjust composition variant, color palette, or character descript
 
 ```
 public/covers/{book-title}/cover/cover_v1.png        ← served as /covers/{book-title}/cover/cover_v1.png
-public/covers/{book-title}/cover/cover_v1.prompt.txt ← prompt used (for iteration reference)
+public/covers/{book-title}/cover/cover_v1.prompt.txt ← prompt used
 ```
 
-All assets live in `public/` inside the project. No CDN or external upload required. The site builder reads `Book.cover` as `/covers/{book-title}/cover/cover_v1.png` (URL path, served from `public/`).
+Served from `public/` — no CDN needed. The site builder reads `Book.cover` as `/covers/{book-title}/cover/cover_v1.png`.
 
 ---
 

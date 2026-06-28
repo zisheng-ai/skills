@@ -172,13 +172,13 @@ Reader body typography matters more than display typography. Get body right befo
 Never use placeholder text, generic emoji, or external icon libraries as the site logo or favicon. Always generate real assets.
 
 **Logo:**
-- Delegate SVG logo generation to Codex first. Fall back to Claude Code's native SVG generation only if Codex is unavailable.
+- Generate SVG logo via Codex (`codex-plugin-cc`). If Codex is unavailable, stop and tell the user — do not fall back to any other method.
 - The logo should reflect the book's genre and visual tone (see `cover-styles.md` for genre references).
 - Default placement: top-left of the nav header. Render as an inline SVG or `<img>` tag pointing to `/logo.svg` in `public/`.
 - Output path: `public/logo.svg`
 
 **Favicon:**
-- Delegate favicon generation to Codex first. Fall back to Claude Code's image generation only if Codex is unavailable.
+- Generate favicon via Codex (`codex-plugin-cc`). If Codex is unavailable, stop and tell the user — do not fall back to any other method.
 - The favicon should be a simplified version of the logo — single motif, high contrast, readable at 16px.
 - Output paths: `public/favicon-32x32.png`, `public/apple-touch-icon.png`, `public/favicon.ico` (convert from 32×32 PNG).
 - Wire up in `src/app/layout.tsx` via Next.js metadata:

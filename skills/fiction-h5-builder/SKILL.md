@@ -58,7 +58,7 @@ All of the following must be true before starting Phase 5. If any check fails, r
 
 | Check | Required location |
 | --- | --- |
-| `content/` has ≥ 5 book directories (initial site launch) | `content/{book-title}/` per book |
+| `content/` has ≥ N book directories, where N = user-specified count or 5 if not specified (initial site launch) | `content/{book-title}/` per book |
 | Each book has ≥ 10 chapters (中篇 minimum) | `content/{book-title}/chapters/` |
 | Each chapter is ≥ 2,000 Chinese characters or 1,500 English words | writing phase 1 |
 | `outline/outline.md` exists and is non-empty | writing phase 0 or import |
@@ -66,7 +66,7 @@ All of the following must be true before starting Phase 5. If any check fails, r
 | `tracking/context.md` exists | writing phase 1 or import |
 | Cover image generated for each book | `public/covers/{book-title}/cover/cover_v1.png` |
 
-Run `/story-cover` if any book is missing a cover image. Do not start site build until all checks pass.
+If any book is missing a cover image, load `references/story-cover.md` and execute cover generation immediately — do not prompt the user to run a command. Do not start site build until all checks pass.
 
 ### Site build phases (always run for publishing)
 
@@ -84,6 +84,27 @@ Optional site build phases (load only when the brief requires):
 - `references/product-surface.md` — when IA or URL structure needs formal documentation
 
 For review and redesign tasks, start at the relevant phase and load only the references covering the failing areas.
+
+## Environment Prerequisites
+
+This skill requires Claude Code and Codex. Before doing anything else, run this check via Bash:
+
+```bash
+which codex >/dev/null 2>&1 && codex --version && echo "CODEX_OK" || echo "CODEX_MISSING"
+```
+
+- If output contains `CODEX_MISSING`: stop immediately and output:
+  ```
+  ERROR: fiction-h5-builder requires Codex CLI on PATH.
+  Install: npm install -g @openai/codex
+  Then re-invoke from a Claude Code session.
+  ```
+- If the Bash tool itself is unavailable (not a Claude Code session): stop immediately and output:
+  ```
+  ERROR: fiction-h5-builder requires Claude Code. Re-invoke from a Claude Code session.
+  ```
+
+Do not proceed to any phase until all checks pass. Do not attempt workarounds.
 
 ## Phase Execution Protocol
 
@@ -109,7 +130,17 @@ Execute phases one at a time. Track progress with the best mechanism available i
 
 Sequential dependencies that cannot be parallelized: 0→1→2→3→4 (writing must precede site build); 5→6 (stack must be chosen before design); 7→8 (data model must be defined before building pages).
 
+**Model selection:**
+
+**If the `Agent` tool is available** (Claude Code — guaranteed by the prerequisite check above): delegate all chapter and prose generation to the Agent tool with `model: 'haiku'`. Never write fiction content directly in the main context. Never prompt the user to switch models manually.
+
+**If the `Agent` tool is not available**: this state cannot be reached — the prerequisite check exits before any phase runs.
+
+Site build phases (5–10) carry no model override and inherit the session model regardless.
+
 **Rules (apply in both modes):**
+- **Within a phase: act autonomously.** Invoke all required tools (image generation, file writes, bash commands) without asking the user. Never surface a "please run X" or "待处理" prompt mid-phase — just do it.
+- **Between phases: pause and confirm.** Only stop to ask the user at phase boundaries, after summarizing what was produced.
 - Parallel-safe phases may be executed in the same turn — announce both at the start and summarize both at the end.
 - Sequential phases still require a user confirmation between them.
 - Load each phase's reference file only when entering that phase.
@@ -140,7 +171,7 @@ Do not deliver a build if any of these are true.
 - Any reader-visible copy mentions AI, Markdown, parser, prompt, skill, or generation.
 
 **Content completeness:**
-- Site launches with fewer than 5 books.
+- Site launches with fewer than N books (N = user-specified count, default 5).
 - Any book has fewer than 10 chapters (not 中篇 level).
 - Any chapter is under 2,000 Chinese characters or 1,500 English words.
 - `outline/outline.md` is missing or empty for any published book.
@@ -190,7 +221,7 @@ Load references only when entering that phase. Do not preload all references at 
 - `story-import.md` — import and split an existing manuscript into project structure.
 - `story-review.md` — multi-perspective structural and prose review.
 - `story-deslop.md` — AI-flavor detection and removal (7 gates).
-- `story-cover.md` + `cover-styles.md` — cover generation via GPT-Image-2 or Claude image generation.
+- `story-cover.md` + `cover-styles.md` — cover generation via Codex (`codex-plugin-cc`).
 
 **Site build references (load for publishing tasks):**
 - `tech-stack.md` — choose the implementation stack before writing any code.
