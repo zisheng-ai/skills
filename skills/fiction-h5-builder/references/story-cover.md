@@ -21,7 +21,7 @@ Check whether `APIYI_API_KEY` is set to choose the generation path:
   \033[33m  Then set: export APIYI_API_KEY="your-key"\033[0m
   ```
 
-Both paths produce a file at `{BOOK_DIR}/cover/cover_v1.png` (or `.svg` for the fallback). Do not block the pipeline in either case.
+Both paths produce a file at `{BOOK_DIR}/cover_v1.png` (or `.svg` for the fallback). Do not block the pipeline in either case.
 
 ## Modes
 
@@ -157,38 +157,31 @@ Offer 2–3 composition variants (close-up portrait / full body / pure scene) on
 
 ```bash
 BOOK_DIR="public/covers/{book-title}"
-mkdir -p "$BOOK_DIR/cover"
+mkdir -p "$BOOK_DIR"
 PROMPT="{full-prompt-from-step-2}"
 
-curl -s https://api.apiyi.com/v1/images/generations \
+IMAGE_URL=$(curl -s https://api.apiyi.com/v1/images/generations \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $APIYI_API_KEY" \
   -d "{
     \"model\": \"gpt-image-2-vip\",
     \"prompt\": $(echo "$PROMPT" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read().strip()))'),
     \"n\": 1,
-    \"size\": \"1024x1536\",
-    \"response_format\": \"b64_json\"
-  }" | python3 -c "
-import sys, json, base64, os
-data = json.load(sys.stdin)
-img = base64.b64decode(data['data'][0]['b64_json'])
-out = '$BOOK_DIR/cover/cover_v1_raw.png'
-os.makedirs(os.path.dirname(out), exist_ok=True)
-open(out, 'wb').write(img)
-print('saved', len(img), 'bytes')
-"
+    \"size\": \"1024x1536\"
+  }" | python3 -c "import sys,json; print(json.load(sys.stdin)['data'][0]['url'])")
+
+curl -s "$IMAGE_URL" -o "$BOOK_DIR/cover_v1_raw.png"
 ```
 
 After generation:
 ```bash
 # Resize to 480×720 for web delivery
-ffmpeg -i "$BOOK_DIR/cover/cover_v1_raw.png" -vf scale=480:720 "$BOOK_DIR/cover/cover_v1.png" -y \
-  || sips -z 720 480 "$BOOK_DIR/cover/cover_v1_raw.png" --out "$BOOK_DIR/cover/cover_v1.png"
-rm "$BOOK_DIR/cover/cover_v1_raw.png"
+ffmpeg -i "$BOOK_DIR/cover_v1_raw.png" -vf scale=480:720 "$BOOK_DIR/cover_v1.png" -y \
+  || sips -z 720 480 "$BOOK_DIR/cover_v1_raw.png" --out "$BOOK_DIR/cover_v1.png"
+rm "$BOOK_DIR/cover_v1_raw.png"
 ```
 
-Write the prompt to `$BOOK_DIR/cover/cover_v1.prompt.txt`.
+Write the prompt to `$BOOK_DIR/cover_v1.prompt.txt`.
 
 On API error: log the response body, skip this book, continue.
 
@@ -200,7 +193,7 @@ Claude writes a styled SVG cover directly. Size: 480×720 viewBox. Must include:
 - Author name in smaller text at bottom
 - A simple symbolic motif (sword, lotus, city silhouette, etc.) as an SVG shape or path
 
-Output path: `{BOOK_DIR}/cover/cover_v1.svg`
+Output path: `{BOOK_DIR}/cover_v1.svg`
 
 Log per book: `\033[33m⚠ SVG fallback — {book-title}\033[0m`
 
@@ -228,15 +221,15 @@ done
 | Composition | Subject prominent, text not blocking key art |
 | Ratio correct | 2:3 portrait |
 
-**Automated pass criteria (unattended):** If `{BOOK_DIR}/cover/cover_v1.png` exists and has portrait dimensions (height > width), mark as passed automatically. Do not regenerate unless the file is missing or obviously corrupt (0 bytes). If regeneration is needed, retry once with the same prompt; on second failure, skip and log the book as needing manual cover review.
+**Automated pass criteria (unattended):** If `{BOOK_DIR}/cover_v1.png` exists and has portrait dimensions (height > width), mark as passed automatically. Do not regenerate unless the file is missing or obviously corrupt (0 bytes). If regeneration is needed, retry once with the same prompt; on second failure, skip and log the book as needing manual cover review.
 
 ## Output Location
 
 ```
-public/covers/{book-title}/cover/cover_v1.png        ← main cover, served as /covers/{book-title}/cover/cover_v1.png
-public/covers/{book-title}/cover/cover_v1.prompt.txt ← prompt used
+public/covers/{book-title}/cover_v1.png        ← main cover, served as /covers/{book-title}/cover_v1.png
+public/covers/{book-title}/cover_v1.prompt.txt ← prompt used
 ```
 
-Served from `public/` — no CDN needed. The site builder reads `Book.cover` as `/covers/{book-title}/cover/cover_v1.png`.
+Served from `public/` — no CDN needed. The site builder reads `Book.cover` as `/covers/{book-title}/cover_v1.png`.
 
 Site logo and favicon are **not** part of this phase. They are generated in Phase 6 (Design plan) via `references/design-system.md`.

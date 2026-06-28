@@ -231,7 +231,7 @@ short/{title}/prose.md        →  Book (one chapter, status: "completed")
 outline/outline.md            →  internal only; not shown to readers
 world/characters/*.md         →  internal only; optional public character page if user requests
 tracking/*.md                 →  internal only
-cover output                  →  Book.cover  (saved to public/covers/<book-title>/cover/cover_v1.png, served as /covers/<book-title>/cover/cover_v1.png)
+cover output                  →  Book.cover  (saved to public/covers/<book-title>/cover_v1.png, served as /covers/<book-title>/cover_v1.png)
 ```
 
 ## Chapter Frontmatter Schema
