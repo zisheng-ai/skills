@@ -272,6 +272,27 @@ Score each candidate from 1 to 5 on all six dimensions. Only candidates averagin
 
 `adsense_safety` is a hard gate: any candidate scoring below 3 here is rejected regardless of other scores.
 
+### GEO (Generative Engine Optimization) vulnerability assessment
+
+Google AI Overviews, Perplexity, and ChatGPT can answer questions directly in the interface, reducing organic click-through rates on affected queries. Assess each niche for AI displacement risk before selecting it.
+
+**Low vulnerability (prefer these):**
+- Interactive tools, calculators, converters — AI cannot replicate the interaction; users must visit the site to get their specific result.
+- Template libraries — users need the actual copyable asset, not a description of it.
+- Directory and comparison hubs with current, verifiable data — AI answers go stale; a maintained directory stays authoritative.
+- Niches requiring real computation with user-specific inputs.
+
+**High vulnerability (proceed with caution):**
+- Simple factual questions ("what is X", "how does Y work") — AI Overviews fully absorb these.
+- Definition pages, glossaries, and explainers without original data or examples.
+- FAQ content on generic topics — likely to appear verbatim in AI answers, leaving no reason to click.
+
+**Mitigation (not a reason to reject, but factor in):**
+- A high-vulnerability niche is still viable if the primary asset is a tool (low vulnerability) and the supporting content serves topical authority. The tool page earns clicks; the supporting pages build authority and are cited by AI.
+- Add `geo_ai_vulnerability` to the niche record: `low | medium | high`.
+
+Record this in `niches.json` (see Output schema).
+
 ---
 
 ## Output
@@ -304,6 +325,7 @@ Write `outputs/niches.json`:
       }
     ],
     "geo_rpm_tier": "high | moderate | low",
+    "geo_ai_vulnerability": "low | medium | high",
     "adsense_policy_check": {
       "banned_category": false,
       "high_risk_category": false,

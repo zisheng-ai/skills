@@ -346,6 +346,37 @@ For AdSense specifically: ad units that inject late cause CLS. Reserve the ad sl
 
 ---
 
+## GEO (Generative Engine Optimization)
+
+AI-powered search interfaces (Google AI Overviews, Perplexity, ChatGPT) increasingly answer queries directly, reducing clicks to organic results. Build content to be cited by these systems — not just ranked by traditional search.
+
+### Content structure for AI citation
+
+- **Lead with a direct answer.** The first paragraph of every supporting page should answer the primary question in 1–3 sentences. AI systems quote the most direct, unambiguous phrasing they find.
+- **Use original data, examples, and computations.** AI systems prefer to cite sources that provide something they cannot generate themselves: real numbers, worked examples with specific inputs and outputs, current-year data, and first-hand observations. Generic summaries are never cited.
+- **Structured definitions.** If a page introduces a term, define it clearly in the first sentence: "X is [definition]." This format is directly quotable by AI answers.
+- **FAQ schema on every supporting page.** FAQ content is the highest-leverage GEO investment: it surfaces in Google's "People Also Ask" boxes AND is structured for AI to parse and quote. Every page should end with 3–5 specific, answered questions.
+- **Cite sources within the content.** Pages that reference external authoritative sources (government data, academic studies, official documentation) are treated as more trustworthy by AI systems. Link out to sources you reference.
+
+### The tool moat
+
+Interactive tools are the strongest GEO defense. AI systems can describe how to use a calculator but cannot *be* a calculator — users who need their specific result must still visit the page. Every site in this skill has a primary tool for exactly this reason.
+
+For tool pages specifically:
+- The tool itself is the citation target. AI answers will say "use [site name]'s [tool name] to calculate this." Ensure the tool name is consistently stated on the page.
+- Worked examples (with real inputs and outputs) are cited more than generic descriptions. Include at least 3 examples with distinct scenarios.
+
+### GEO-vulnerable content to monitor
+
+Flag these page types as at-risk after launch and watch their impressions in GSC:
+- Simple definition pages ("what is X")
+- Pages where the primary keyword already shows a fully-resolving AI Overview
+- Short FAQ pages without original data
+
+If impressions collapse on a GEO-vulnerable page within 3–6 months, the page needs either a tool angle, original data, or consolidation into a deeper resource.
+
+---
+
 ## Site Identity Assets
 
 Generate favicon and logo before writing any page component so they embed from day one.

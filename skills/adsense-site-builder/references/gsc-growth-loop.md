@@ -108,11 +108,50 @@ Act on these immediately:
 
 | Signal | Likely Cause | Action |
 | --- | --- | --- |
-| Sudden drop in clicks on a specific page | Google update, competitor improvement, or content freshness issue | Audit the page against current top-3 results and improve |
+| Sudden drop in clicks on a specific page | Google update, competitor improvement, content freshness, or AI Overview displacement | Check the SERP for that page's keyword — if an AI Overview now appears, see GEO section below |
 | "Discovered - currently not indexed" in GSC | Google crawled the page but chose not to index it — thin content likely | Improve content depth and request re-indexing |
-| High impressions, near-zero clicks | Page ranking for irrelevant queries or title mismatch | Check what queries are generating impressions; rewrite title to match actual intent |
+| High impressions, near-zero clicks | Page ranking for irrelevant queries, title mismatch, or AI Overview absorbing intent | Check queries driving impressions; if an AI Overview is present, optimize to be cited in it |
 | Core Web Vitals failing in GSC | Performance regression, likely from a new dependency or image | Run PageSpeed Insights and fix the regressing metric |
 | AdSense invalid traffic warning | Traffic source quality issue | Audit traffic sources; remove any non-organic channel that may be sending low-quality visits |
+
+---
+
+## GEO (Generative Engine Optimization) — Monthly AI Overview Audit
+
+AI Overviews expand over time — a keyword without an AI Overview today may have one in 3 months. Run this check monthly alongside the standard GSC loop.
+
+### Step 1: Identify AI Overview exposure
+
+For every page with a month-over-month click decline greater than 20%:
+1. Search the page's primary keyword in an incognito window.
+2. Check whether a Google AI Overview now appears above organic results.
+3. If yes — is the site being cited in the Overview? Check the Overview's source links.
+
+### Step 2: Respond by signal
+
+| AI Overview status | Action |
+| --- | --- |
+| No AI Overview | Drop is from another cause — investigate ranking, CWV, or content freshness |
+| Overview present, site is cited | The citation is driving brand impressions even if organic clicks fell. Maintain the content quality that earned the citation. |
+| Overview present, site is NOT cited | Optimize for citation: add a clear 1–3 sentence answer at the top of the page, add or improve FAQ schema, include original data or examples AI would prefer to attribute |
+| Overview fully resolves the query, no citation possible | Accept organic CTR loss. Mitigate by: adding an interactive tool to the page (forces a visit), shifting SEO weight to tool-angle keywords for this topic |
+
+### Step 3: GEO-proof new content
+
+When building new pages in the monthly growth loop (View C — content gaps):
+- Check if the target query shows an AI Overview before writing the page.
+- If it does: lead with a direct quotable answer, include original worked examples, add FAQ schema.
+- If it does not: build normally, but monitor for AI Overview appearance at the next monthly check.
+
+### What GEO cannot take
+
+Protect investment here — AI systems cannot displace:
+- Interactive tools that produce user-specific results
+- Template libraries where users need the actual copyable asset
+- Directories with real, verified, current listings
+- Original research, proprietary data, or first-hand tested content
+
+If the site's primary asset is a tool, GEO risk is structurally low. Supporting content may lose clicks to AI Overviews but the tool page is protected.
 
 ---
 

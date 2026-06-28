@@ -77,6 +77,22 @@ Targets the broadest keyword in the niche. Summarizes the site's value and links
 
 ---
 
+## GEO (Generative Engine Optimization) — AI Overview Check
+
+Before finalizing any page, search its primary keyword and check whether Google displays an AI Overview above organic results.
+
+| Signal | Implication | Action |
+| --- | --- | --- |
+| No AI Overview | Safer for organic CTR | Proceed as planned |
+| AI Overview present, partial answer | Content could be cited by AI | Optimize to appear *in* the Overview: clear answer in the first paragraph, FAQ schema, original data cited |
+| AI Overview fully resolves the query | Organic CTR may be near zero | Deprioritize or replace with a tool-angle that AI cannot replicate |
+
+**Rule:** if more than half of the supporting page keywords trigger fully-resolving AI Overviews, the cluster is over-weighted on informational content. Shift toward tool-keyword variants (e.g. "hourly rate calculator" beats "how to calculate hourly rate") — interactive tools are not displaceable by AI answers.
+
+Mark each page in `site-map.json` with `"ai_overview": true | false` after checking the live SERP for its primary keyword.
+
+---
+
 ## Page Selection Rules
 
 - Each page must satisfy a **distinct search intent** that differs from every other page.
