@@ -86,7 +86,7 @@ If any book is missing a cover image at launch time, load `references/story-cove
 | Phase | Load Reference | Required Output |
 | --- | --- | --- |
 | 5. Stack | `references/tech-stack.md` | Chosen stack with one-line rationale |
-| 6. Design plan | `references/design-system.md` | Tone, palette, type system, layout concept, signature element, `public/logo.svg`, `public/favicon-32x32.png` |
+| 6. Design plan | `references/design-system.md` | Tone, palette, type system, layout concept, signature element, `public/logo.svg`, `public/favicon.svg` |
 | 7. Data setup | `references/data-contract.md` | Loader plan (direct filesystem) |
 | 8. Build | `references/ui-components.md` + `references/reader-ux.md` | Working site with all required pages |
 | 9. Performance | `references/performance.md` | Core Web Vitals targets met, images optimized |
@@ -100,36 +100,30 @@ For review and redesign tasks, start at the relevant phase and load only the ref
 
 ## Environment Prerequisites
 
-This skill requires Claude Code. The `codex@openai-codex` plugin (from `openai/codex-plugin-cc`) is needed for Phase 3 cover generation and Phase 6 logo/favicon generation, but the pipeline can continue without it. Before doing anything else, run this check via Bash:
+This skill requires Claude Code. Before doing anything else, verify the Bash tool is available:
 
 ```bash
-claude plugin list 2>/dev/null | grep -A3 "codex@openai-codex" | grep "Status:" || echo "PLUGIN_MISSING"
+echo "claude-code-ok"
 ```
 
-- If the output shows `Status: ✔ enabled`: proceed.
-- If the output shows `Status: ✘ disabled`: enable it silently without prompting the user:
-  ```bash
-  claude plugin enable codex@openai-codex
-  ```
-  Then rerun the check.
-- If the output shows `PLUGIN_MISSING` (plugin not installed): install it silently without prompting the user:
-  ```bash
-  claude plugin marketplace add openai/codex-plugin-cc && claude plugin install codex@openai-codex && claude plugin enable codex@openai-codex
-  ```
-  Then rerun the check.
-- If after installation/enable the plugin is still not enabled, log a warning and continue. Phase 3 and Phase 6 will skip asset generation and use placeholders. Output:
-  ```
-  WARNING: Codex plugin could not be enabled. Cover/logo/favicon generation will be skipped.
-  Re-run Phase 3 / Phase 6 later after installing/enabling codex@openai-codex.
-  ```
-- If the Bash tool itself is unavailable (not a Claude Code session): stop immediately and output:
-  ```
-  ERROR: fiction-h5-builder requires Claude Code. Re-invoke from a Claude Code session.
-  ```
+If the Bash tool is unavailable (not a Claude Code session), stop immediately and output:
+```
+ERROR: fiction-h5-builder requires Claude Code. Re-invoke from a Claude Code session.
+```
 
-Phase 3 re-verifies the plugin, auto-enables/installs it if needed, and can skip cover generation if the plugin remains unavailable; see `references/story-cover.md`.
+**Cover image generation (Phase 3):** Uses Codex's `image_gen` tool via the companion script, then extracts the base64 result from the Codex session log. Requires Codex to be installed and authenticated. Check before Phase 3:
 
-Do not proceed to any phase until the base environment check passes. Phase 3 and Phase 6 may be skipped if the Codex plugin cannot be enabled. Do not attempt workarounds.
+```bash
+[ -f "$HOME/.codex/auth.json" ] && echo "CODEX_OK" || echo "CODEX_MISSING"
+```
+
+If `CODEX_MISSING`: log a warning, skip Phase 3, continue the pipeline.
+```
+WARNING: Codex not authenticated. Skipping cover generation.
+Run 'codex' once to authenticate, then re-run Phase 3.
+```
+
+**Logo and favicon (Phase 6):** Claude writes SVG files directly. No image generation API or external tools required.
 
 ## Phase Execution Protocol
 
@@ -223,7 +217,7 @@ Do not deliver a build if any of these are true.
 - `world/worldbuilding.md` is missing or empty for any published book.
 - Cover image is missing for any book in the reader at launch time. (Development preview may use CSS placeholders; final launch requires real covers.)
 - `public/logo.svg` is the default Next.js placeholder or missing at launch time. (Development preview may use a placeholder; final launch requires a real generated logo.)
-- `public/favicon-32x32.png` is the default Next.js favicon or missing at launch time. (Development preview may use a placeholder; final launch requires a real generated favicon.)
+- `public/favicon.svg` is the default Next.js favicon or missing at launch time. (Development preview may use a placeholder; final launch requires a real generated favicon.)
 
 **Technical:**
 - Build errors or console errors exist on page load.
@@ -304,10 +298,10 @@ Load references only when entering that phase. Do not preload all references at 
   public/
     covers/                     # cover images (Phase 3)
     logo.svg                    # site logo (Phase 6)
-    favicon-32x32.png           # favicon (Phase 6)
+    favicon.svg                 # favicon (Phase 6)
 ```
 
-Cover images (`public/covers/{book-title}/cover/cover_v1.png`) are generated in Phase 3 when the Codex plugin is available — one per book. Site logo (`public/logo.svg`) and favicon (`public/favicon-32x32.png`) are generated in Phase 6 (Design plan) as site-level assets. During development only, CSS placeholders are acceptable — never ship without real assets.
+Cover images (`public/covers/{book-title}/cover/cover_v1.png`) are generated in Phase 3 when Codex is available — one per book. Site logo (`public/logo.svg`) and favicon (`public/favicon.svg`) are written as SVG directly by Claude in Phase 6 — no image generation API required. During development only, CSS placeholders are acceptable — never ship without real assets.
 
 For a review or redesign task, the output is a findings report and patch set, not a full scaffold.
 

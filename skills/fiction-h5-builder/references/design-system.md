@@ -171,33 +171,30 @@ Reader body typography matters more than display typography. Get body right befo
 
 Never use placeholder text, generic emoji, or external icon libraries as the site logo or favicon. Always generate real assets for launch.
 
-**Parallel generation:** Generate the logo and favicon in parallel using the `codex:codex-rescue` Agent (same pattern as cover generation in `story-cover.md` Step 3). Both are independent and can run concurrently.
+**Logo:** Write SVG directly — Claude generates the SVG code based on genre and tone. No image generation API needed.
 
-```js
-// Substitute {genre} with the actual detected genre before spawning.
-await Promise.all([
-  Agent({
-    subagent_type: "codex:codex-rescue",
-    prompt: `--fresh Generate an SVG site logo for a Chinese web fiction site. Genre: {genre}. Save to public/logo.svg. Do not read any files or search the filesystem.`
-  }),
-  Agent({
-    subagent_type: "codex:codex-rescue",
-    prompt: `--fresh Generate favicon assets for a Chinese web fiction site. Genre: {genre}. Single-motif icon, high contrast, readable at 16px. Save a 32x32 PNG to public/favicon-32x32.png and a 180x180 PNG to public/apple-touch-icon.png. Do not read any files or search the filesystem.`
-  })
-])
+```bash
+mkdir -p public
+# Claude writes the SVG content directly to this file
+cat > public/logo.svg << 'SVG'
+{claude-generated SVG markup for the site logo}
+SVG
 ```
 
-**Logo:**
-- Generate SVG logo via the `codex@openai-codex` Claude Code plugin. Codex will produce `public/logo.svg`.
-- If Codex is unavailable or the generation fails, log a warning and continue. Use a minimal inline SVG placeholder during development, but never ship the default Next.js logo or a missing logo in production.
-- The logo should reflect the book's genre and visual tone (see `cover-styles.md` for genre references).
-- Default placement: top-left of the nav header. Render as an inline SVG or `<img>` tag pointing to `/logo.svg` in `public/`.
-- Output path: `public/logo.svg`
+The SVG should reflect the site's visual register and genre (see `cover-styles.md`). Keep it simple: a single motif (book, quill, ink drop, sword, portal, etc.) that works at both 32px and full nav-bar size. Output path: `public/logo.svg`.
 
-**Favicon:**
-- Generate favicon via the `codex@openai-codex` Claude Code plugin. Codex will produce the favicon assets.
-- If Codex is unavailable or the generation fails, log a warning and continue. Use a simple generated placeholder during development, but never ship the default Next.js favicon in production.
-- The favicon should be a simplified version of the logo — single motif, high contrast, readable at 16px.
+**Favicon:** Write a second SVG directly — a simplified single-motif version of the logo, optimized for small sizes (32px). Reference it as an SVG favicon in `app/layout.tsx`:
+
+```tsx
+// app/layout.tsx
+export const metadata = {
+  icons: {
+    icon: '/favicon.svg',
+  },
+}
+```
+
+Save to `public/favicon.svg`. Modern browsers support SVG favicons natively — no PNG conversion needed. Never ship the default Next.js favicon.
 - Output paths: `public/favicon-32x32.png`, `public/apple-touch-icon.png`, `public/favicon.ico` (convert from 32×32 PNG).
 - Wire up in `src/app/layout.tsx` via Next.js metadata:
 
