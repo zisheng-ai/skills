@@ -16,12 +16,12 @@ Pick one before starting. The entire story structure flows from this choice.
 
 | Target emotion | Best for | Difficulty | Market heat |
 | --- | --- | --- | --- |
-| 意难平 (lingering regret) | Romance, missed connection | Medium | High |
-| 反转震撼 (twist shock) | Suspense, identity reversal | Hard | High |
-| 爽感释放 (cathartic release) | Face-slapping, reversal of fortune | Easy | Medium |
-| 治愈温暖 (healing warmth) | Growth, family, friendship | Medium | Medium |
-| 细思极恐 (creeping dread) | Psychological, suspense | Hard | Low-Medium |
-| 共鸣感动 (resonant emotion) | Realist, workplace, marriage | Medium | High |
+| Lingering regret (意难平) | Romance, missed connection | Medium | High |
+| Twist shock (反转震撼) | Suspense, identity reversal | Hard | High |
+| Cathartic release (爽感释放) | Face-slapping, reversal of fortune | Easy | Medium |
+| Healing warmth (治愈温暖) | Growth, family, friendship | Medium | Medium |
+| Creeping dread (细思极恐) | Psychological, suspense | Hard | Low-Medium |
+| Resonant emotion (共鸣感动) | Realist, workplace, marriage | Medium | High |
 
 ## Writing Process
 
@@ -30,11 +30,11 @@ Pick one before starting. The entire story structure flows from this choice.
 Answer before writing any prose:
 
 ```
-目标情绪: {从上表选一}
-一句话梗概: {主角 + 困境 + 反转 + 情绪落点}
-核心反转: {一句话描述}
-开头钩子: {开头3句，必须包含悬念或冲突}
-结尾余韵: {最后一句，必须有回味或震撼}
+Target emotion: {choose one from the table above}
+One-line premise: {protagonist + predicament + reversal + emotional landing}
+Core twist: {one sentence}
+Opening hook: {first 3 sentences — must contain suspense or conflict}
+Closing echo: {final sentence — must have resonance or impact}
 ```
 
 Save as `content/短篇/{短篇标题}/设定.md` from the project root.
@@ -44,13 +44,13 @@ Save as `content/短篇/{短篇标题}/设定.md` from the project root.
 Write a beat-level outline with section markers. Target 6–12 beats for 8,000–20,000 characters.
 
 ```md
-### 1. 钩子 — {action/conflict that hooks immediately}
-### 2. 建立 — {introduce character situation, raise stakes}
-### 3. 铺垫1 — {first misdirection or setup detail}
-### 4. 铺垫2 — {second misdirection, tighten tension}
-### 5. 假结局 — {appears to resolve, but raises new question}
-### 6. 反转 — {the twist, from a single unambiguous moment}
-### 7. 余韵 — {emotional landing, last image or line}
+### 1. Hook — {action/conflict that hooks immediately}
+### 2. Setup — {introduce character situation, raise stakes}
+### 3. Misdirection 1 — {first misdirection or setup detail}
+### 4. Misdirection 2 — {second misdirection, tighten tension}
+### 5. False resolution — {appears to resolve, but raises new question}
+### 6. Twist — {the twist, from a single unambiguous moment}
+### 7. Resonance — {emotional landing, last image or line}
 ```
 
 Save as `content/短篇/{短篇标题}/小节大纲.md` from the project root.
@@ -79,7 +79,7 @@ If the user has a reference book to emulate:
 
 1. Read `{短篇标题}/对标/{书名}/拆文报告.md` and `写作手法.md`.
 2. Extract: twist positioning, pacing of misdirection, sentence-level technique.
-3. Add a brief "对标摘要" section at the bottom of `设定.md`.
+3. Add a brief "Reference Summary" section at the bottom of `设定.md`.
 4. During Phase 3, pull 1–2 specific techniques per section from the摘要 — do not copy, emulate.
 
 If no reference exists, use the genre emotion table to select a structural template before writing.

@@ -30,7 +30,7 @@ Run the applicable gates based on severity (see Severity Levels below).
 | Moderate | 6–15 banned words/1,000 chars, or 3+ consecutive templates | A + B + C + D + G |
 | Severe | >15 banned words/1,000 chars, or 4+ of the 7 Gates flagged | All 7 Gates + targeted rewrites |
 
-Deletion cap by severity: Mild ≤15%, Moderate ≤25%, Severe ≤35% of the passage. Mark anything borderline `[需复核]` rather than deleting.
+Deletion cap by severity: Mild ≤15%, Moderate ≤25%, Severe ≤35% of the passage. Mark anything borderline `[NEEDS REVIEW]` rather than deleting.
 
 ## Natural Writing Benchmarks
 
@@ -58,9 +58,9 @@ Deletion cap by severity: Mild ≤15%, Moderate ≤25%, Severe ≤35% of the pas
 
 ## Three-Pass Method
 
-- **Pass 1 (去泛化)**: Gates A, C (abstract emotion), D (uniform rhythm), G (narrator intrusion)
-- **Pass 2 (去书面化)**: Gates A (literary register), B (sentence templates)
-- **Pass 3 (回自然感)**: Gates D (short/long rhythm mix), E (dialogue differentiation), F (ending de-moralization), add sensory detail
+- **Pass 1 — Deabstract**: Gates A, C (abstract emotion), D (uniform rhythm), G (narrator intrusion)
+- **Pass 2 — Deliteralize**: Gates A (literary register), B (sentence templates)
+- **Pass 3 — Restore natural voice**: Gates D (short/long rhythm mix), E (dialogue differentiation), F (ending de-moralization), add sensory detail
 
 - Mild: Pass 1 only
 - Moderate: Pass 1 + Pass 2
@@ -73,16 +73,16 @@ If the project root contains `.deslop-whitelist`, skip flagging any phrase that 
 ## Deslop Report Format
 
 ```
-## 去AI味报告
+## De-Slop Report
 
-AI味等级: {轻度/中度/重度}
-执行 Gates: {A B C ...}
-删除比例: {X%}
+AI flavor level: {mild / moderate / severe}
+Gates applied: {A B C ...}
+Deletion rate: {X%}
 
-### 修改清单
-| 位置 | Gate | 原文 | 改文 | 说明 |
-|------|------|------|------|------|
+### Change Log
+| Location | Gate | Original | Revised | Note |
+|----------|------|----------|---------|------|
 
-### [需复核]
+### [NEEDS REVIEW]
 {Any passages marked for human review rather than auto-rewrite}
 ```

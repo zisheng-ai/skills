@@ -1,6 +1,6 @@
 ---
 name: fiction-h5-builder
-description: write fiction and build the reading site end-to-end. use when the user asks to write a novel or short story (长篇小说, 短篇小说, write chapters, continue writing, story setup, import a manuscript, review prose, remove AI flavor), or asks for a mobile-first fiction reading site, web novel H5, work list/detail/catalog/reader pages, markdown chapters, multilingual reading sites in english/spanish/japanese/korean, or a simple fiction site for social traffic campaigns. do not use for creator dashboards, ranking systems, bookshelf platforms, or reader community features unless the user explicitly asks for those.
+description: write fiction and build the reading site end-to-end. use when the user asks to write a novel or short story (long-form novel / 长篇小说, short-form story / 短篇小说, write chapters, continue writing, story setup, import a manuscript, review prose, remove AI flavor), or asks for a mobile-first fiction reading site, web novel H5, work list/detail/catalog/reader pages, markdown chapters, multilingual reading sites in english/spanish/japanese/korean, or a simple fiction site for social traffic campaigns. do not use for creator dashboards, ranking systems, bookshelf platforms, or reader community features unless the user explicitly asks for those.
 ---
 
 # Fiction H5 Builder

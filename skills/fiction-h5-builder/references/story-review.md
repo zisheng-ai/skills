@@ -115,13 +115,13 @@ Worst passages: {location + problem + fix direction}
 Read only the files relevant to the review scope:
 
 ```
-必读（如存在）:
-  追踪/伏笔.md          — to check unresolved threads
-  追踪/时间线.md         — to check timeline coherence
-  追踪/角色状态.md       — to check character consistency
+Required (if they exist):
+  追踪/伏笔.md                     — to check unresolved threads
+  追踪/时间线.md                    — to check timeline coherence
+  追踪/角色状态.md                  — to check character consistency
 
-按需读:
-  设定/角色/{名}.md      — if character voice/behavior is in question
-  大纲/大纲.md           — if structural pacing is in question
-  对标/{书名}/拆文报告.md — if comparing against reference book standard
+Load only if needed:
+  设定/角色/{character-name}.md     — if character voice/behavior is in question
+  大纲/大纲.md                      — if structural pacing is in question
+  对标/{book-title}/拆文报告.md     — if comparing against reference book standard
 ```

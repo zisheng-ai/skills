@@ -30,7 +30,7 @@ Confirm detections with the user before proceeding.
 | --- | --- | --- |
 | Explicit chapter markers | Multiple discrete chapters | Single file or ≤3 chapters |
 | Word count | >30,000 characters | ≤30,000 characters |
-| User declaration | "长篇" / "长篇小说" | "短篇" / "短故事" |
+| User declaration | "long-form" / "长篇" / "长篇小说" | "short-form" / "短篇" / "短故事" |
 
 User declaration overrides auto-detection. Confirm classification with the user.
 
@@ -108,7 +108,7 @@ When the source is a single file with chapter markers:
 4. Add frontmatter if chapter title is available:
    ```md
    ---
-   title: "章名"
+   title: "{chapter-title}"
    chapter: N
    ---
    ```

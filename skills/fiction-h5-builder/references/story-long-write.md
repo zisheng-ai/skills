@@ -12,14 +12,14 @@ Load this reference when the user asks to write, continue, or revise long-form n
 ## What to Read Before Each Chapter
 
 ```
-必读：
-  追踪/上下文.md        — previous chapter ending + open threads
-  大纲/大纲.md          — this chapter's role in the arc (find by chapter number)
+Required:
+  追踪/上下文.md                   — previous chapter ending + open threads
+  大纲/大纲.md                     — this chapter's role in the arc (find by chapter number)
 
-按需读：
-  设定/角色/{涉及角色}.md  — only characters appearing in this chapter
-  追踪/伏笔.md           — only if this chapter resolves or plants a foreshadow
-  对标/{书名}/写作手法.md  — only if a reference technique is needed
+Load only if needed:
+  设定/角色/{character-name}.md    — only characters appearing in this chapter
+  追踪/伏笔.md                     — only if this chapter resolves or plants a foreshadow
+  对标/{book-title}/写作手法.md    — only if a reference technique is needed
 ```
 
 ## Single Chapter Writing Process
@@ -45,7 +45,7 @@ title: "第一章：夜渡"
 chapter: 1
 ---
 
-正文从这里开始，无空行开头。
+Prose starts here — no leading blank line.
 ```
 
 Frontmatter is optional but recommended. The site loader falls back to filename if `title` is absent.
@@ -68,18 +68,18 @@ Prose formatting rules:
 ## Context Handoff (`追踪/上下文.md` template)
 
 ```md
-## 上一章结尾
-{最后一个动作或对话，1-3句}
+## Last Chapter Ending
+{Final action or dialogue — 1–3 sentences}
 
-## 下一章起点
-{从哪个动作/场景接续}
+## Next Chapter Start
+{Which action or scene to continue from}
 
-## 开放线索
-- {伏笔/悬念1}
-- {伏笔/悬念2}
+## Open Threads
+- {foreshadow/suspense 1}
+- {foreshadow/suspense 2}
 
-## 下一章目标情绪
-{紧张/释放/震惊/意难平/温暖}
+## Target Emotion for Next Chapter
+{tension / release / shock / lingering regret / warmth}
 ```
 
 Always overwrite `上下文.md` after each chapter. Do not append history — the file is a rolling handoff.
