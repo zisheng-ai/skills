@@ -63,7 +63,7 @@ Keep this pass minimal. Do not run a full quality rewrite here; that is Phase 4.
 
 ### Multiple books in parallel
 
-Spawn one top-level Agent per book. Pass only that book's `world/`, `outline/`, and character files so each agent starts with a minimal context. Books share no state and can complete in any order.
+Spawn one top-level Agent per book (model: haiku). Pass only that book's `world/`, `outline/`, and character files so each agent starts with a minimal context. Books share no state and can complete in any order.
 
 ## Single Chapter Writing Process
 

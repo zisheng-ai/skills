@@ -58,7 +58,8 @@ Writing and site build run on two independent tracks that start together after P
 
 | Track | Phases | Can start when |
 | --- | --- | --- |
-| Writing | 1 → 2 → 3 → 4 | Phase 0 complete |
+| Writing (new) | 1 → 3 → 4 | Phase 0 complete |
+| Writing (import) | 2 → 3 → 4 | Phase 0 complete |
 | Site setup | 5 → 6 → 7 | Phase 0 complete |
 | Site build | 8 → 9 → 10 | Track "Site setup" complete AND ≥ 1 book with ≥ 10 chapters exists |
 

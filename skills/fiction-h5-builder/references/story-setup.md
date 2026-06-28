@@ -105,6 +105,8 @@ Verify all of the following before go-live:
 - [ ] `outline/outline.md` is non-empty for each book.
 - [ ] `world/worldbuilding.md` is non-empty for each book.
 - [ ] `tracking/context.md` populated for each book.
-- [ ] `/story-cover` has been run: `public/covers/{book-title}/cover/cover_v1.png` for every book, `public/logo.svg`, `public/favicon-32x32.png` all exist.
+- [ ] Cover image generated for each book (Phase 3): `public/covers/{book-title}/cover/cover_v1.png` for every book.
+- [ ] Site logo generated (Phase 6): `public/logo.svg`.
+- [ ] Favicon generated (Phase 6): `public/favicon-32x32.png`.
 
-These are hard requirements — site build is blocked until all pass.
+These are launch requirements only — they do not block Phase 5 site build. Development preview may run without them.

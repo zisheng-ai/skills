@@ -171,7 +171,19 @@ Reader body typography matters more than display typography. Get body right befo
 
 Never use placeholder text, generic emoji, or external icon libraries as the site logo or favicon. Always generate real assets for launch.
 
-**Parallel generation:** Generate the logo and favicon in parallel using the `codex@openai-codex` plugin. Both assets are independent and can be produced in one batch call to Codex.
+**Parallel generation:** Generate the logo and favicon in parallel using the `codex:codex-rescue` Agent (same pattern as cover generation in `story-cover.md` Step 3). Both are independent and can run concurrently.
+
+```js
+await Promise.all([
+  Agent({
+    subagent_type: "codex:codex-rescue",
+    prompt: `--fresh Generate an SVG site logo for a Chinese web fiction site. Genre: {genre}. Save to public/logo.svg. Do not read any files or search the filesystem.`
+  }),
+  Agent({
+    subagent_type: "codex:codex-rescue",
+    prompt: `--fresh Generate a 32x32 PNG favicon for a Chinese web fiction site. It should be a simplified single-motif icon matching the genre {genre}. High contrast, readable at 16px. Save to public/favicon-32x32.png. Do not read any files or search the filesystem.`
+  })
+])
 
 **Logo:**
 - Generate SVG logo via the `codex@openai-codex` Claude Code plugin. Codex will produce `public/logo.svg`.

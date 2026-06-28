@@ -38,7 +38,7 @@ Do not fall back to any other image generation method.
 | **Batch** | Initial site launch — all books written, Pre-Build Gate pending | Covers for every book in `content/` |
 | **Single-book** | Adding one new book to an existing site | Cover for one book only (logo/favicon already exist) |
 
-**Default to Batch mode at initial launch.** The Pre-Build Gate requires covers for all ≥5 books. Single-book mode is for incremental updates only.
+**Default to Batch mode at initial launch.** The Pre-Launch Gate requires covers for all ≥5 books. Single-book mode is for incremental updates only.
 
 ---
 
@@ -72,17 +72,17 @@ If the pen name cannot be found in any of these files, substitute `"The Author"`
 
 ### B3 — Generate covers in parallel
 
-Spawn **one Codex task per book**, all running in parallel. A single Codex task can only issue one `image_gen` call at a time, so putting multiple covers in one task serializes generation. Parallel tasks generate multiple covers concurrently.
+Spawn **one `codex:codex-rescue` Agent per book** (via the Agent tool), all running in parallel. A single Codex session can only issue one `image_gen` call at a time, so one Agent per book is required to achieve true concurrent generation.
 
 For each book in `BOOKS`:
 1. Read `content/{book-title}/world/worldbuilding.md` to extract genre and tone.
 2. Run genre detection (Step 1.5 below) to select cover style.
 3. Build the cover prompt (Step 2 below) substituting the book's title, genre, and characters.
-4. Spawn a Codex task with the direct `image_gen` invocation from Step 3.
-5. As each task finishes, verify the output file exists.
+4. Spawn an Agent using the invocation from Step 3 (preferred: `codex:codex-rescue`).
+5. As each Agent finishes, verify the output file exists.
 6. Log: `✓ {book-title} — cover saved` or `⚠ {book-title} — cover skipped: {reason}`.
 
-Run all tasks in the background and `wait` for completion. Do not spawn them sequentially.
+Spawn all Agents in parallel. Do not await one before starting the next.
 
 If the Codex plugin is unavailable, log the failure and skip Phase 3 entirely. Missing covers can be retried later.
 
@@ -174,12 +174,15 @@ Report the final file path.`
 For batch mode, spawn **one Agent per book in parallel**. Each agent is independent and issues one `image_gen` call. Do not put all books into a single agent call — that forces sequential generation.
 
 ```js
-await Promise.all(books.map(book =>
+// BOOKS is a string array of content/ directory names (same value as the URL slug)
+await Promise.all(BOOKS.map(bookSlug =>
   Agent({
     subagent_type: "codex:codex-rescue",
     prompt: `--fresh Use the built-in image_gen tool directly. Do not read files or search.
-Generate one 1024x1536 portrait PNG cover for Chinese web novel '${book.title}' ...
-Copy to public/covers/${book.slug}/cover/cover_v1.png and write prompt to ...cover_v1.prompt.txt.`
+Generate one 1024x1536 portrait PNG cover for the Chinese web novel whose directory is '${bookSlug}'.
+Author: '{pen-name}'. Genre/style: {genre-style}. {prompt-body}.
+Copy the image to public/covers/${bookSlug}/cover/cover_v1.png and write the prompt to public/covers/${bookSlug}/cover/cover_v1.prompt.txt.
+Report the final file path.`
   })
 ))
 ```
@@ -219,25 +222,15 @@ If the call fails, log the error, skip this book's cover, and continue with the 
 | Composition | Subject prominent, text not blocking key art |
 | Ratio correct | 2:3 portrait |
 
-If unsatisfied: adjust composition variant, color palette, or character description and regenerate.
-
-## Output location
-
-```
-public/covers/{book-title}/cover/cover_v1.png        ← served as /covers/{book-title}/cover/cover_v1.png
-public/covers/{book-title}/cover/cover_v1.prompt.txt ← prompt used
-```
-
-Served from `public/` — no CDN needed. The site builder reads `Book.cover` as `/covers/{book-title}/cover/cover_v1.png`.
-
----
+**Automated pass criteria (unattended):** If `{BOOK_DIR}/cover/cover_v1.png` exists and has portrait dimensions (height > width), mark as passed automatically. Do not regenerate unless the file is missing or obviously corrupt (0 bytes). If regeneration is needed, retry once with the same prompt; on second failure, skip and log the book as needing manual cover review.
 
 ## Output Location
 
 ```
 public/covers/{book-title}/cover/cover_v1.png        ← main cover, served as /covers/{book-title}/cover/cover_v1.png
 public/covers/{book-title}/cover/cover_v1.prompt.txt ← prompt used
-public/covers/{book-title}/cover/cover_v1_upload.png ← platform-cropped version (if UPLOAD_SIZE set)
 ```
+
+Served from `public/` — no CDN needed. The site builder reads `Book.cover` as `/covers/{book-title}/cover/cover_v1.png`.
 
 Site logo and favicon are **not** part of this phase. They are generated in Phase 6 (Design plan) via `references/design-system.md`.
