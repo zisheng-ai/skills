@@ -254,7 +254,7 @@ Load references only when entering that phase. Do not preload all references at 
 - `story-import.md` — import and split an existing manuscript into project structure.
 - `story-review.md` — multi-perspective structural and prose review.
 - `story-deslop.md` — AI-flavor detection and removal (7 gates).
-- `story-cover.md` + `cover-styles.md` — cover generation via `codex-companion.mjs` + session log extraction.
+- `story-cover.md` + `cover-styles.md` — cover generation via apiyi `gpt-image-2-vip` (SVG fallback if no API key).
 
 **Site build references (load for publishing tasks):**
 - `tech-stack.md` — choose the implementation stack before writing any code.

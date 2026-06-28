@@ -183,7 +183,7 @@ Pick the template that best matches the book's core tension. These mirror the re
 
 ## Prompt Quality Checklist
 
-Before sending a prompt to image_gen, verify:
+Before sending a prompt to the image API, verify:
 - [ ] Render style keyword included (`photorealistic`, `hyperrealistic 3D render`, `cinematic`)
 - [ ] Color palette specified
 - [ ] Lighting description included

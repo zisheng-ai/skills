@@ -106,7 +106,7 @@ Must have before proceeding: **book title**, **author pen name**, **BOOK_DIR**.
 
 Derive all three from project files:
 - **Book title**: directory name under `content/`
-- **Pen name**: see B2 resolution order above (`books.ts` → worldbuilding → context → placeholder)
+- **Pen name**: see B2 resolution order above (worldbuilding → context → books.ts → placeholder)
 - **BOOK_DIR**: `public/covers/{book-title}/`
 
 Do not ask the user. Do not fabricate values that cannot be derived.
@@ -206,15 +206,18 @@ Log per book: `\033[33m⚠ SVG fallback — {book-title}\033[0m`
 
 ### B3 batch flow
 
-For each book in `BOOKS`, run Step 3 in sequence. API calls can be fired in rapid succession since each call is independent, but write sequentially to avoid filesystem races:
+For each book in `BOOKS`, run Steps 1–3 in sequence. Build the prompt inline per book — do not pre-build a map:
 
 ```bash
 for bookSlug in "${BOOKS[@]}"; do
   BOOK_DIR="public/covers/${bookSlug}"
-  PROMPT="${resolvedPrompts[$bookSlug]}"
-  # run apiyi curl or SVG fallback per above
+  # Steps 1.5 + 2: detect genre, build PROMPT string for this book
+  PROMPT="$(build_cover_prompt "$bookSlug")"  # inline per Step 2 template
+  # Step 3: apiyi curl or SVG fallback
 done
 ```
+
+`build_cover_prompt` is not a real function — it represents executing Steps 1.5 and 2 inline for each book before the curl call.
 
 ## Step 4 — Quality check
 

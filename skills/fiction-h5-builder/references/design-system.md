@@ -194,6 +194,7 @@ mkdir -p public
 
 # Logo prompt: single symbolic motif for the site genre, transparent or dark background,
 # no text, suitable for nav bar. Square composition, clean edges.
+# Claude constructs this based on site genre and visual register before running curl
 LOGO_PROMPT="{genre-appropriate motif — e.g. glowing sword on dark background for xianxia}"
 
 curl -s https://api.apiyi.com/v1/images/generations \
@@ -208,6 +209,7 @@ print('logo saved')
 "
 
 # Favicon prompt: same motif, ultra-simplified, readable at 32px
+# Claude constructs this as a simplified version of the logo prompt
 FAVICON_PROMPT="{same motif, minimal, high contrast, no text, works at tiny size}"
 
 curl -s https://api.apiyi.com/v1/images/generations \

@@ -114,7 +114,7 @@ Verify all of the following before go-live:
 - [ ] `world/worldbuilding.md` is non-empty for each book.
 - [ ] `tracking/context.md` populated for each book.
 - [ ] Cover image generated for each book (Phase 3): `public/covers/{book-title}/cover/cover_v1.png` for every book.
-- [ ] Site logo generated (Phase 6): `public/logo.svg`.
-- [ ] Favicon generated (Phase 6): `public/favicon-32x32.png`.
+- [ ] Site logo generated (Phase 6): `public/logo.png` (apiyi) or `public/logo.svg` (SVG fallback).
+- [ ] Favicon generated (Phase 6): `public/favicon-32x32.png` (apiyi) or `public/favicon.svg` (SVG fallback).
 
 These are launch requirements only — they do not block Phase 5 site build. Development preview may run without them.

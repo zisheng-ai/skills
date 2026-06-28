@@ -13,8 +13,8 @@ Run these checks before go-live. These are **not** blockers for development prev
 - [ ] `world/worldbuilding.md` exists and describes the world, genre, and tone.
 - [ ] `tracking/context.md` exists and reflects the last written chapter.
 - [ ] Cover image generated for each book: `public/covers/{book-title}/cover/cover_v1.png`.
-- [ ] Site logo generated: `public/logo.svg`.
-- [ ] Favicon generated: `public/favicon-32x32.png`.
+- [ ] Site logo generated: `public/logo.png` (apiyi) or `public/logo.svg` (SVG fallback).
+- [ ] Favicon generated: `public/favicon-32x32.png` (apiyi) or `public/favicon.svg` (SVG fallback).
 
 If any launch asset is missing, attempt to generate it automatically (Phase 3 / Phase 6). Only if generation fails, log the missing asset and continue; do not stop the pipeline.
 
