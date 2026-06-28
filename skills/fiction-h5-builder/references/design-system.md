@@ -173,17 +173,21 @@ Never use placeholder text, generic emoji, or external icon libraries. Always ge
 
 ### Entry check
 
+**MANDATORY — run this bash command first. Do not skip it. Do not assume the result.**
+
 ```bash
 [ -n "$APIYI_API_KEY" ] && echo "API_PATH=apiyi" || echo "API_PATH=claude_svg"
 ```
 
-- If not set → print yellow warning, then fall back to Claude SVG:
-  ```
-  \033[33m⚠ WARNING: APIYI_API_KEY is not set. Falling back to SVG logo/favicon generation.\033[0m
-  \033[33m  To enable AI-generated assets via gpt-image-2-vip, get an API key at:\033[0m
-  \033[33m  https://api.apiyi.com/register/?aff_code=ijv5\033[0m
-  \033[33m  Then set: export APIYI_API_KEY="your-key"\033[0m
-  ```
+**If the output is `API_PATH=apiyi` → you MUST use the apiyi curl path below. Generating SVG when the key is present is wrong.**
+
+If the output is `API_PATH=claude_svg` → print the warning below, then fall back to Claude SVG:
+```
+\033[33m⚠ WARNING: APIYI_API_KEY is not set. Falling back to SVG logo/favicon generation.\033[0m
+\033[33m  To enable AI-generated assets via gpt-image-2-vip, get an API key at:\033[0m
+\033[33m  https://api.apiyi.com/register/?aff_code=ijv5\033[0m
+\033[33m  Then set: export APIYI_API_KEY="your-key"\033[0m
+```
 
 ### apiyi path (APIYI_API_KEY is set)
 
@@ -197,31 +201,25 @@ mkdir -p public
 # Claude constructs this based on site genre and visual register before running curl
 LOGO_PROMPT="{genre-appropriate motif — e.g. glowing sword on dark background for xianxia}"
 
-curl -s https://api.apiyi.com/v1/images/generations \
+LOGO_URL=$(curl -s https://api.apiyi.com/v1/images/generations \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $APIYI_API_KEY" \
-  -d "{\"model\":\"gpt-image-2-vip\",\"prompt\":$(echo "$LOGO_PROMPT" | python3 -c 'import json,sys;print(json.dumps(sys.stdin.read().strip()))'),\"n\":1,\"size\":\"1024x1024\",\"response_format\":\"b64_json\"}" \
-  | python3 -c "
-import sys,json,base64
-d=json.load(sys.stdin)
-open('public/logo_raw.png','wb').write(base64.b64decode(d['data'][0]['b64_json']))
-print('logo saved')
-"
+  -d "{\"model\":\"gpt-image-2-vip\",\"prompt\":$(echo "$LOGO_PROMPT" | python3 -c 'import json,sys;print(json.dumps(sys.stdin.read().strip()))'),\"n\":1,\"size\":\"1024x1024\"}" \
+  | python3 -c "import sys,json;print(json.load(sys.stdin)['data'][0]['url'])")
+curl -s "$LOGO_URL" -o public/logo_raw.png
+echo "logo saved"
 
 # Favicon prompt: same motif, ultra-simplified, readable at 32px
 # Claude constructs this as a simplified version of the logo prompt
 FAVICON_PROMPT="{same motif, minimal, high contrast, no text, works at tiny size}"
 
-curl -s https://api.apiyi.com/v1/images/generations \
+FAVICON_URL=$(curl -s https://api.apiyi.com/v1/images/generations \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $APIYI_API_KEY" \
-  -d "{\"model\":\"gpt-image-2-vip\",\"prompt\":$(echo "$FAVICON_PROMPT" | python3 -c 'import json,sys;print(json.dumps(sys.stdin.read().strip()))'),\"n\":1,\"size\":\"1024x1024\",\"response_format\":\"b64_json\"}" \
-  | python3 -c "
-import sys,json,base64
-d=json.load(sys.stdin)
-open('public/favicon_raw.png','wb').write(base64.b64decode(d['data'][0]['b64_json']))
-print('favicon saved')
-"
+  -d "{\"model\":\"gpt-image-2-vip\",\"prompt\":$(echo "$FAVICON_PROMPT" | python3 -c 'import json,sys;print(json.dumps(sys.stdin.read().strip()))'),\"n\":1,\"size\":\"1024x1024\"}" \
+  | python3 -c "import sys,json;print(json.load(sys.stdin)['data'][0]['url'])")
+curl -s "$FAVICON_URL" -o public/favicon_raw.png
+echo "favicon saved"
 
 # Resize
 ffmpeg -i public/logo_raw.png -vf scale=256:256 public/logo.png -y \
@@ -243,7 +241,9 @@ export const metadata: Metadata = {
 }
 ```
 
-### Claude SVG fallback (APIYI_API_KEY not set)
+### Claude SVG fallback (APIYI_API_KEY not set — confirmed by entry check)
+
+**Only enter this section if the entry check above returned `API_PATH=claude_svg`. If APIYI_API_KEY is set, go back and use the apiyi curl path.**
 
 Claude writes SVG files directly. Both must reflect the site's visual register and genre (see `cover-styles.md`).
 

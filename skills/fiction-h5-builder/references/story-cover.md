@@ -6,22 +6,23 @@ Load this reference when the user asks to generate a novel cover (封面, /story
 
 ## Phase 3 Entry Check
 
-Check whether `APIYI_API_KEY` is set to choose the generation path:
+**MANDATORY — run this bash command before anything else. Do not skip it. Do not assume the result.**
 
 ```bash
 [ -n "$APIYI_API_KEY" ] && echo "API_PATH=apiyi" || echo "API_PATH=claude_svg"
 ```
 
-- If set → **apiyi path**: call `https://api.apiyi.com/v1/images/generations` with `gpt-image-2-vip`.
-- If not set → print a yellow warning, then use **Claude SVG fallback**:
-  ```
-  \033[33m⚠ WARNING: APIYI_API_KEY is not set. Falling back to SVG cover generation.\033[0m
-  \033[33m  To enable photorealistic covers via gpt-image-2-vip, get an API key at:\033[0m
-  \033[33m  https://api.apiyi.com/register/?aff_code=ijv5\033[0m
-  \033[33m  Then set: export APIYI_API_KEY="your-key"\033[0m
-  ```
+**If the output is `API_PATH=apiyi` → you MUST use the apiyi curl path below. Generating SVG when the key is present is wrong.**
 
-Both paths produce a file at `{BOOK_DIR}/cover_v1.png` (or `.svg` for the fallback). Do not block the pipeline in either case.
+If the output is `API_PATH=claude_svg` → print the warning below, then use the SVG fallback:
+```
+\033[33m⚠ WARNING: APIYI_API_KEY is not set. Falling back to SVG cover generation.\033[0m
+\033[33m  To enable photorealistic covers via gpt-image-2-vip, get an API key at:\033[0m
+\033[33m  https://api.apiyi.com/register/?aff_code=ijv5\033[0m
+\033[33m  Then set: export APIYI_API_KEY="your-key"\033[0m
+```
+
+Both paths produce a file at `{BOOK_DIR}/cover_v1.png` (or `.svg` for the SVG fallback). Do not block the pipeline in either case.
 
 ## Modes
 
@@ -185,7 +186,9 @@ Write the prompt to `$BOOK_DIR/cover_v1.prompt.txt`.
 
 On API error: log the response body, skip this book, continue.
 
-### Claude SVG fallback (APIYI_API_KEY not set)
+### Claude SVG fallback (APIYI_API_KEY not set — confirmed by entry check)
+
+**Only enter this section if the entry check above returned `API_PATH=claude_svg`. If APIYI_API_KEY is set, go back and use the apiyi curl path.**
 
 Claude writes a styled SVG cover directly. Size: 480×720 viewBox. Must include:
 - Genre-appropriate background gradient (from `cover-styles.md` color palette)
