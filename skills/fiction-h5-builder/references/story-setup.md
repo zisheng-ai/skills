@@ -4,63 +4,63 @@ Load this reference when the user asks to set up a new writing project or initia
 
 ## Project Directory Structure
 
-Long-form novel (长篇) — place under `content/{书名}/`:
+Long-form novel (长篇) — place under `content/{book-title}/`:
 
 ```
-content/{书名}/
-├── 设定/
-│   ├── 世界观.md
-│   ├── 角色/
-│   │   ├── {主角名}.md
+content/{book-title}/
+├── world/
+│   ├── worldbuilding.md
+│   ├── characters/
+│   │   ├── {protagonist-name}.md
 │   │   └── ...
-│   └── 地图.md                 # optional
-├── 大纲/
-│   ├── 大纲.md                 # full-book outline
-│   └── 分卷大纲/               # optional arc-level outlines
-├── 正文/
-│   ├── 第001章_章名.md
-│   ├── 第002章_章名.md
+│   └── map.md                 # optional
+├── outline/
+│   ├── outline.md             # full-book outline
+│   └── arc-outlines/          # optional arc-level outlines
+├── chapters/
+│   ├── ch-001-{title}.md
+│   ├── ch-002-{title}.md
 │   └── ...
-├── 对标/
-│   └── {参考书名}/
-│       ├── 拆文报告.md
-│       ├── 情节节点.md
-│       └── 写作手法.md
-├── 追踪/
-│   ├── 上下文.md               # running context for next chapter
-│   ├── 伏笔.md
-│   ├── 时间线.md
-│   └── 角色状态.md
-└── 参考资料/                   # optional research
+├── reference/
+│   └── {reference-title}/
+│       ├── teardown.md
+│       ├── plot-beats.md
+│       └── techniques.md
+├── tracking/
+│   ├── context.md             # running context for next chapter
+│   ├── threads.md
+│   ├── timeline.md
+│   └── character-status.md
+└── resources/                 # optional research
 ```
 
-Short-form story (短篇) — place under `content/短篇/{短篇标题}/`:
+Short-form story (短篇) — place under `content/short/{story-title}/`:
 
 ```
-content/短篇/{短篇标题}/
-├── 设定.md                     # world + characters + emotion target
-├── 小节大纲.md                 # beat-level outline
-├── 正文.md                     # all prose, single file
-└── 对标/                       # optional reference books
-    └── {书名}/
-        ├── 拆文报告.md
-        └── 写作手法.md
+content/short/{story-title}/
+├── setup.md                   # world + characters + emotion target
+├── beat-outline.md            # beat-level outline
+├── prose.md                   # all prose, single file
+└── reference/                 # optional reference books
+    └── {book-title}/
+        ├── teardown.md
+        └── techniques.md
 ```
 
 ## Naming Conventions
 
-- Chapter files: `第NNN章_章名.md` — zero-padded to 3 digits minimum (`第001章`, `第010章`, `第100章`)
+- Chapter files: `ch-NNN-{title}.md` — zero-padded to 3 digits minimum (`ch-001`, `ch-010`, `ch-100`)
 - Chapter order: derived from filename sort — never rely on frontmatter order alone
-- Book root: `content/{书名}/` — use the book title as the directory name under `content/`
-- Short stories: always under `content/短篇/{短篇标题}/`
+- Book root: `content/{book-title}/` — use the book title as the directory name under `content/`
+- Short stories: always under `content/short/{story-title}/`
 
 ## What the Site Reads vs. Ignores
 
 | Directory | Reader sees it? |
 | --- | --- |
-| `正文/第NNN章_*.md` | Yes — chapter content |
-| `public/covers/<书名>/封面/封面_v1.png` | Yes — served as `/covers/<书名>/封面/封面_v1.png` |
-| `设定/`, `大纲/`, `追踪/`, `对标/`, `参考资料/` | Never — writing internals |
+| `chapters/ch-NNN-*.md` | Yes — chapter content |
+| `public/covers/<book-title>/cover/cover_v1.png` | Yes — served as `/covers/<book-title>/cover/cover_v1.png` |
+| `world/`, `outline/`, `tracking/`, `reference/`, `resources/` | Never — writing internals |
 
 Never create routes or expose links to writing-internal directories.
 
@@ -69,8 +69,8 @@ Never create routes or expose links to writing-internal directories.
 When setting up a new project:
 
 1. Create the directory structure above with placeholder files.
-2. Write a brief `设定/世界观.md` (3–5 bullet points: genre, setting, tone, core conflict).
-3. Write `设定/角色/{主角名}.md` with role, motivation, voice notes.
-4. Write `大纲/大纲.md` with a 10–30 beat arc outline.
-5. Create `追踪/上下文.md` — starts empty; populated after each chapter.
-6. If a reference book exists, run `/story-import` or manually create `对标/{书名}/` files.
+2. Write a brief `world/worldbuilding.md` (3–5 bullet points: genre, setting, tone, core conflict).
+3. Write `world/characters/{protagonist-name}.md` with role, motivation, voice notes.
+4. Write `outline/outline.md` with a 10–30 beat arc outline.
+5. Create `tracking/context.md` — starts empty; populated after each chapter.
+6. If a reference book exists, run `/story-import` or manually create `reference/{book-title}/` files.

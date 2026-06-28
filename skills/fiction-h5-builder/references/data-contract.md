@@ -27,21 +27,21 @@ yarn add @content-collections/core @content-collections/next
 ```
 my-novel-site/
 ├── content/                      ← all fiction writing content
-│   ├── {书名}/                   ← long-form book directory
-│   │   ├── 正文/
-│   │   │   ├── 第001章_开始.md
-│   │   │   └── 第002章_发展.md
-│   │   ├── 大纲/                 ← writing internal, never read by content-collections
-│   │   ├── 设定/                 ← writing internal
-│   │   └── 追踪/                 ← writing internal
-│   └── 短篇/                     ← short stories
+│   ├── {book-title}/             ← long-form book directory
+│   │   ├── chapters/
+│   │   │   ├── ch-001-the-beginning.md
+│   │   │   └── ch-002-development.md
+│   │   ├── outline/              ← writing internal, never read by content-collections
+│   │   ├── world/                ← writing internal
+│   │   └── tracking/             ← writing internal
+│   └── short/                    ← short stories
 │       └── {title}/
-│           └── 正文.md
+│           └── prose.md
 ├── public/
 │   └── covers/                   ← cover images, served as static assets
-│       └── {书名}/
-│           └── 封面/
-│               └── 封面_v1.png
+│       └── {book-title}/
+│           └── cover/
+│               └── cover_v1.png
 ├── content-collections.ts        ← collection definitions
 ├── src/
 │   ├── app/
@@ -61,7 +61,7 @@ import { defineCollection, defineConfig } from '@content-collections/core'
 const chapters = defineCollection({
   name: 'chapters',
   directory: 'content',
-  include: '*/正文/*.md',          // long-form: content/{书名}/正文/第NNN章.md
+  include: '*/chapters/*.md',      // long-form: content/{book-title}/chapters/ch-NNN-{title}.md
   schema: z => ({
     title: z.string().optional(),
     chapter: z.coerce.number().optional(),
@@ -72,18 +72,18 @@ const chapters = defineCollection({
   transform: doc => {
     const [bookSlug] = doc._meta.path.split('/')
     const filename = doc._meta.fileName
-    const orderMatch = filename.match(/第?0*(\d+)[章节回]?/)
+    const orderMatch = filename.match(/ch-?0*(\d+)/)
     const order = doc.chapter ?? (orderMatch ? Number(orderMatch[1]) : 0)
     const title = doc.title
-      ?? filename.replace(/^第?\d+[章节回]?_?/, '').replace(/\.md$/, '')
+      ?? filename.replace(/^ch-\d+-?/, '').replace(/\.md$/, '')
     return { ...doc, bookSlug, order, title }
   },
 })
 
 const shortStories = defineCollection({
   name: 'shortStories',
-  directory: 'content/短篇',
-  include: '*/正文.md',            // short-form: content/短篇/{title}/正文.md
+  directory: 'content/short',
+  include: '*/prose.md',           // short-form: content/short/{title}/prose.md
   schema: z => ({
     title: z.string().optional(),
     wordCount: z.coerce.number().optional(),
@@ -136,9 +136,9 @@ export default function ChapterPage({ params }: { params: { slug: string; n: str
 }
 ```
 
-- Writing internals (`大纲/`, `设定/`, `追踪/`, `拆文库/`) are excluded by the `include` glob — they never appear in generated types.
-- Adding a new book: create `content/{书名}/正文/` and write chapters. `next build` picks them up automatically.
-- Adding a new short story: create `content/短篇/{title}/正文.md`. No config change needed.
+- Writing internals (`outline/`, `world/`, `tracking/`, `teardowns/`) are excluded by the `include` glob — they never appear in generated types.
+- Adding a new book: create `content/{book-title}/chapters/` and write chapters. `next build` picks them up automatically.
+- Adding a new short story: create `content/short/{title}/prose.md`. No config change needed.
 - Generated types live in `.content-collections/` — add to `.gitignore`.
 
 ## Data Models
@@ -200,38 +200,38 @@ Long-form project:
 
 ```text
 {book-title}/
-├── 设定/
-├── 大纲/
-├── 正文/
-│   ├── 第001章_章名.md
+├── world/
+├── outline/
+├── chapters/
+│   ├── ch-001-{title}.md
 │   └── ...
-├── 对标/
-├── 追踪/
-│   ├── 上下文.md
-│   ├── 伏笔.md
-│   ├── 时间线.md
-│   └── 角色状态.md
-└── 参考资料/
+├── reference/
+├── tracking/
+│   ├── context.md
+│   ├── threads.md
+│   ├── timeline.md
+│   └── character-status.md
+└── resources/
 ```
 
 Short-form project:
 
 ```text
-短篇/{title}/
-├── 正文.md
-├── 小节大纲.md
-└── 拆文库/
+short/{title}/
+├── prose.md
+├── beat-outline.md
+└── teardowns/
 ```
 
 ## Field Mapping
 
 ```text
-正文/第001章_章名.md   →  Chapter { content, title, order }
-短篇/{title}/正文.md   →  Book (one chapter, status: "completed")
-大纲/大纲.md           →  internal only; not shown to readers
-设定/角色/*.md         →  internal only; optional public character page if user requests
-追踪/*.md              →  internal only
-封面 output            →  Book.cover  (saved to public/covers/<书名>/封面/封面_v1.png, served as /covers/<书名>/封面/封面_v1.png)
+chapters/ch-001-{title}.md   →  Chapter { content, title, order }
+short/{title}/prose.md        →  Book (one chapter, status: "completed")
+outline/outline.md            →  internal only; not shown to readers
+world/characters/*.md         →  internal only; optional public character page if user requests
+tracking/*.md                 →  internal only
+cover output                  →  Book.cover  (saved to public/covers/<book-title>/cover/cover_v1.png, served as /covers/<book-title>/cover/cover_v1.png)
 ```
 
 ## Chapter Frontmatter Schema

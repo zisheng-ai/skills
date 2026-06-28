@@ -37,7 +37,7 @@ Opening hook: {first 3 sentences — must contain suspense or conflict}
 Closing echo: {final sentence — must have resonance or impact}
 ```
 
-Save as `content/短篇/{短篇标题}/设定.md` from the project root.
+Save as `content/short/{story-title}/setup.md` from the project root.
 
 ### Phase 2: Beat outline
 
@@ -53,11 +53,11 @@ Write a beat-level outline with section markers. Target 6–12 beats for 8,000�
 ### 7. Resonance — {emotional landing, last image or line}
 ```
 
-Save as `content/短篇/{短篇标题}/小节大纲.md` from the project root.
+Save as `content/short/{story-title}/beat-outline.md` from the project root.
 
 ### Phase 3: Write prose
 
-Write full prose section by section following the beat outline. Save all to `content/短篇/{短篇标题}/正文.md` from the project root.
+Write full prose section by section following the beat outline. Save all to `content/short/{story-title}/prose.md` from the project root.
 
 Prose formatting:
 - Adjacent paragraphs: single `\n` between them — no blank lines
@@ -77,10 +77,10 @@ Prose formatting:
 
 If the user has a reference book to emulate:
 
-1. Read `{短篇标题}/对标/{书名}/拆文报告.md` and `写作手法.md`.
+1. Read `{story-title}/reference/{book-title}/teardown.md` and `techniques.md`.
 2. Extract: twist positioning, pacing of misdirection, sentence-level technique.
-3. Add a brief "Reference Summary" section at the bottom of `设定.md`.
-4. During Phase 3, pull 1–2 specific techniques per section from the摘要 — do not copy, emulate.
+3. Add a brief "Reference Summary" section at the bottom of `setup.md`.
+4. During Phase 3, pull 1–2 specific techniques per section from the summary — do not copy, emulate.
 
 If no reference exists, use the genre emotion table to select a structural template before writing.
 

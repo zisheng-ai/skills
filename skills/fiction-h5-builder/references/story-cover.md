@@ -5,7 +5,7 @@ Load this reference when the user asks to generate a novel cover (封面, /story
 ## Generation Method
 
 **Primary — Codex via `codex-plugin-cc` (no API key needed):**
-Delegate image generation to Codex using the `codex-plugin-cc` plugin installed in this environment. Build the prompt using Steps 1–2 below, then invoke Codex image generation. Save the result to `public/covers/<书名>/封面/封面_v1.png`.
+Delegate image generation to Codex using the `codex-plugin-cc` plugin installed in this environment. Build the prompt using Steps 1–2 below, then invoke Codex image generation. Save the result to `public/covers/{book-title}/cover/cover_v1.png`.
 
 **Secondary — Claude native image generation:**
 Use Claude's built-in image generation tool directly if `codex-plugin-cc` is unavailable. Build the same prompt from Steps 1–2 and call the image generation tool.
@@ -22,7 +22,7 @@ Use Steps 3–3.5 below only when the user explicitly requests GPT-Image-2 and p
 | `GPT_IMAGE_MODEL` | No | `gpt-image-2` | Override only for testing |
 | `GPT_IMAGE_SIZE` | No | `1024x1536` | Target ratio hint — many proxies ignore it; Step 3.5 crops to exact size |
 | `UPLOAD_SIZE` | No | — | Platform exact pixels (e.g. `600x800` for 番茄); Step 3.5 center-crops to this |
-| `BOOK_DIR` | Yes | — | Output directory, e.g. `./public/covers/<书名>` |
+| `BOOK_DIR` | Yes | — | Output directory, e.g. `./public/covers/{book-title}` |
 | `REF_IMAGE` | No | — | Local path or URL for image-to-image mode |
 
 ## Step 1 — Collect required info
@@ -50,8 +50,8 @@ All prompt text in English. Structure: text layer + style layer + visual layer.
 
 ```
 Chinese web novel cover, [platform style from cover-styles.md].
-Title text '{书名}' at top center in [title font style for genre].
-Author name '{笔名}' at bottom center in [author name style for genre].
+Title text '{book-title}' at top center in [title font style for genre].
+Author name '{pen-name}' at bottom center in [author name style for genre].
 [genre style tags]. [character description]. [background description].
 [color palette]. [lighting].
 Professional book cover, high detail digital painting, portrait [ratio] ratio,
@@ -76,9 +76,9 @@ MODEL="${GPT_IMAGE_MODEL:-gpt-image-2}"
 SIZE="${GPT_IMAGE_SIZE:-1024x1536}"
 BOOK_DIR="${BOOK_DIR:?Set BOOK_DIR first}"
 
-mkdir -p "$BOOK_DIR/封面"
-i=1; while [ -f "$BOOK_DIR/封面/封面_v${i}.png" ]; do i=$((i+1)); done
-OUT="$BOOK_DIR/封面/封面_v${i}.png"
+mkdir -p "$BOOK_DIR/cover"
+i=1; while [ -f "$BOOK_DIR/cover/cover_v${i}.png" ]; do i=$((i+1)); done
+OUT="$BOOK_DIR/cover/cover_v${i}.png"
 RESP=$(mktemp); trap 'rm -f "$RESP"' EXIT
 
 BODY=$(jq -n --arg m "$MODEL" --arg p "$PROMPT" --arg s "$SIZE" \
@@ -94,7 +94,7 @@ jq -e '.error' "$RESP" >/dev/null 2>&1 && { jq '.error' "$RESP" >&2; exit 1; }
 jq -er '.data[0].b64_json // empty' "$RESP" | base64 --decode > "$OUT"
 [ -s "$OUT" ] || { echo "empty output" >&2; exit 1; }
 printf '%s\n' "$PROMPT" > "${OUT%.png}.prompt.txt"
-file "$OUT"; ls -lt "$BOOK_DIR/封面/"
+file "$OUT"; ls -lt "$BOOK_DIR/cover/"
 ```
 
 ### Image-to-image (REF_IMAGE is set)
@@ -119,7 +119,7 @@ curl -fsS --max-time 240 --retry 2 --retry-delay 5 \
 Center-crop and scale to exact pixels. Does not depend on proxy honoring `GPT_IMAGE_SIZE`.
 
 ```bash
-SRC="$OUT"; TARGET="${UPLOAD_SIZE:-}"; UP="${SRC%.png}_上传.png"
+SRC="$OUT"; TARGET="${UPLOAD_SIZE:-}"; UP="${SRC%.png}_upload.png"
 W="${TARGET%x*}"; H="${TARGET#*x}"
 if [ -n "$TARGET" ] && [ -f "$SRC" ]; then
   if command -v magick >/dev/null 2>&1; then
@@ -150,9 +150,9 @@ If unsatisfied: adjust composition variant, color palette, or character descript
 ## Output location
 
 ```
-public/covers/<书名>/封面/封面_v1.png        ← main output, served as /covers/<书名>/封面/封面_v1.png
-public/covers/<书名>/封面/封面_v1.prompt.txt ← prompt used
-public/covers/<书名>/封面/封面_v1_上传.png   ← platform-cropped version (if UPLOAD_SIZE set)
+public/covers/{book-title}/cover/cover_v1.png        ← main output, served as /covers/{book-title}/cover/cover_v1.png
+public/covers/{book-title}/cover/cover_v1.prompt.txt ← prompt used
+public/covers/{book-title}/cover/cover_v1_upload.png ← platform-cropped version (if UPLOAD_SIZE set)
 ```
 
-The site builder reads `Book.cover` as `/covers/<书名>/封面/封面_v1.png` (URL path, served from `public/`).
+The site builder reads `Book.cover` as `/covers/{book-title}/cover/cover_v1.png` (URL path, served from `public/`).

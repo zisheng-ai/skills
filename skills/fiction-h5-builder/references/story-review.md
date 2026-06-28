@@ -60,8 +60,8 @@ Do not rewrite prose in a review — that is `/story-deslop`'s job. Point to spe
 
 - Are character names, appearance, and traits consistent across chapters?
 - Are setting details (geography, distances, time-of-day) internally coherent?
-- Does the timeline hold? Check `追踪/时间线.md` if available.
-- Are open threads from `追踪/伏笔.md` accounted for?
+- Does the timeline hold? Check `tracking/timeline.md` if available.
+- Are open threads from `tracking/threads.md` accounted for?
 
 Flag: name variants, contradictory descriptions, timeline breaks, unresolved foreshadows that appear forgotten.
 
@@ -116,12 +116,12 @@ Read only the files relevant to the review scope:
 
 ```
 Required (if they exist):
-  追踪/伏笔.md                     — to check unresolved threads
-  追踪/时间线.md                    — to check timeline coherence
-  追踪/角色状态.md                  — to check character consistency
+  tracking/threads.md                    — to check unresolved threads
+  tracking/timeline.md                   — to check timeline coherence
+  tracking/character-status.md           — to check character consistency
 
 Load only if needed:
-  设定/角色/{character-name}.md     — if character voice/behavior is in question
-  大纲/大纲.md                      — if structural pacing is in question
-  对标/{book-title}/拆文报告.md     — if comparing against reference book standard
+  world/characters/{character-name}.md   — if character voice/behavior is in question
+  outline/outline.md                     — if structural pacing is in question
+  reference/{book-title}/teardown.md     — if comparing against reference book standard
 ```
