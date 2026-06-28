@@ -2,6 +2,73 @@
 
 Load this reference when the user asks to generate a novel cover (封面, /story-cover, cover generation).
 
+## Modes
+
+| Mode | When to use | What it generates |
+|---|---|---|
+| **Batch** | Initial site launch — all books written, Pre-Build Gate pending | Covers for every book in `content/`, site logo, favicon |
+| **Single-book** | Adding one new book to an existing site | Cover for one book only (logo/favicon already exist) |
+
+**Default to Batch mode at initial launch.** The Pre-Build Gate requires covers for all ≥5 books. Single-book mode is for incremental updates only.
+
+---
+
+## Batch Mode (initial launch)
+
+### B1 — Discover all books
+
+List every directory in `content/` that is NOT `content/short/` — short stories do not get standalone covers.
+
+```bash
+CONTENT_DIR="${CONTENT_DIR:-./content}"
+BOOKS=()
+for d in "$CONTENT_DIR"/*/; do
+  [ -d "$d" ] && [ "$(basename "$d")" != "short" ] && BOOKS+=("$(basename "$d")")
+done
+printf 'Found %d books:\n' "${#BOOKS[@]}"
+printf '  %s\n' "${BOOKS[@]}"
+```
+
+If fewer than 5 books are found, stop and return to the writing phase.
+
+### B2 — Collect site-level info once
+
+Ask once (do not repeat per book):
+- **Author pen name** — appears on every cover
+- **Target platform** — determines cover ratio (see platform table in Single-book mode)
+
+### B3 — Generate cover for each book
+
+For each book in `BOOKS`:
+1. Read `content/{book-title}/world/worldbuilding.md` to extract genre and tone.
+2. Run genre detection (Step 1.5 below) to select cover style.
+3. Build the cover prompt (Step 2 below) substituting the book's title, genre, and characters.
+4. **Delegate to Codex** via `codex-plugin-cc`. Save output to `public/covers/{book-title}/cover/cover_v1.png`.
+5. Log: `✓ {book-title} — cover saved`.
+
+If Codex is unavailable, fall back to Claude Code native image generation for that book. Continue to the next book regardless — log failures and fix at the end, do not stop the batch.
+
+### B4 — Generate site logo and favicon
+
+After all book covers are done, generate the site-level assets **once** (see **Site Logo and Favicon** section below).
+
+### Batch completion checklist
+
+Before handing off to site build:
+
+- [ ] `public/covers/{book-title}/cover/cover_v1.png` exists for every book in `BOOKS`
+- [ ] `public/logo.svg` exists
+- [ ] `public/favicon-32x32.png` exists
+- [ ] `public/apple-touch-icon.png` exists
+
+Any missing file is a Pre-Build Gate failure — fix before starting Phase 4 (site build).
+
+---
+
+## Single-book mode
+
+Use for adding one book to an already-launched site. Skip logo and favicon steps — they already exist.
+
 ## Generation Method
 
 **Primary — Codex via `codex-plugin-cc` (no API key needed):**
