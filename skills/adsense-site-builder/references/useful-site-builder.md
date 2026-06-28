@@ -234,6 +234,31 @@ Format (write to `public/llms.txt` for Next.js, `static/llms.txt` for Astro):
 - Group pages by cluster: primary tool first, then guides, then reference/FAQ, then trust pages. Order within each group by importance (most traffic expected → first).
 - Optionally also generate `public/llms-full.txt` with the full text content of the 3–5 most important pages (primary tool page + top guides). This is especially valuable when the site has original data or worked examples that AI systems should quote directly.
 
+### Fonts
+
+Load any display or heading web font via `next/font` — never via a Google Fonts `<link>` tag in production.
+
+`next/font` self-hosts font files alongside your deployment: no third-party requests at runtime, GDPR-compliant by default, and it applies a `size-adjust` on the fallback metric automatically — which is what actually holds CLS near zero during the swap. A bare `font-display: swap` does not prevent the text-shift; only a matching fallback metric does.
+
+```ts
+import { Geist } from 'next/font/google'
+
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' })
+```
+
+**Rules:**
+- **Body text:** prefer system font stacks (`system-ui`, `-apple-system`, `Georgia`, or equivalent). Zero load time, zero CLS, equally readable.
+- **Display / headings:** one family maximum, loaded via `next/font`. Subset to the characters actually used (`subsets: ['latin']`).
+- **CJK body:** never load a CJK web font for mobile body text. System stacks (Hiragino, Yu Gothic, Noto) are faster and equally correct. Load a custom CJK font lazily only if a user explicitly selects it.
+
+### Images
+
+- Always set `width` and `height` on every `<img>` (and on `next/image`). Unset dimensions cause CLS during load.
+- Use `next/image` for all images in Next.js projects — it negotiates WebP/AVIF automatically, applies lazy loading by default, and reserves space to prevent CLS.
+- Add `priority` prop to the first above-the-fold image (home page hero or primary tool screenshot).
+- Target under 150KB per hero or card image at display size. Compress before shipping.
+- CSS placeholders (flat color, no heavy gradients) are acceptable when no real image is available — always set explicit dimensions.
+
 ### Canonical URLs
 
 Every page must include a self-referencing canonical tag:
@@ -430,7 +455,23 @@ Priority order:
 2. **Claude native image generation** — if Codex is unavailable.
 3. **SVG placeholder** — label clearly and note in the completion gate.
 
-Minimum: `/favicon.ico` (32×32) + `/apple-touch-icon.png` (180×180). Logo in header: SVG or styled text in the token system typeface. Do not ship with a browser-default blank icon — it signals an incomplete site to Google reviewers.
+**Output paths:**
+- Logo: `public/logo.svg` — inline SVG or `<img src="/logo.svg">` in the header. Fallback: site name as styled text in the token system typeface and accent color.
+- Favicon source: `public/favicon-32x32.png` (32×32 PNG) — also convert to `public/favicon.ico`.
+- Apple touch icon: `public/apple-touch-icon.png` (180×180).
+
+Wire up in `src/app/layout.tsx` via Next.js metadata:
+
+```ts
+export const metadata: Metadata = {
+  icons: {
+    icon: '/favicon-32x32.png',
+    apple: '/apple-touch-icon.png',
+  },
+}
+```
+
+Do not ship with a browser-default blank favicon or a missing logo — both signal an incomplete site to Google reviewers.
 
 ---
 

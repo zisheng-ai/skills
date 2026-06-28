@@ -81,7 +81,10 @@ A site is not ready to submit for AdSense if any of these are true:
 - Pages are not indexed in GSC, or GSC shows zero impressions.
 - Title tags exceed 60 characters or are missing.
 - Schema markup is absent from the primary tool and FAQ pages.
-- Core Web Vitals: LCP > 4s on mobile.
+- `<html lang>` attribute is missing or set to the wrong locale.
+- Any interactive touch target (button, link) is below 44×44px on mobile.
+- Core Web Vitals: LCP target < 2.5s ("Good"); fails if LCP > 4s on mobile (Google "Poor" threshold).
+- Site ships with the default Next.js favicon or a missing logo asset.
 
 **Safety:**
 - Any banned category content (adult, gambling, weapons, drugs, hate, piracy) exists anywhere.

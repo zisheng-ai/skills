@@ -56,7 +56,7 @@ These phases are skipped entirely when the user starts from existing Markdown fi
 
 | Phase | Load Reference | Required Output |
 | --- | --- | --- |
-| 4. Stack | `references/tech-stack.md` | Chosen stack with one-line rationale |
+| 4. Stack (site build entry point) | `references/tech-stack.md` | Chosen stack with one-line rationale |
 | 5. Design plan | `references/design-system.md` | Tone, palette, type system, layout concept, signature element |
 | 6. Data setup | `references/data-contract.md` | Loader plan (direct filesystem) |
 | 7. Build | `references/mobile-ui.md` + `references/reader-ux.md` | Working site with all required pages |

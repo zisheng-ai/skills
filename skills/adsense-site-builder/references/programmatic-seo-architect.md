@@ -144,6 +144,7 @@ Forbidden:
 - Themed replacement of standard UI copy (`Authenticate Session` instead of `Next`).
 - Unicode glyphs used as icons.
 - AI-slop register: twee subcopy on serious surfaces, ornamental status strips, fake dashboard screenshots.
+- Em-dash (`—`) anywhere visible to users — in headlines, body text, labels, CTAs, or captions. Use a hyphen (`-`) or restructure the sentence. Zero em-dashes is the rule.
 
 Required:
 
@@ -183,7 +184,21 @@ Do not ship with a browser-default blank favicon. Priority order:
 2. **Claude native image generation** — if Codex is unavailable.
 3. **SVG placeholder** — label clearly (`<!-- TODO: replace with final favicon/logo -->`). Add to the phase 4 completion gate so it cannot be forgotten.
 
-Minimum required deliverables: 32×32 px favicon + 180×180 px Apple touch icon at `/favicon.ico` and `/apple-touch-icon.png`. Logo in the header: SVG preferred; fallback is site name as styled text using the token system typeface and accent color.
+**Output paths:**
+- Logo: `public/logo.svg` — SVG preferred. Fallback: site name as styled text in the token system typeface and accent color.
+- Favicon source: `public/favicon-32x32.png` (32×32 PNG) — also convert to `public/favicon.ico`.
+- Apple touch icon: `public/apple-touch-icon.png` (180×180).
+
+Wire up in `src/app/layout.tsx` via Next.js metadata:
+
+```ts
+export const metadata: Metadata = {
+  icons: {
+    icon: '/favicon-32x32.png',
+    apple: '/apple-touch-icon.png',
+  },
+}
+```
 
 **Page-level visual assets:**
 
