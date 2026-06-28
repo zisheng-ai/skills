@@ -175,7 +175,8 @@ Write `outputs/<site-slug>/site-map.json`:
       "inputs": ["input one", "input two"],
       "output": "result description",
       "schema": "WebApplication",
-      "difficulty_estimate": "medium"
+      "difficulty_estimate": "medium",
+      "ai_overview": false
     }
   ],
   "supporting_pages": [
@@ -189,6 +190,7 @@ Write `outputs/<site-slug>/site-map.json`:
       "unique_value": "worked examples and edge cases",
       "schema": "HowTo",
       "difficulty_estimate": "low",
+      "ai_overview": false,
       "internal_links_to": ["/calculator"]
     }
   ],
@@ -236,4 +238,6 @@ Before advancing to phase 3, verify all of the following:
 - [ ] No two pages differ only by a swapped keyword, location name, or adjective without distinct data or logic.
 - [ ] All `acts_in_phase: "keywords"` entries from `competitive_brief` in `outputs/niches.json` are accounted for — the missing sub-topics or page angles are either present in the site map or explicitly ruled out with a reason.
 - [ ] Internal link map ensures no orphan pages.
+- [ ] Every page in `site-map.json` has `ai_overview` set to `true` or `false` — checked against the live SERP for its primary keyword. Pages with `ai_overview: true` have a note on the GEO strategy (optimize for citation, shift to tool-angle, or accept and monitor).
+- [ ] If more than half of supporting pages have `ai_overview: true`, the cluster has been rebalanced toward tool-keyword variants to reduce AI displacement risk.
 - [ ] `outputs/<site-slug>/site-brief.md` is initialized with: site name, one-sentence purpose, target audience, primary keyword strategy, and a link to this site-map.json. Subsequent phases will append to this file.
