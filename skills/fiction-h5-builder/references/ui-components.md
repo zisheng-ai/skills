@@ -1,4 +1,6 @@
-# Mobile UI And Visual Quality
+# UI And Visual Quality (Mobile-First Responsive)
+
+**Mobile-first means responsive — not mobile-only.** Write styles for mobile first, then layer in `min-width` breakpoints to enhance the layout for tablet and desktop. Every component spec in this file covers all three breakpoints. Desktop must have a distinct, purposeful layout — not a stretched phone screen.
 
 ## Aesthetic Direction
 
@@ -41,9 +43,15 @@ Any of these is a quality gate failure:
 - Must not cover body text. Use `padding-bottom` on the content area to prevent overlap.
 - See `reader-ux.md` **Navigation Button Size** for full button spec.
 
-### Book Card (Cover-First Feed — Mobile Default)
+### Book Card (Cover-First Responsive Grid)
 
-Mobile book lists default to a single-column feed, not a grid. The card is the page's primary visual unit; get it right.
+The book list uses a responsive grid. The card is the page's primary visual unit; get it right.
+
+**Grid columns:**
+- Mobile (< 640px): 1 column
+- Tablet (≥ 640px): 2 columns
+- Desktop (≥ 1024px): 3 columns, or `repeat(auto-fill, minmax(280px, 1fr))`
+- Column gap: 20–24px; row gap: 24–32px
 
 **Cover:**
 - Aspect ratio: `3/4` (portrait book cover). Do not use landscape or square.
@@ -148,7 +156,7 @@ Add only when the brief explicitly asks for it.
 - Card gap: 12–16px in a grid, 0 or 1px divider in a list.
 - Card radius: 6–8px. Consistent across the site.
 - No nested cards. A card inside a card creates visual noise.
-- Book grids: 2 columns on mobile for cover-first layouts; single column list for text-first layouts. 4–6 columns on desktop only when there are enough works to fill the grid.
+- Book grids: 1 column on mobile (< 640px), 2 columns on tablet (≥ 640px), 3 columns on desktop (≥ 1024px). Text-first list layouts use single column at all breakpoints.
 
 ## Imagery
 
@@ -189,7 +197,7 @@ Always account for iPhone notch and home-indicator clearance on iOS. Test at 390
 
 Desktop must feel like a different layout, not a stretched phone:
 
-- Discovery pages: wider grid (4–6 columns), `max-width: 1200px`, centered.
+- Discovery pages: 3-column responsive grid (`repeat(auto-fill, minmax(280px, 1fr))`), `max-width: 1200px`, centered.
 - Book detail: 2-column layout (cover + metadata left, catalog right) at ≥ 768px.
 - Reader: centered text column, `max-width: 680px` for Latin prose, `max-width: 600px` for CJK. Optional left chapter catalog sidebar at ≥ 1024px.
 - Navigation: horizontal nav bar replaces mobile bottom bar. Side panel for settings instead of bottom sheet.

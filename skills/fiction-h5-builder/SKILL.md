@@ -200,6 +200,6 @@ For a review or redesign task, the output is a findings report and patch set, no
 
 ## Collaboration With Other Skills
 
-If a frontend-design or taste-skill is available, use it for implementation and visual verification. This skill's reader-comfort requirements and QA gates take priority over any visual suggestion from a collaborating skill.
+`frontend-design` capabilities are built into this skill — no separate installation needed. Use them directly for implementation and visual verification.
 
-Accept aesthetic feedback only when it does not reduce reading comfort, reduce contrast, or add visual noise to the chapter surface.
+This skill's reader-comfort requirements and QA gates take priority over any visual suggestion. Accept aesthetic feedback only when it does not reduce reading comfort, reduce contrast, or add visual noise to the chapter surface.

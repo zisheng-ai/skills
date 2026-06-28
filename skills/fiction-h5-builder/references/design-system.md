@@ -88,8 +88,9 @@ Before writing any markup, decide the following and record them as `outputs/<sit
 Spend all the distinctiveness in one place. A good signature element improves reader orientation, mood, or recognition — not decoration. Take one real aesthetic risk you can justify.
 
 Examples that work:
+- **Atmospheric detail hero** (web novel / romance / thriller): blurred, darkened, saturated cover fills the hero zone behind the crisp floating cover. See `ui-components.md` Book Detail Hero for implementation. This is the minimum quality bar for web novel builds.
 - A chapter progress rail styled as a bookmark ribbon or page-edge marker.
-- Book cover cards with a subtle spine shadow and color-coded genre accent strip.
+- Book cover cards with a genre badge overlaid on the cover image (dark pill, top-right).
 - A reader settings panel that slides in as a "reading lamp" side drawer.
 - A "continue reading" card with a short chapter excerpt and a chapter-number marker.
 - Desktop reader with a restrained antiquarian left margin rule (visual only, no interaction needed).
