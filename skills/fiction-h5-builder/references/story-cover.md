@@ -35,7 +35,6 @@ If fewer than 5 books are found, stop and return to the writing phase.
 
 Ask once (do not repeat per book):
 - **Author pen name** — appears on every cover
-- **Target platform** — determines cover ratio (see platform table in Single-book mode)
 
 ### B3 — Generate cover for each book
 
@@ -93,15 +92,10 @@ Use Steps 3–3.5 below only when the user explicitly requests GPT-Image-2 and p
 
 ## Step 1 — Collect required info
 
-Must have before proceeding: **book title**, **author pen name**, **target platform**, **BOOK_DIR**.
+Must have before proceeding: **book title**, **author pen name**, **BOOK_DIR**.
 If any is missing, ask once — do not fabricate.
 
-Platform → size mapping:
-
-| Platform | Ratio | GPT_IMAGE_SIZE |
-|---|---|---|
-| 番茄小说 | 3:4 | `768x1024` |
-| Others (default) | 2:3 | `1024x1536` |
+Cover ratio: **2:3 portrait** (`1024x1536`). This is the standard for self-hosted reading sites.
 
 ## Step 1.5 — Genre detection
 
@@ -115,7 +109,7 @@ Scan the book title (and synopsis if available) against the keyword table in `re
 All prompt text in English. Structure: text layer + style layer + visual layer.
 
 ```
-Chinese web novel cover, [platform style from cover-styles.md].
+Chinese web novel cover, [genre style from cover-styles.md].
 Title text '{book-title}' at top center in [title font style for genre].
 Author name '{pen-name}' at bottom center in [author name style for genre].
 [genre style tags]. [character description]. [background description].
@@ -187,7 +181,7 @@ curl -fsS --max-time 240 --retry 2 --retry-delay 5 \
 | Title legible | Clear, font matches genre |
 | Genre match | Visual style matches book |
 | Composition | Subject prominent, text not blocking key art |
-| Ratio correct | Portrait aspect matches platform target |
+| Ratio correct | 2:3 portrait |
 
 If unsatisfied: adjust composition variant, color palette, or character description and regenerate.
 

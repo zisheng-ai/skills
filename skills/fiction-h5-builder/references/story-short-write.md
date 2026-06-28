@@ -1,6 +1,6 @@
 # Story Short Write
 
-Load this reference when the user asks to write a short story (短篇), flash fiction, or platform-specific standalone piece.
+Load this reference when the user asks to write a short story (短篇) or flash fiction.
 
 ## Core Principles
 
@@ -61,7 +61,7 @@ Write full prose section by section following the beat outline. Save all to `con
 
 Prose formatting:
 - Adjacent paragraphs: single `\n` between them — no blank lines
-- Dialogue: half-width double quotes `""` by default; platform quote style as agreed
+- Dialogue: half-width double quotes `""`
 - Section markers: `### 1.` / `### 2.` — consistent throughout
 - No `……` or `——` — rewrite as action, short sentence, or line break
 
@@ -71,7 +71,7 @@ Prose formatting:
 - Twist: arrives from setup, not from nowhere?
 - Ending: has one image or line that lingers?
 - No consecutive 3+ sentences with identical syntactic structure.
-- Total word count is within platform target (盐言: 8,000–15,000; 七猫短篇: 10,000–20,000).
+- Total word count: 8,000–20,000 characters for a self-contained short story.
 
 ## Reference Book Integration
 
@@ -84,11 +84,3 @@ If the user has a reference book to emulate:
 
 If no reference exists, use the genre emotion table to select a structural template before writing.
 
-## Platform-Specific Notes
-
-| Platform | Word target | POV default | Quote style |
-| --- | --- | --- | --- |
-| 盐言 | 8,000–15,000 | First person | 「」 |
-| 七猫短篇 | 10,000–20,000 | First person | "" |
-| 晋江短篇 | 5,000–30,000 | First or third | "" |
-| 番茄短篇 | 6,000–20,000 | First person | "" |

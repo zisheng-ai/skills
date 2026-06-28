@@ -22,7 +22,6 @@ Default to `full`. If no agents are deployed or the environment doesn't support 
 Requested Mode: full | lean | solo
 Effective Mode: full | lean | solo
 Fallback: none | missing agents -> solo | agent tool unavailable -> solo
-Rubric: fanqie | qidian | zhihu | generic web-fiction
 ```
 
 ## Review Dimensions
@@ -73,7 +72,6 @@ Flag: name variants, contradictory descriptions, timeline breaks, unresolved for
 Requested Mode: {mode}
 Effective Mode: {mode}
 Fallback: {reason or "none"}
-Rubric: {platform}
 Scope: {chapters N–M or "full manuscript"}
 
 ---
@@ -107,7 +105,6 @@ Worst passages: {location + problem + fix direction}
 
 - Does not rewrite prose (use `/story-deslop`)
 - Does not generate new content
-- Does not evaluate market viability or platform fit
 - Does not validate the story concept — only the execution
 
 ## Context Files to Read Before Reviewing

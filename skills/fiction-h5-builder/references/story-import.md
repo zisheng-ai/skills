@@ -12,7 +12,7 @@ The deliverable is a **writable project**, not just an analysis.
 
 Ask the user:
 1. Book title and source file path (or paste text directly)
-2. Genre and target platform (起点 / 番茄 / 晋江 / other)
+2. Genre
 3. Is the manuscript complete or partial? If partial, which chapter is the last?
 4. Is the last chapter complete or a fragment?
 5. Does the user want a full writable project (can continue writing) or just a structural analysis?

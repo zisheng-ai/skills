@@ -52,7 +52,7 @@ Frontmatter is optional but recommended. The site loader falls back to filename 
 
 Prose formatting rules:
 - Adjacent paragraphs: single `\n` between them (no blank lines / `\n\n`)
-- Dialogue quotes: default half-width double quotes `""`; platform-specific as agreed
+- Dialogue quotes: half-width double quotes `""`
 - No `……` or `——` in the prose product — rewrite as action, short sentence, or line break
 - No chapter summaries or author notes inline
 

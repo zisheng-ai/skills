@@ -1,18 +1,6 @@
 # Cover Styles
 
-Reference for `story-cover.md`. Genre-to-visual-style mapping and platform style keywords for GPT-Image-2 prompts.
-
-## Platform Styles
-
-| Platform | Keywords |
-|---|---|
-| 番茄小说 | `vibrant saturated colors, eye-catching bold design, character portrait dominating frame, mass-market novel cover style, high contrast` |
-| 起点 | `polished refined illustration, detailed cinematic composition, epic atmospheric, mature sophisticated style, premium quality` |
-| 晋江 | `dreamy ethereal aesthetic, soft pastel tones, elegant romantic, delicate beauty, flower petals and bokeh` |
-| 知乎盐言 | `minimalist literary style, clean composition with negative space, subtle moody atmosphere, independent film poster aesthetic` |
-| 七猫 | `striking high-impact design, vivid dramatic colors, spectacular visual effects, attention-grabbing poster style` |
-| 刺猬猫 | `anime illustration style, vibrant colorful, detailed character art, Japanese light novel aesthetic` |
-| Web (default) | `professional digital illustration, balanced composition, clear hierarchy, genre-appropriate atmosphere` |
+Reference for `story-cover.md`. Genre-to-visual-style mapping for cover image generation prompts.
 
 ## Genre Detection Keywords
 
