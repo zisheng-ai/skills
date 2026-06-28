@@ -6,7 +6,9 @@ Run this checklist before any final delivery. Do not skip sections for "simple" 
 
 Run these checks before writing any site code. If any fails, complete the writing phase first — do not proceed.
 
-- [ ] Each book has at least one chapter file in `content/{book-title}/chapters/`.
+- [ ] `content/` has ≥ 5 book directories (initial site launch).
+- [ ] Each book has ≥ 10 chapter files in `content/{book-title}/chapters/` (中篇 minimum).
+- [ ] Each chapter is ≥ 2,000 Chinese characters or 1,500 English words — no stub content.
 - [ ] `outline/outline.md` exists and contains a real arc outline (not empty or stub-only).
 - [ ] `world/worldbuilding.md` exists and describes the world, genre, and tone.
 - [ ] `tracking/context.md` exists and reflects the last written chapter.

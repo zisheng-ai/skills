@@ -21,7 +21,6 @@ Use Steps 3–3.5 below only when the user explicitly requests GPT-Image-2 and p
 | `GPT_IMAGE_BASE_URL` | No | `https://api.openai.com/v1` | Override for proxy |
 | `GPT_IMAGE_MODEL` | No | `gpt-image-2` | Override only for testing |
 | `GPT_IMAGE_SIZE` | No | `1024x1536` | Target ratio hint — many proxies ignore it; Step 3.5 crops to exact size |
-| `UPLOAD_SIZE` | No | — | Platform exact pixels (e.g. `600x800` for 番茄); Step 3.5 center-crops to this |
 | `BOOK_DIR` | Yes | — | Output directory, e.g. `./public/covers/{book-title}` |
 | `REF_IMAGE` | No | — | Local path or URL for image-to-image mode |
 
@@ -32,10 +31,10 @@ If any is missing, ask once — do not fabricate.
 
 Platform → size mapping:
 
-| Platform | Upload size | Ratio | GPT_IMAGE_SIZE |
-|---|---|---|---|
-| 番茄小说 | 600×800 | 3:4 | `768x1024` |
-| Others (default) | Per spec | 2:3 | `1024x1536` |
+| Platform | Ratio | GPT_IMAGE_SIZE |
+|---|---|---|
+| 番茄小说 | 3:4 | `768x1024` |
+| Others (default) | 2:3 | `1024x1536` |
 
 ## Step 1.5 — Genre detection
 
@@ -114,28 +113,6 @@ curl -fsS --max-time 240 --retry 2 --retry-delay 5 \
   -F "image=@$REF_LOCAL" > "$RESP"
 ```
 
-## Step 3.5 — Export platform upload size (when UPLOAD_SIZE is set)
-
-Center-crop and scale to exact pixels. Does not depend on proxy honoring `GPT_IMAGE_SIZE`.
-
-```bash
-SRC="$OUT"; TARGET="${UPLOAD_SIZE:-}"; UP="${SRC%.png}_upload.png"
-W="${TARGET%x*}"; H="${TARGET#*x}"
-if [ -n "$TARGET" ] && [ -f "$SRC" ]; then
-  if command -v magick >/dev/null 2>&1; then
-    magick "$SRC" -resize "${W}x${H}^" -gravity center -extent "${W}x${H}" "$UP"
-  elif command -v sips >/dev/null 2>&1; then
-    cp "$SRC" "$UP"
-    sw=$(sips -g pixelWidth "$UP" | awk '/pixelWidth/{print $NF}')
-    sh=$(sips -g pixelHeight "$UP" | awk '/pixelHeight/{print $NF}')
-    if [ $((sw*H)) -ge $((sh*W)) ]; then sips --resampleHeight "$H" "$UP" >/dev/null
-    else sips --resampleWidth "$W" "$UP" >/dev/null; fi
-    sips -c "$H" "$W" "$UP" >/dev/null
-  fi
-  [ -f "$UP" ] && file "$UP"
-fi
-```
-
 ## Step 4 — Quality check
 
 | Check | Standard |
@@ -143,16 +120,15 @@ fi
 | Title legible | Clear, font matches genre |
 | Genre match | Visual style matches book |
 | Composition | Subject prominent, text not blocking key art |
-| Platform fit | Ratio correct; upload size shows title/author unclipped |
+| Ratio correct | Portrait aspect matches platform target |
 
 If unsatisfied: adjust composition variant, color palette, or character description and regenerate.
 
 ## Output location
 
 ```
-public/covers/{book-title}/cover/cover_v1.png        ← main output, served as /covers/{book-title}/cover/cover_v1.png
-public/covers/{book-title}/cover/cover_v1.prompt.txt ← prompt used
-public/covers/{book-title}/cover/cover_v1_upload.png ← platform-cropped version (if UPLOAD_SIZE set)
+public/covers/{book-title}/cover/cover_v1.png        ← served as /covers/{book-title}/cover/cover_v1.png
+public/covers/{book-title}/cover/cover_v1.prompt.txt ← prompt used (for iteration reference)
 ```
 
-The site builder reads `Book.cover` as `/covers/{book-title}/cover/cover_v1.png` (URL path, served from `public/`).
+All assets live in `public/` inside the project. No CDN or external upload required. The site builder reads `Book.cover` as `/covers/{book-title}/cover/cover_v1.png` (URL path, served from `public/`).

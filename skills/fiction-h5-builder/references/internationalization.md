@@ -45,8 +45,7 @@ Never use `NanumGothic`, `Dotum`, or legacy CJK UI fonts as the first choice —
 
 If the brief specifies a custom display font (for the site logo or book titles):
 - Load only the display font, not a body font.
-- Use `font-display: swap`.
-- Add `<link rel="preconnect" href="https://fonts.gstatic.com">` (or CDN equivalent).
+- Use `next/font` to self-host the font as a static asset — never load from an external CDN at runtime.
 - Subset the font to the characters actually needed (Latin, specific CJK range).
 - Keep the total font payload below 50KB for display-only use.
 

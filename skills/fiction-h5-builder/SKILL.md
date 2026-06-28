@@ -19,7 +19,7 @@ Typography, spacing, and contrast are non-negotiable. Interactive reader control
 ## Operating Principles
 
 - The chapter page is the product. Every other page is a path to it.
-- Mobile first. Facebook / social traffic is 90% mobile — if it breaks at 390px, it's broken.
+- Mobile first — not mobile only. Design and code for mobile first, then enhance for tablet and desktop with `min-width` breakpoints. Social traffic is 90% mobile so 390px must work perfectly; desktop must still get a purposeful layout.
 - One deliberate visual choice per build. Everything else supports reading.
 - Prefer the simplest tech choice that meets the brief. Complexity needs a reason.
 - Fixed good typography beats user-adjustable bad typography.
@@ -58,7 +58,9 @@ All of the following must be true before starting Phase 4. If any check fails, r
 
 | Check | Required location |
 | --- | --- |
-| `chapters/` contains at least one `.md` file | `content/{book-title}/chapters/` |
+| `content/` has ≥ 5 book directories (initial site launch) | `content/{book-title}/` per book |
+| Each book has ≥ 10 chapters (中篇 minimum) | `content/{book-title}/chapters/` |
+| Each chapter is ≥ 2,000 Chinese characters or 1,500 English words | writing phase 1 |
 | `outline/outline.md` exists and is non-empty | writing phase 0 or import |
 | `world/worldbuilding.md` exists and is non-empty | writing phase 0 or import |
 | `tracking/context.md` exists | writing phase 1 or import |
@@ -75,7 +77,7 @@ Run `/story-cover` if cover, logo, or favicon are missing. Do not start site bui
 | 4. Stack (site build entry point) | `references/tech-stack.md` | Chosen stack with one-line rationale |
 | 5. Design plan | `references/design-system.md` | Tone, palette, type system, layout concept, signature element |
 | 6. Data setup | `references/data-contract.md` | Loader plan (direct filesystem) |
-| 7. Build | `references/mobile-ui.md` + `references/reader-ux.md` | Working site with all required pages |
+| 7. Build | `references/ui-components.md` + `references/reader-ux.md` | Working site with all required pages |
 | 8. Performance | `references/performance.md` | Core Web Vitals targets met, images optimized |
 | 9. QA | `references/qa-checklist.md` | Screenshots at required viewports, checklist passed |
 
@@ -109,6 +111,9 @@ Do not deliver a build if any of these are true.
 - Any reader-visible copy mentions AI, Markdown, parser, prompt, skill, or generation.
 
 **Content completeness:**
+- Site launches with fewer than 5 books.
+- Any book has fewer than 10 chapters (not 中篇 level).
+- Any chapter is under 2,000 Chinese characters or 1,500 English words.
 - `outline/outline.md` is missing or empty for any published book.
 - `world/worldbuilding.md` is missing or empty for any published book.
 - Cover image is missing for any book in the reader.
@@ -162,7 +167,7 @@ Load references only when entering that phase. Do not preload all references at 
 - `tech-stack.md` — choose the implementation stack before writing any code.
 - `design-system.md` — plan design identity before building any UI.
 - `data-contract.md` — define data models and @content-collections setup.
-- `mobile-ui.md` — visual and component quality floor during build.
+- `ui-components.md` — visual and component quality floor during build.
 - `reader-ux.md` — chapter page UX requirements during build.
 - `performance.md` — Core Web Vitals, loading strategy, image optimization.
 - `qa-checklist.md` — final QA and screenshot verification.
