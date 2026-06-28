@@ -111,16 +111,10 @@ If the Bash tool is unavailable (not a Claude Code session), stop immediately an
 ERROR: fiction-h5-builder requires Claude Code. Re-invoke from a Claude Code session.
 ```
 
-**Cover image generation (Phase 3):** Uses Codex's `image_gen` tool via the companion script, then extracts the base64 result from the Codex session log. Requires Codex to be installed and authenticated. Check before Phase 3:
+**Cover image generation (Phase 3):** Calls `https://api.apiyi.com/v1/images/generations` with model `gpt-image-2-vip` via curl. Requires `APIYI_API_KEY` in the environment. If not set, Claude generates a styled SVG cover as fallback — no external API required.
 
 ```bash
-[ -f "$HOME/.codex/auth.json" ] && echo "CODEX_OK" || echo "CODEX_MISSING"
-```
-
-If `CODEX_MISSING`: log a warning, skip Phase 3, continue the pipeline.
-```
-WARNING: Codex not authenticated. Skipping cover generation.
-Run 'codex' once to authenticate, then re-run Phase 3.
+[ -n "$APIYI_API_KEY" ] && echo "apiyi path" || echo "SVG fallback"
 ```
 
 **Logo and favicon (Phase 6):** Claude writes SVG files directly. No image generation API or external tools required.

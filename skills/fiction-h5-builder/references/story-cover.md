@@ -6,18 +6,22 @@ Load this reference when the user asks to generate a novel cover (封面, /story
 
 ## Phase 3 Entry Check
 
-Before generating any cover, verify Codex is installed and authenticated:
+Check whether `APIYI_API_KEY` is set to choose the generation path:
 
 ```bash
-[ -f "$HOME/.codex/auth.json" ] && echo "CODEX_OK" || echo "CODEX_MISSING"
+[ -n "$APIYI_API_KEY" ] && echo "API_PATH=apiyi" || echo "API_PATH=claude_svg"
 ```
 
-- If `CODEX_OK`: proceed to B1/B2/B3.
-- If `CODEX_MISSING`: log a warning and skip Phase 3. Do not block the rest of the pipeline.
+- If set → **apiyi path**: call `https://api.apiyi.com/v1/images/generations` with `gpt-image-2-vip`.
+- If not set → print a yellow warning, then use **Claude SVG fallback**:
   ```
-  WARNING: Codex not authenticated. Skipping cover generation.
-  Run 'codex' once to authenticate, then re-run /story-cover.
+  \033[33m⚠ WARNING: APIYI_API_KEY is not set. Falling back to SVG cover generation.\033[0m
+  \033[33m  To enable photorealistic covers via gpt-image-2-vip, get an API key at:\033[0m
+  \033[33m  https://api.apiyi.com/register/?aff_code=ijv5\033[0m
+  \033[33m  Then set: export APIYI_API_KEY="your-key"\033[0m
   ```
+
+Both paths produce a file at `{BOOK_DIR}/cover/cover_v1.png` (or `.svg` for the fallback). Do not block the pipeline in either case.
 
 ## Modes
 
@@ -60,26 +64,22 @@ Note: `src/lib/books.ts` is generated during Phase 8 and will not exist when Pha
 
 If the pen name cannot be found in any of these files, substitute `"The Author"` as a placeholder and log a warning. Never stop the batch to ask.
 
-### B3 — Generate covers sequentially via companion script
-
-Run one `codex-companion.mjs task` call per book. Codex image generation is inherently sequential (one session at a time), so books are processed one after another. Extract the image from the session log immediately after each call completes.
+### B3 — Generate covers
 
 For each book in `BOOKS`:
 1. Read `content/{book-title}/world/worldbuilding.md` to extract genre and tone.
 2. Run genre detection (Step 1.5 below) to select cover style.
 3. Build the cover prompt (Step 2 below) substituting the book's title, genre, and characters.
-4. Record timestamp, call companion script, extract from session log (see Step 3 for full commands).
+4. Run Step 3 (apiyi curl or Claude SVG fallback).
 5. Verify the output file exists.
 6. Log: `✓ {book-title} — cover saved` or `⚠ {book-title} — cover skipped: {reason}`.
-
-If Codex is not authenticated, log the failure and skip Phase 3 entirely. Missing covers can be retried later.
 
 ### Batch completion checklist
 
 - [ ] Covers exist for as many books as possible.
 - [ ] Any failed/skipped covers are logged with the book title and error reason.
 
-Missing covers are not a hard blocker for site build — the site can use CSS placeholders during development. Re-run Phase 3 later when Codex is available. Site logo and favicon are generated in Phase 6 (Design plan) — do not block on them here.
+Missing covers are not a hard blocker for site build — the site can use CSS placeholders during development. Re-run Phase 3 later if needed. Site logo and favicon are generated in Phase 6 (Design plan) — do not block on them here.
 
 ---
 
@@ -89,14 +89,15 @@ Use for adding one book to an already-launched site. Skip logo and favicon steps
 
 ## Generation Method
 
-Call `codex-companion.mjs task` directly with `--fresh` and an explicit `image_gen` instruction. Do not read files or search the filesystem. After the call completes, extract the base64 image from the Codex session log and write it to disk (see Step 3 for full commands).
+**apiyi path (preferred):** `curl` to `https://api.apiyi.com/v1/images/generations` with model `gpt-image-2-vip`. Response is base64 PNG, decoded and written to disk with Python. See Step 3.
 
-If Codex is not authenticated or the call fails, skip this cover and continue. CSS placeholders are acceptable only during development, never as a final launch asset.
+**Claude SVG fallback:** When `APIYI_API_KEY` is not set, Claude writes a styled SVG cover directly. Acceptable as a launch asset when the API is unavailable.
 
 ## Environment Variables
 
 | Variable | Required | Notes |
 |---|---|---|
+| `APIYI_API_KEY` | No | API key for `api.apiyi.com`. If unset, falls back to SVG cover. Get one at https://api.apiyi.com/register/?aff_code=ijv5 |
 | `BOOK_DIR` | Yes | Output directory, e.g. `./public/covers/{book-title}` |
 
 ## Step 1 — Resolve required info (no prompt)
@@ -150,89 +151,70 @@ keep title and author name inside the central safe area (inner ~85%), no waterma
 Title font styles and author name styles are in `references/cover-styles.md` per genre.
 Offer 2–3 composition variants (close-up portrait / full body / pure scene) on first generation.
 
-## Step 3 — Generate cover via Codex image_gen + session log extraction
+## Step 3 — Generate cover
 
-**How it works:** Codex's `image_gen` tool stores the generated image as base64 in the session log (`~/.codex/sessions/.../*.jsonl`) under the `image_generation_end` event's `result` field — even when Codex itself cannot write it to disk. We call Codex to generate the image, then immediately extract the base64 from the session log and decode it to a file.
-
-### Single-book flow
+### apiyi path (APIYI_API_KEY is set)
 
 ```bash
-# 1. Record the current time as extraction anchor
-BEFORE_TS=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-TODAY=$(date +"%Y/%m/%d")
-SESSION_DIR="$HOME/.codex/sessions/$TODAY"
+BOOK_DIR="public/covers/{book-title}"
+mkdir -p "$BOOK_DIR/cover"
+PROMPT="{full-prompt-from-step-2}"
 
-# 2. Run Codex image generation (use companion script)
-node "$HOME/.claude/plugins/cache/openai-codex/codex/1.0.4/scripts/codex-companion.mjs" task \
-  "--fresh Use image_gen directly. Do not read any files or explore. Generate a 1024x1536 portrait PNG book cover. {full-prompt-from-step-2}" \
-  --write
-
-# 3. Extract base64 from the session log written after BEFORE_TS
-mkdir -p {BOOK_DIR}/cover
-python3 - <<'PY'
-import os, json, base64, glob, sys
-from datetime import datetime, timezone
-
-before = datetime.fromisoformat("$BEFORE_TS".replace('Z', '+00:00'))
-session_dir = os.path.expanduser("$SESSION_DIR")
-out_path = "{BOOK_DIR}/cover/cover_v1_raw.png"
-
-# Find session logs modified after we started
-logs = sorted(glob.glob(f"{session_dir}/*.jsonl"), key=os.path.getmtime, reverse=True)
-for log_path in logs[:5]:
-    mtime = datetime.fromtimestamp(os.path.getmtime(log_path), tz=timezone.utc)
-    if mtime < before:
-        continue
-    with open(log_path) as f:
-        for line in f:
-            try:
-                d = json.loads(line)
-                p = d.get('payload', {})
-                if p.get('type') == 'image_generation_end' and p.get('result'):
-                    img = base64.b64decode(p['result'])
-                    os.makedirs(os.path.dirname(out_path), exist_ok=True)
-                    with open(out_path, 'wb') as out:
-                        out.write(img)
-                    print(f"saved {len(img)} bytes to {out_path}")
-                    sys.exit(0)
-            except Exception:
-                pass
-
-print("ERROR: image_generation_end event not found in recent session logs")
-sys.exit(1)
-PY
+curl -s https://api.apiyi.com/v1/images/generations \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $APIYI_API_KEY" \
+  -d "{
+    \"model\": \"gpt-image-2-vip\",
+    \"prompt\": $(echo "$PROMPT" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read().strip()))'),
+    \"n\": 1,
+    \"size\": \"1024x1536\",
+    \"response_format\": \"b64_json\"
+  }" | python3 -c "
+import sys, json, base64, os
+data = json.load(sys.stdin)
+img = base64.b64decode(data['data'][0]['b64_json'])
+out = '$BOOK_DIR/cover/cover_v1_raw.png'
+os.makedirs(os.path.dirname(out), exist_ok=True)
+open(out, 'wb').write(img)
+print('saved', len(img), 'bytes')
+"
 ```
 
-### Multi-book batch flow
+After generation:
+```bash
+# Resize to 480×720 for web delivery
+ffmpeg -i "$BOOK_DIR/cover/cover_v1_raw.png" -vf scale=480:720 "$BOOK_DIR/cover/cover_v1.png" -y \
+  || sips -z 720 480 "$BOOK_DIR/cover/cover_v1_raw.png" --out "$BOOK_DIR/cover/cover_v1.png"
+rm "$BOOK_DIR/cover/cover_v1_raw.png"
+```
 
-Generate one book at a time (Codex sessions are sequential) but keep the extraction loop tight so total wall time is mainly generation time:
+Write the prompt to `$BOOK_DIR/cover/cover_v1.prompt.txt`.
+
+On API error: log the response body, skip this book, continue.
+
+### Claude SVG fallback (APIYI_API_KEY not set)
+
+Claude writes a styled SVG cover directly. Size: 480×720 viewBox. Must include:
+- Genre-appropriate background gradient (from `cover-styles.md` color palette)
+- Book title in large centered text with genre font style
+- Author name in smaller text at bottom
+- A simple symbolic motif (sword, lotus, city silhouette, etc.) as an SVG shape or path
+
+Output path: `{BOOK_DIR}/cover/cover_v1.svg`
+
+Log per book: `\033[33m⚠ SVG fallback — {book-title}\033[0m`
+
+### B3 batch flow
+
+For each book in `BOOKS`, run Step 3 in sequence. API calls can be fired in rapid succession since each call is independent, but write sequentially to avoid filesystem races:
 
 ```bash
 for bookSlug in "${BOOKS[@]}"; do
-  BEFORE_TS=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-  node "$HOME/.claude/plugins/cache/openai-codex/codex/1.0.4/scripts/codex-companion.mjs" task \
-    "--fresh Use image_gen directly. Do not read any files. Generate 1024x1536 portrait PNG cover for '${bookSlug}'. ${resolvedPrompts[$bookSlug]}" \
-    --write
-  # extract immediately after each generation
-  python3 extract_cover.py "$BEFORE_TS" "public/covers/${bookSlug}/cover/cover_v1_raw.png"
+  BOOK_DIR="public/covers/${bookSlug}"
+  PROMPT="${resolvedPrompts[$bookSlug]}"
+  # run apiyi curl or SVG fallback per above
 done
 ```
-
-Where `extract_cover.py` is the extraction logic from the single-book flow above, parameterized on `$1` (before timestamp) and `$2` (output path).
-
-### After extraction
-
-1. Verify `{BOOK_DIR}/cover/cover_v1_raw.png` exists (non-zero bytes).
-2. Resize to 480×720 for web delivery:
-   ```bash
-   ffmpeg -i "{BOOK_DIR}/cover/cover_v1_raw.png" -vf scale=480:720 "{BOOK_DIR}/cover/cover_v1.png" -y \
-     || sips -z 720 480 "{BOOK_DIR}/cover/cover_v1_raw.png" --out "{BOOK_DIR}/cover/cover_v1.png"
-   ```
-3. Remove raw file: `rm "{BOOK_DIR}/cover/cover_v1_raw.png"`
-4. Write prompt text to `{BOOK_DIR}/cover/cover_v1.prompt.txt`.
-5. On failure: log and skip. Do not block the pipeline.
-
-If the call fails, log the error, skip this book's cover, and continue with the next book. Do not silently substitute a placeholder, and do not block the pipeline on a single failure.
 
 ## Step 4 — Quality check
 
