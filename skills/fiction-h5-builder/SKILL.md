@@ -44,17 +44,17 @@ All writing phase outputs MUST be saved to the correct path under `content/` fro
 | Phase | Load Reference | Required Output |
 | --- | --- | --- |
 | 0. Project setup | `references/story-setup.md` | Directory structure, naming conventions |
-| 1. Write long-form | `references/story-long-write.md` | Chapters in `chapters/ch-NNN-{title}.md`, updated `tracking/` |
-| 1. Write short-form | `references/story-short-write.md` | `prose.md`, `setup.md`, `beat-outline.md` |
+| 1a. Write (long-form) | `references/story-long-write.md` | Chapters in `chapters/ch-NNN-{title}.md`, updated `tracking/` |
+| 1b. Write (short-form) | `references/story-short-write.md` | `prose.md`, `setup.md`, `beat-outline.md` |
 | 2. Import manuscript | `references/story-import.md` | Split chapters, `world/`, `outline/`, `tracking/` reconstructed |
-| 3. Cover | `references/story-cover.md` + `references/cover-styles.md` | Cover image `public/covers/{book-title}/cover/cover_v1.png`, site logo `public/logo.svg`, favicon `public/favicon-32x32.png` |
+| 3. Cover | `references/story-cover.md` + `references/cover-styles.md` | Cover image `public/covers/{book-title}/cover/cover_v1.png` — required for every book, no exceptions |
 | 4. Quality pass | `references/story-review.md` + `references/story-deslop.md` | Review report, prose with AI flavor removed |
 
-These phases are skipped entirely when the user starts from existing Markdown files.
+Phase 1a and 1b are mutually exclusive — run the one that matches the project type, skip the other. These phases are skipped entirely when the user starts from existing Markdown files.
 
 ### Pre-Build Gate
 
-All of the following must be true before starting Phase 4. If any check fails, return to the appropriate writing phase.
+All of the following must be true before starting Phase 5. If any check fails, return to the appropriate writing phase.
 
 | Check | Required location |
 | --- | --- |
@@ -65,27 +65,56 @@ All of the following must be true before starting Phase 4. If any check fails, r
 | `world/worldbuilding.md` exists and is non-empty | writing phase 0 or import |
 | `tracking/context.md` exists | writing phase 1 or import |
 | Cover image generated for each book | `public/covers/{book-title}/cover/cover_v1.png` |
-| Site logo generated | `public/logo.svg` |
-| Favicon generated | `public/favicon-32x32.png` |
 
-Run `/story-cover` if cover, logo, or favicon are missing. Do not start site build until all checks pass.
+Run `/story-cover` if any book is missing a cover image. Do not start site build until all checks pass.
 
 ### Site build phases (always run for publishing)
 
 | Phase | Load Reference | Required Output |
 | --- | --- | --- |
-| 4. Stack (site build entry point) | `references/tech-stack.md` | Chosen stack with one-line rationale |
-| 5. Design plan | `references/design-system.md` | Tone, palette, type system, layout concept, signature element |
-| 6. Data setup | `references/data-contract.md` | Loader plan (direct filesystem) |
-| 7. Build | `references/ui-components.md` + `references/reader-ux.md` | Working site with all required pages |
-| 8. Performance | `references/performance.md` | Core Web Vitals targets met, images optimized |
-| 9. QA | `references/qa-checklist.md` | Screenshots at required viewports, checklist passed |
+| 5. Stack | `references/tech-stack.md` | Chosen stack with one-line rationale |
+| 6. Design plan | `references/design-system.md` | Tone, palette, type system, layout concept, signature element, `public/logo.svg`, `public/favicon-32x32.png` |
+| 7. Data setup | `references/data-contract.md` | Loader plan (direct filesystem) |
+| 8. Build | `references/ui-components.md` + `references/reader-ux.md` | Working site with all required pages |
+| 9. Performance | `references/performance.md` | Core Web Vitals targets met, images optimized |
+| 10. QA | `references/qa-checklist.md` | Screenshots at required viewports, checklist passed |
 
 Optional site build phases (load only when the brief requires):
 - `references/internationalization.md` — when target language is not the build default
 - `references/product-surface.md` — when IA or URL structure needs formal documentation
 
 For review and redesign tasks, start at the relevant phase and load only the references covering the failing areas.
+
+## Phase Execution Protocol
+
+Execute phases one at a time. Track progress with the best mechanism available in the current environment:
+
+**If `TaskCreate` / `TaskUpdate` are available** (Claude Code): use them. Create all phase tasks at session start (`pending`), flip to `in_progress` when entering a phase, `completed` when done. Use `TaskGet` on re-entry to restore state. This gives the native Claude Code task list UI.
+
+**If those tools are not available** (other agents / API): print a compact text progress block at each phase boundary instead:
+
+```
+[ Fiction H5 Builder — Phase 2 / 10 ]
+✓ 0 Setup  ✓ 1b Write  ▶ 2 Import  ○ 3 Cover  ○ 4 Quality
+○ 5 Stack  ○ 6 Design  ○ 7 Data  ○ 8 Build  ○ 9 Perf  ○ 10 QA
+```
+
+**Parallelism:** Some phases can run concurrently — do not force sequential execution when parallel work is safe.
+
+| Parallel-safe pairs | Notes |
+| --- | --- |
+| Phase 3 covers across multiple books | Generate all book covers in one batch (B1–B3 loop), not one-at-a-time |
+| Phase 6 (Design) + Phase 7 (Data setup) | Design tokens and data schema are independent; can draft both in one turn |
+| Phase 9 (Performance) + Phase 10 (QA) | Performance audit and visual QA can run in parallel passes |
+
+Sequential dependencies that cannot be parallelized: 0→1→2→3→4 (writing must precede site build); 5→6 (stack must be chosen before design); 7→8 (data model must be defined before building pages).
+
+**Rules (apply in both modes):**
+- Parallel-safe phases may be executed in the same turn — announce both at the start and summarize both at the end.
+- Sequential phases still require a user confirmation between them.
+- Load each phase's reference file only when entering that phase.
+- If a phase is skipped, mark it done with a note explaining why, then pause.
+- On re-entry, restore or reprint current state before proceeding.
 
 ## Quality Gates
 
@@ -194,7 +223,7 @@ Load references only when entering that phase. Do not preload all references at 
     covers/                     # optional: cover images
 ```
 
-Cover images are required for each book (`public/covers/{book-title}/cover/cover_v1.png`). Run `/story-cover` before Phase 4. Site logo (`public/logo.svg`) and favicon (`public/favicon-32x32.png`) are also required. During development only, a CSS placeholder is acceptable — never ship without real assets.
+Cover images (`public/covers/{book-title}/cover/cover_v1.png`) are generated in Phase 3 — one per book, no exceptions. Site logo (`public/logo.svg`) and favicon (`public/favicon-32x32.png`) are generated in Phase 6 (Design plan) as site-level assets. During development only, CSS placeholders are acceptable — never ship without real assets.
 
 For a review or redesign task, the output is a findings report and patch set, not a full scaffold.
 

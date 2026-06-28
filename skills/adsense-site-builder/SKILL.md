@@ -47,6 +47,27 @@ Run these phases in order unless the user explicitly starts from an existing art
 - Phase 6 (go-live) executes the distribution plan immediately.
 - Phase 7 (audit) requires 2–4 weeks of real GSC data — indexing, impressions, crawl coverage. Run it only after that window passes. Do not submit AdSense the same day the site launches.
 
+## Phase Execution Protocol
+
+Execute phases one at a time. Track progress with the best mechanism available in the current environment:
+
+**If `TaskCreate` / `TaskUpdate` are available** (Claude Code): use them. Create all 8 phase tasks at session start (`pending`), flip to `in_progress` when entering a phase, `completed` when done. Use `TaskGet` on re-entry to restore state.
+
+**If those tools are not available** (other agents / API): print a compact text progress block at each phase boundary instead:
+
+```
+[ AdSense Site Builder — Phase 3 / 8 ]
+✓ 1 Niche  ✓ 2 Keywords  ▶ 3 Page Model  ○ 4 Build  ○ 5 Distribution
+○ 6 Go-live  ○ 7 Audit (2–4 wks post-launch)  ○ 8 Growth Loop (monthly)
+```
+
+**Rules (apply in both modes):**
+- One phase per response turn. Never advance to the next phase without an explicit user confirmation.
+- Load the phase's reference file only when entering that phase — not before.
+- If a phase is skipped, mark it done with a note explaining why, then pause.
+- On re-entry, restore or reprint current state before proceeding.
+- Phases 7 and 8 have external timing dependencies. When completing Phase 6, remind the user: Phase 7 requires 2–4 weeks of real GSC data; Phase 8 runs monthly post-approval.
+
 ## Default Batch Workflow
 
 When the user asks to create multiple sites:

@@ -8,7 +8,7 @@ Reverse-engineer a user-provided manuscript into a complete writing project — 
 
 The deliverable is a **writable project**, not just an analysis.
 
-## Phase 1: Confirm the Source
+## Step 1: Confirm the Source
 
 Ask the user:
 1. Book title and source file path (or paste text directly)
@@ -34,7 +34,7 @@ Confirm detections with the user before proceeding.
 
 User declaration overrides auto-detection. Confirm classification with the user.
 
-## Phase 2: Structural Analysis
+## Step 2: Structural Analysis
 
 ### Long-form analysis
 
@@ -63,7 +63,7 @@ Output to:
 
 Output to `{story-title}/reference/{book-title}/` with same three files.
 
-## Phase 3: Build the Writing Project
+## Step 3: Build the Writing Project
 
 After analysis, construct the writable project.
 
@@ -79,7 +79,7 @@ content/{book-title}/
 ├── chapters/
 │   ├── ch-001-{title}.md    — split from source, zero-padded
 │   └── ...
-├── reference/{book-title}/   — from Phase 2 analysis
+├── reference/{book-title}/   — from Step 2 analysis
 ├── tracking/
 │   ├── context.md           — last chapter's ending + open threads
 │   ├── threads.md           — all open foreshadows with chapter references
@@ -95,7 +95,7 @@ content/short/{story-title}/
 ├── setup.md               — emotion target + characters + world notes
 ├── beat-outline.md        — beat outline of the imported story
 ├── prose.md               — full prose
-└── reference/{book-title}/  — from Phase 2 analysis
+└── reference/{book-title}/  — from Step 2 analysis
 ```
 
 ## Chapter Splitting Rules (Long-form)

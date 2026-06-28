@@ -6,7 +6,7 @@ Load this reference when the user asks to generate a novel cover (封面, /story
 
 | Mode | When to use | What it generates |
 |---|---|---|
-| **Batch** | Initial site launch — all books written, Pre-Build Gate pending | Covers for every book in `content/`, site logo, favicon |
+| **Batch** | Initial site launch — all books written, Pre-Build Gate pending | Covers for every book in `content/` |
 | **Single-book** | Adding one new book to an existing site | Cover for one book only (logo/favicon already exist) |
 
 **Default to Batch mode at initial launch.** The Pre-Build Gate requires covers for all ≥5 books. Single-book mode is for incremental updates only.
@@ -47,20 +47,13 @@ For each book in `BOOKS`:
 
 If Codex is unavailable, fall back to Claude Code native image generation for that book. Continue to the next book regardless — log failures and fix at the end, do not stop the batch.
 
-### B4 — Generate site logo and favicon
-
-After all book covers are done, generate the site-level assets **once** (see **Site Logo and Favicon** section below).
-
 ### Batch completion checklist
 
-Before handing off to site build:
+Before handing off to Pre-Build Gate:
 
 - [ ] `public/covers/{book-title}/cover/cover_v1.png` exists for every book in `BOOKS`
-- [ ] `public/logo.svg` exists
-- [ ] `public/favicon-32x32.png` exists
-- [ ] `public/apple-touch-icon.png` exists
 
-Any missing file is a Pre-Build Gate failure — fix before starting Phase 4 (site build).
+Any missing cover is a Pre-Build Gate failure — fix before starting Phase 5 (Stack). Site logo and favicon are generated later in Phase 6 (Design plan) — do not block on them here.
 
 ---
 
@@ -196,41 +189,12 @@ All assets live in `public/` inside the project. No CDN or external upload requi
 
 ---
 
-## Site Logo and Favicon
+## Output Location
 
-Phase 3 requires generating all three assets before site build: cover images, site logo, and favicon. Run these steps after cover generation is complete. Codex is the primary method for all three — never skip to placeholder.
-
-### Logo (`public/logo.svg`)
-
-1. Delegate to Codex via `codex-plugin-cc`. Prompt:
-   ```
-   SVG logo for a fiction reading site. Genre: {genre}. Style: {one-word visual tone}.
-   Single motif, clean lines, works on both light and dark backgrounds.
-   Output as inline SVG, no external references, no raster images embedded.
-   ```
-2. Save result to `public/logo.svg`.
-3. Fallback (Codex unavailable): use Claude Code's native SVG generation with the same prompt.
-
-### Favicon (`public/favicon-32x32.png`)
-
-1. Delegate to Codex via `codex-plugin-cc`. Prompt:
-   ```
-   Favicon icon, 32×32px, single high-contrast motif simplified from the site logo.
-   Must be readable at 16px. Solid background, no text.
-   ```
-2. Save 32×32 PNG to `public/favicon-32x32.png`.
-3. Generate 180×180 version for `public/apple-touch-icon.png` using the same motif.
-4. Fallback: Claude Code native image generation.
-
-Wire up in `src/app/layout.tsx`:
-
-```ts
-export const metadata: Metadata = {
-  icons: {
-    icon: '/favicon-32x32.png',
-    apple: '/apple-touch-icon.png',
-  },
-}
+```
+public/covers/{book-title}/cover/cover_v1.png        ← main cover, served as /covers/{book-title}/cover/cover_v1.png
+public/covers/{book-title}/cover/cover_v1.prompt.txt ← prompt used
+public/covers/{book-title}/cover/cover_v1_upload.png ← platform-cropped version (if UPLOAD_SIZE set)
 ```
 
-**Never ship without all three assets generated. Placeholder = blocked build.**
+Site logo and favicon are **not** part of this phase. They are generated in Phase 6 (Design plan) via `references/design-system.md`.

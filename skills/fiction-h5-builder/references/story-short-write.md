@@ -25,7 +25,7 @@ Pick one before starting. The entire story structure flows from this choice.
 
 ## Writing Process
 
-### Phase 1: Lock the emotion and framework
+### Step 1: Lock the emotion and framework
 
 Answer before writing any prose:
 
@@ -39,7 +39,7 @@ Closing echo: {final sentence — must have resonance or impact}
 
 Save as `content/short/{story-title}/setup.md` from the project root.
 
-### Phase 2: Beat outline
+### Step 2: Beat outline
 
 Write a beat-level outline with section markers. Target 6–12 beats for 8,000–20,000 characters.
 
@@ -55,7 +55,7 @@ Write a beat-level outline with section markers. Target 6–12 beats for 8,000�
 
 Save as `content/short/{story-title}/beat-outline.md` from the project root.
 
-### Phase 3: Write prose
+### Step 3: Write prose
 
 Write full prose section by section following the beat outline. Save all to `content/short/{story-title}/prose.md` from the project root.
 
@@ -80,7 +80,7 @@ If the user has a reference book to emulate:
 1. Read `{story-title}/reference/{book-title}/teardown.md` and `techniques.md`.
 2. Extract: twist positioning, pacing of misdirection, sentence-level technique.
 3. Add a brief "Reference Summary" section at the bottom of `setup.md`.
-4. During Phase 3, pull 1–2 specific techniques per section from the summary — do not copy, emulate.
+4. During Step 3, pull 1–2 specific techniques per section from the summary — do not copy, emulate.
 
 If no reference exists, use the genre emotion table to select a structural template before writing.
 
