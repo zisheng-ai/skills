@@ -130,12 +130,19 @@ Do not ask the user. Do not fabricate values that cannot be derived.
 
 Cover ratio: **2:3 portrait** (`1024x1536`). This is the standard for self-hosted reading sites.
 
-## Step 1.5 — Genre detection
+## Step 1.5 — Determine visual register and genre
 
-Scan the book title (and synopsis if available) against the keyword table in `references/cover-styles.md`.
+**First: check the site-level visual register** (set during Phase 6 design plan, or derive from the site's dominant content type):
+- If the site is drama/romance-dominant → **Cinematic Drama** register for all covers
+- If the site is fantasy/sci-fi-dominant → **Dark Fantasy Illustration** register for all covers
+- Record the register and apply it consistently across all books on this site
+
+**Then: detect per-book genre** by scanning the book title (and synopsis if available) against the keyword table in `references/cover-styles.md`.
 - One match → use it
 - Multiple matches → priority order: 仙侠 > 西幻 > 古言 > 现言 > 都市 > 悬疑 > 科幻 > 历史 > 灵异 > 轻小说
-- No match → default `都市`
+- No match → default to the site's primary genre
+
+The genre determines composition template, color palette, character design, and typography style. The visual register determines render quality language (photorealistic film-still vs. hyperrealistic 3D render).
 
 ## Step 2 — Build the prompt
 
