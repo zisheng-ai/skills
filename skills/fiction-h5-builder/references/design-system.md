@@ -174,6 +174,7 @@ Never use placeholder text, generic emoji, or external icon libraries as the sit
 **Parallel generation:** Generate the logo and favicon in parallel using the `codex:codex-rescue` Agent (same pattern as cover generation in `story-cover.md` Step 3). Both are independent and can run concurrently.
 
 ```js
+// Substitute {genre} with the actual detected genre before spawning.
 await Promise.all([
   Agent({
     subagent_type: "codex:codex-rescue",
@@ -181,9 +182,10 @@ await Promise.all([
   }),
   Agent({
     subagent_type: "codex:codex-rescue",
-    prompt: `--fresh Generate a 32x32 PNG favicon for a Chinese web fiction site. It should be a simplified single-motif icon matching the genre {genre}. High contrast, readable at 16px. Save to public/favicon-32x32.png. Do not read any files or search the filesystem.`
+    prompt: `--fresh Generate favicon assets for a Chinese web fiction site. Genre: {genre}. Single-motif icon, high contrast, readable at 16px. Save a 32x32 PNG to public/favicon-32x32.png and a 180x180 PNG to public/apple-touch-icon.png. Do not read any files or search the filesystem.`
   })
 ])
+```
 
 **Logo:**
 - Generate SVG logo via the `codex@openai-codex` Claude Code plugin. Codex will produce `public/logo.svg`.
@@ -384,7 +386,7 @@ Run every item before delivering. If any item fails, the output is not done.
 - [ ] Previous / next chapter navigation present and working?
 - [ ] End-of-chapter "Next chapter" prompt visible at bottom of content?
 - [ ] Reader background is not pure `#fff` or `#000`?
-- [ ] Body text ≥ 16px mobile, contrast ≥ 4.5:1 against page background?
+- [ ] Body text ≥ 17px mobile, contrast ≥ 4.5:1 against page background?
 - [ ] Dark mode toggle present and persists in `localStorage`?
 - [ ] Last visited chapter stored and surfaced on home/detail page?
 - [ ] Light and dark themes implemented via DaisyUI `data-theme`? (required; verify WCAG AA for each)

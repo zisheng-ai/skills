@@ -25,11 +25,14 @@ Run the build and start the production server, then verify routes programmatical
 ```bash
 set -e
 
-# Build (use the project's build script: npm/yarn/pnpm run build, or npx next build)
-npm run build
+# Detect package manager
+PKG_MGR=$([ -f yarn.lock ] && echo yarn || [ -f pnpm-lock.yaml ] && echo pnpm || echo npm)
+
+# Build
+$PKG_MGR run build
 
 # Start server in background and capture its port
-npm start > /tmp/fiction-server.log 2>&1 &
+$PKG_MGR run start > /tmp/fiction-server.log 2>&1 &
 SERVER_PID=$!
 
 # Wait for server to be ready; extract the port it bound to
@@ -59,14 +62,21 @@ check() {
   fi
 }
 
-# Route smoke tests
-check "home responds" curl -sf "${BASE}/" > /dev/null
-check "book detail responds" curl -sf "${BASE}/book/${BOOK_SLUG}/" > /dev/null
-check "chapter reader responds" curl -sf "${BASE}/book/${BOOK_SLUG}/chapter/1/" > /dev/null
+# Route smoke tests (curl -sf already silences progress; no > /dev/null so check() can print ✓/✗)
+check "home responds" curl -sf "${BASE}/"
+check "book detail responds" curl -sf "${BASE}/book/${BOOK_SLUG}/"
+check "chapter reader responds" curl -sf "${BASE}/book/${BOOK_SLUG}/chapter/1/"
 
 # Content checks
 check "chapter content renders" sh -c "curl -s '${BASE}/book/${BOOK_SLUG}/chapter/1/' | grep -q '<p>'"
-check "next/finish link present" sh -c "curl -s '${BASE}/book/${BOOK_SLUG}/chapter/1/' | grep -qE 'Next chapter|Finish'""
+check "next/finish link present" sh -c "curl -s '${BASE}/book/${BOOK_SLUG}/chapter/1/' | grep -qE 'Next chapter|Finish'"
+# Only test prev-chapter link if chapter 2 actually exists
+CHAPTER2_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${BASE}/book/${BOOK_SLUG}/chapter/2/")
+if [ "$CHAPTER2_STATUS" = "200" ]; then
+  check "prev chapter link present" sh -c "curl -s '${BASE}/book/${BOOK_SLUG}/chapter/2/' | grep -qiE 'Previous|上一章|Prev'"
+else
+  echo "- prev chapter link (skipped — only 1 chapter found)"
+fi
 
 kill $SERVER_PID
 

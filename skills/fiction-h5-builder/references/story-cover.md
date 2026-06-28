@@ -64,9 +64,11 @@ If fewer than 5 books are found, log a warning and continue with whatever books 
 
 Read the pen name from project files in this order — do not ask the user:
 
-1. `src/lib/books.ts` → first book's `author` field
-2. Any `content/{book}/world/worldbuilding.md` → first "Author" line
-3. Any `content/{book}/tracking/context.md` → first "Pen name" line
+1. Any `content/{book}/world/worldbuilding.md` → first "Author" line
+2. Any `content/{book}/tracking/context.md` → first "Pen name" line
+3. `src/lib/books.ts` → first book's `author` field (only exists after Phase 8 site build)
+
+Note: `src/lib/books.ts` is generated during Phase 8 and will not exist when Phase 3 runs. Try it last, not first.
 
 If the pen name cannot be found in any of these files, substitute `"The Author"` as a placeholder and log a warning. Never stop the batch to ask.
 
@@ -174,17 +176,23 @@ Report the final file path.`
 For batch mode, spawn **one Agent per book in parallel**. Each agent is independent and issues one `image_gen` call. Do not put all books into a single agent call — that forces sequential generation.
 
 ```js
-// BOOKS is a string array of content/ directory names (same value as the URL slug)
-await Promise.all(BOOKS.map(bookSlug =>
-  Agent({
+// BOOKS is a string array of content/ directory names (same value as the URL slug).
+// Before spawning agents, substitute {pen-name}, {genre-style}, and {prompt-body}
+// per book using the output of B2 (pen name) and Steps 1.5 + 2 (genre + prompt).
+// Do NOT pass the literal placeholder strings — Codex will use them verbatim.
+await Promise.all(BOOKS.map((bookSlug, i) => {
+  const penName = resolvedPenNames[i]       // from B2
+  const genreStyle = resolvedGenreStyles[i] // from Step 1.5
+  const promptBody = resolvedPromptBodies[i] // from Step 2
+  return Agent({
     subagent_type: "codex:codex-rescue",
     prompt: `--fresh Use the built-in image_gen tool directly. Do not read files or search.
 Generate one 1024x1536 portrait PNG cover for the Chinese web novel whose directory is '${bookSlug}'.
-Author: '{pen-name}'. Genre/style: {genre-style}. {prompt-body}.
+Author: '${penName}'. Genre/style: ${genreStyle}. ${promptBody}.
 Copy the image to public/covers/${bookSlug}/cover/cover_v1.png and write the prompt to public/covers/${bookSlug}/cover/cover_v1.prompt.txt.
 Report the final file path.`
   })
-))
+}))
 ```
 
 ### Fallback: direct script invocation

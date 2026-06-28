@@ -96,7 +96,7 @@ Prose starts here — no leading blank line.
 Frontmatter is optional but recommended. The site loader falls back to filename if `title` is absent.
 
 Prose formatting rules:
-- Adjacent paragraphs: single `\n` between them (no blank lines / `\n\n`)
+- Adjacent paragraphs: blank line between them (`\n\n`). Within a paragraph, do not hard-wrap lines. (CommonMark renders a single `\n` as a space, collapsing all paragraphs into one block.)
 - Dialogue quotes: half-width double quotes `""`
 - No `……` or `——` in the prose product — rewrite as action, short sentence, or line break
 - No chapter summaries or author notes inline
@@ -136,4 +136,4 @@ Always overwrite `context.md` after each chapter. Do not append history — the 
 - Hook-out: does it create forward pull? Reader must want the next chapter.
 - No consecutive paragraphs with identical rhythm or length.
 - No three consecutive sentences starting with the same subject.
-- Run `/story-deslop` before marking a chapter complete if AI flavor is detected.
+- If AI flavor is detected, flag the chapter for the Phase 4 deslop pass — do not run `/story-deslop` inline here. Phase 4 (`references/story-deslop.md`) is loaded separately and runs after all chapters are written.

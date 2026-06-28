@@ -75,7 +75,15 @@ Never create routes or expose links to writing-internal directories.
 
 ## Initialization Checklist
 
-When setting up a new project:
+**Before running any step below**, check whether the project already exists:
+
+```bash
+[ -f "content/*/world/worldbuilding.md" ] || ls content/*/world/worldbuilding.md 2>/dev/null
+```
+
+If `content/` already contains at least one book directory with non-empty files, **skip steps 1–6 entirely** and proceed directly to the writing phase. Re-running initialization on an existing project will overwrite `worldbuilding.md`, `outline.md`, and `tracking/context.md` with placeholder content, destroying the author's work.
+
+When setting up a **new project** (no existing content):
 
 1. Create the directory structure above with placeholder files.
 2. Write a brief `world/worldbuilding.md` (3–5 bullet points: genre, setting, tone, core conflict).

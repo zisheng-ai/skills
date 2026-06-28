@@ -29,7 +29,7 @@ Typography, spacing, and contrast are non-negotiable. Interactive reader control
 
 ## Content-to-Site Promise
 
-This skill delivers a Hexo/Next.js-blog-style experience:
+This skill delivers a Next.js-blog-style experience:
 
 1. Novel files live in `content/` inside the Next.js project root.
 2. `next dev` / `next build` picks them up automatically — no scripts, no JSON generation.
@@ -141,8 +141,9 @@ Scope-to-phase mapping:
 
 | User intent | Phases to track |
 | --- | --- |
-| "Write a novel" / "Continue writing" / `/story-long-write` | 0, 1a, (4 if requested) |
-| "Write a short story" / `/story-short-write` | 0, 1b, (4 if requested) |
+| "Write a novel" / "Continue writing" / `/story-long-write` | 0 (skip if project exists), 1a, (4 if requested) |
+| "Write a short story" / `/story-short-write` | 0 (skip if project exists), 1b, (4 if requested) |
+| "Add one book to existing site" | 1a (single-book), 3 (single-book mode) — skip 0 and 5–10 |
 | "Generate covers" / `/story-cover` | 3 only |
 | "Import manuscript" / `/story-import` | 2 only |
 | "Review prose" / `/story-review` | 4 only |
@@ -170,7 +171,7 @@ Flip a task to `in_progress` when entering that phase and `completed` when done.
 | Chapters within a book (Phase 1) | Expand outline beats first, then spawn one Agent per chapter; run a continuity pass after all finish |
 | Phase 6 (Design) + Phase 7 (Data setup) | Design tokens and data schema are independent; can draft both in one turn |
 | Phase 3 covers across multiple books | Generate all book covers in one batch (B1–B3 loop), not one-at-a-time |
-| Phase 9 (Performance) + Phase 10 (QA) | Performance audit and visual QA can run in parallel passes |
+| Phase 9 (Performance) + Phase 10 (QA) | Share one build: run `npm run build` once, then run performance checks and QA checks in parallel against the same build output. Do not run two separate builds concurrently — they would conflict on `.next/`. |
 
 Sequential dependencies that cannot be parallelized: 0 → (writing track AND site setup track); within writing: outline expansion → parallel chapter writing → continuity pass → cover; within site: 5→6→7→8 (with ≥1 complete book as gate for Phase 8); 8→9→10.
 
@@ -178,7 +179,7 @@ Sequential dependencies that cannot be parallelized: 0 → (writing track AND si
 
 **If the `Agent` tool is available** (Claude Code — guaranteed by the prerequisite check above): delegate all chapter and prose generation to the Agent tool with `model: 'haiku'`. Never write fiction content directly in the main context. Never prompt the user to switch models manually.
 
-**If the `Agent` tool is not available**: this state cannot be reached — the prerequisite check exits before any phase runs.
+**If the `Agent` tool is not available**: write chapters sequentially in the main context. Skip parallel multi-book and multi-chapter spawning; write one chapter at a time following the Single Chapter Writing Process in `story-long-write.md`. Note: this is a degraded mode — quality and speed are both reduced.
 
 Site build phases (5–10) carry no model override and inherit the session model regardless.
 
@@ -205,7 +206,7 @@ Do not deliver a build if any of these are true.
 **Visual quality:**
 - Loud gradients, fake glass panels, glowing orbs, or heavy drop shadows on any surface.
 - Body font is decorative, handwritten, or a novelty display face.
-- Body text is below 18px on mobile or below 19px on desktop.
+- Body text is below 17px on mobile or below 17px on desktop.
 - Body text fails WCAG AA contrast (4.5:1) against the page background.
 - Desktop is a stretched phone layout with no layout adaptation.
 
@@ -282,20 +283,28 @@ Load references only when entering that phase. Do not preload all references at 
 
 ```
 <project>/
+  content/                      # all writing outputs live here
+    {book-title}/
+      chapters/                 # ch-001-{title}.md, ch-002-{title}.md, ...
+      world/                    # worldbuilding.md, characters/, map.md
+      outline/                  # outline.md
+      tracking/                 # context.md, threads.md, timeline.md
   src/app/
     page.tsx                    # home: book list
     book/[slug]/
       page.tsx                  # book detail: synopsis + chapter list
       chapter/[n]/
         page.tsx                # chapter reader: content + prev/next
-  content-collections.ts          # collection schema definitions
+  content-collections.ts        # collection schema definitions
   src/lib/
   src/components/
     BookCard.tsx
     ChapterNav.tsx
     ThemeToggle.tsx             # DaisyUI data-theme switcher
   public/
-    covers/                     # optional: cover images
+    covers/                     # cover images (Phase 3)
+    logo.svg                    # site logo (Phase 6)
+    favicon-32x32.png           # favicon (Phase 6)
 ```
 
 Cover images (`public/covers/{book-title}/cover/cover_v1.png`) are generated in Phase 3 when the Codex plugin is available — one per book. Site logo (`public/logo.svg`) and favicon (`public/favicon-32x32.png`) are generated in Phase 6 (Design plan) as site-level assets. During development only, CSS placeholders are acceptable — never ship without real assets.
