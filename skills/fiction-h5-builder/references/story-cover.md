@@ -70,24 +70,19 @@ Read the pen name from project files in this order — do not ask the user:
 
 If the pen name cannot be found in any of these files, substitute `"The Author"` as a placeholder and log a warning. Never stop the batch to ask.
 
-### B3 — Generate covers in one batch
+### B3 — Generate covers in parallel
 
-Spawn **one** Codex task that generates all covers in parallel. Passing the full book list in a single delegation avoids the per-call overhead of spawning one task per book.
+Spawn **one Codex task per book**, all running in parallel. A single Codex task can only issue one `image_gen` call at a time, so putting multiple covers in one task serializes generation. Parallel tasks generate multiple covers concurrently.
 
-Build a single prompt that lists every book with its title, genre/style tags, and pen name. Ask Codex to generate all `public/covers/{book-title}/cover/cover_v1.png` files and all corresponding `.prompt.txt` files.
+For each book in `BOOKS`:
+1. Read `content/{book-title}/world/worldbuilding.md` to extract genre and tone.
+2. Run genre detection (Step 1.5 below) to select cover style.
+3. Build the cover prompt (Step 2 below) substituting the book's title, genre, and characters.
+4. Spawn a Codex task with the direct `image_gen` invocation from Step 3.
+5. As each task finishes, verify the output file exists.
+6. Log: `✓ {book-title} — cover saved` or `⚠ {book-title} — cover skipped: {reason}`.
 
-Example task text:
-
-```
-Generate book covers for the following novels. Each cover must be 1024x1536 portrait PNG.
-Save each image to the exact path shown and write the prompt used to the matching .prompt.txt file.
-
-1. Title: {title-1} | Author: {pen-name} | Genre/style: {style-1} | Output: public/covers/{slug-1}/cover/cover_v1.png
-2. Title: {title-2} | Author: {pen-name} | Genre/style: {style-2} | Output: public/covers/{slug-2}/cover/cover_v1.png
-...
-```
-
-After Codex returns, verify each expected file exists. Log `✓ {book-title} — cover saved` for each successful cover and `⚠ {book-title} — cover skipped: {reason}` for any failure.
+Run all tasks in the background and `wait` for completion. Do not spawn them sequentially.
 
 If the Codex plugin is unavailable, log the failure and skip Phase 3 entirely. Missing covers can be retried later.
 
@@ -108,7 +103,9 @@ Use for adding one book to an already-launched site. Skip logo and favicon steps
 
 **Codex via the `codex@openai-codex` Claude Code plugin — preferred method.**
 
-Delegate the cover generation task to Codex using the plugin. Codex will use its built-in `imagegen` capability with the prompt from Step 2. Save the result to `public/covers/{book-title}/cover/cover_v1.png`.
+Delegate the cover generation task to Codex using the plugin. Codex has a built-in `image_gen` tool. To avoid the slow exploration phase, each task prompt must explicitly instruct Codex to use `image_gen` directly and forbid file reads / filesystem searches.
+
+Save the result to `public/covers/{book-title}/cover/cover_v1.png`.
 
 If the plugin is unavailable or the call fails, skip this cover and continue. Do not degrade to Claude native image generation, GPT-Image-2, or any other method during the main pipeline. A skipped cover can be retried later by re-entering Phase 3. CSS placeholders are acceptable only during development, never as a final launch asset.
 
@@ -155,25 +152,58 @@ keep title and author name inside the central safe area (inner ~85%), no waterma
 Title font styles and author name styles are in `references/cover-styles.md` per genre.
 Offer 2–3 composition variants (close-up portrait / full body / pure scene) on first generation.
 
-## Step 3 — Call Codex
+## Step 3 — Delegate to Codex via Agent tool
 
-Use the installed `codex@openai-codex` plugin to delegate cover generation to Codex. Codex will use its built-in `imagegen` capability to produce the cover.
+Use the `codex:codex-rescue` subagent to delegate image generation to Codex. This is the preferred invocation — Codex runs inside the shared Claude Code runtime with its built-in `image_gen` tool. Pass `--fresh` to prevent Codex from asking to resume a previous session (required for unattended use).
 
-Preferred invocation (when `codex-companion.mjs` is available):
+### Single-book invocation (preferred)
+
+```js
+Agent({
+  subagent_type: "codex:codex-rescue",
+  prompt: `--fresh Use the built-in image_gen tool directly. Do not read any files, do not search the filesystem, and do not explore.
+Generate one 1024x1536 portrait PNG book cover for a Chinese web novel.
+Title: '{book-title}'. Author: '{pen-name}'. Genre/style: {genre-style}. {prompt-body}.
+After generating, copy the image file to {BOOK_DIR}/cover/cover_v1.png and write the exact prompt to {BOOK_DIR}/cover/cover_v1.prompt.txt.
+Report the final file path.`
+})
+```
+
+### Multi-book batch invocation (preferred)
+
+For batch mode, spawn **one Agent per book in parallel**. Each agent is independent and issues one `image_gen` call. Do not put all books into a single agent call — that forces sequential generation.
+
+```js
+await Promise.all(books.map(book =>
+  Agent({
+    subagent_type: "codex:codex-rescue",
+    prompt: `--fresh Use the built-in image_gen tool directly. Do not read files or search.
+Generate one 1024x1536 portrait PNG cover for Chinese web novel '${book.title}' ...
+Copy to public/covers/${book.slug}/cover/cover_v1.png and write prompt to ...cover_v1.prompt.txt.`
+  })
+))
+```
+
+### Fallback: direct script invocation
+
+If `codex:codex-rescue` is unavailable (non-Claude-Code environment), fall back to the companion script:
 
 ```bash
 node "$HOME/.claude/plugins/cache/openai-codex/codex/1.0.4/scripts/codex-companion.mjs" task \
-  "Generate a 1024x1536 portrait PNG book cover for a Chinese web novel. Title: '{book-title}'. Author: '{pen-name}'. Genre/style: {genre-style}. {prompt-body}. Save the final image to {BOOK_DIR}/cover/cover_v1.png and also write the exact prompt used to {BOOK_DIR}/cover/cover_v1.prompt.txt." \
+  "--fresh Use the built-in image_gen tool directly. Do not read any files, do not search the filesystem, and do not explore. Generate one 1024x1536 portrait PNG book cover for a Chinese web novel. Title: '{book-title}'. Author: '{pen-name}'. Genre/style: {genre-style}. {prompt-body}. After generating, copy the image file to {BOOK_DIR}/cover/cover_v1.png and write the exact prompt to {BOOK_DIR}/cover/cover_v1.prompt.txt. Report the final file path." \
   --write
 ```
 
-If the exact path to `codex-companion.mjs` differs in this environment, locate it with:
+### Required constraints in every prompt
 
-```bash
-find "$HOME/.claude/plugins/cache/openai-codex" -name codex-companion.mjs | head -1
-```
+- `--fresh` (prevents session-resume prompts)
+- `Use the built-in image_gen tool directly.`
+- `Do not read any files, do not search the filesystem, and do not explore.`
+- Exact output path for the PNG.
+- Exact output path for the `.prompt.txt`.
 
-Codex may return the image directly or write it to a temporary cache path. After the task completes:
+### After the task completes
+
 1. Verify `{BOOK_DIR}/cover/cover_v1.png` exists and has portrait dimensions near 1024x1536.
 2. If Codex wrote the image to a different path, copy it to `{BOOK_DIR}/cover/cover_v1.png`.
 3. Save the prompt text to `{BOOK_DIR}/cover/cover_v1.prompt.txt`.
