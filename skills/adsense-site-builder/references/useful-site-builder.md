@@ -190,6 +190,50 @@ Disallow: /admin/
 Sitemap: https://your-domain.com/sitemap.xml
 ```
 
+### llms.txt
+
+`llms.txt` is a plain-text file at the site root that tells AI crawlers (Perplexity, ChatGPT, Google AI Overview) which pages exist and how to understand the site. It is the AI-crawler equivalent of `robots.txt` — it does not block crawlers but guides what they should read and how they should describe the site.
+
+**Why it matters for GEO:** Sites with a well-structured `llms.txt` are more likely to be cited correctly in AI answers. The file directly signals the site's purpose, the tool's name, and which pages are authoritative — the same information AI systems need to form accurate citations.
+
+**Auto-generate from `site-map.json`:** Since the site map already lists every page with title, path, description, and intent, `llms.txt` can be generated mechanically at end of phase 4.
+
+Format (write to `public/llms.txt` for Next.js, `static/llms.txt` for Astro):
+
+```txt
+# [Site Name]
+
+> [One sentence: what the site does and who it's for.]
+
+## Primary Tool
+
+- [Tool Name](/path): [One sentence describing what the tool does and what output it produces.]
+
+## Guides and Resources
+
+- [Page Title](/path): [One sentence describing the page's topic and what the user learns or gets.]
+- [Page Title](/path): [One sentence.]
+...
+
+## Reference Pages
+
+- [FAQ](/faq): [One sentence.]
+...
+
+## About
+
+- [About](/about): [One sentence about the site's purpose and who maintains it.]
+- [Contact](/contact): Contact form for questions and feedback.
+- [Privacy Policy](/privacy): Privacy policy covering data use and Google AdSense cookies.
+```
+
+**Generation rules:**
+- One entry per indexable page. Exclude `/api/*`, `/admin/*`, and any `noindex` pages.
+- Descriptions must be original — do not copy the meta description verbatim. Write from the AI citation perspective: "This page explains..." or "Use this tool to..."
+- The `>` intro line (the site description) is the highest-weight signal — write it to match the site's primary keyword and purpose clearly.
+- Group pages by cluster: primary tool first, then guides, then reference/FAQ, then trust pages. Order within each group by importance (most traffic expected → first).
+- Optionally also generate `public/llms-full.txt` with the full text content of the 3–5 most important pages (primary tool page + top guides). This is especially valuable when the site has original data or worked examples that AI systems should quote directly.
+
 ### Canonical URLs
 
 Every page must include a self-referencing canonical tag:
@@ -497,6 +541,12 @@ Before advancing to phase 5 (pre-launch distribution plan), verify all of the fo
 **Site identity:**
 - [ ] Favicon and Apple touch icon are in place (not browser-default blank).
 - [ ] Logo or site name mark is in the header and matches the token system.
+
+**Technical SEO files:**
+- [ ] `public/llms.txt` (or `static/llms.txt`) generated from `site-map.json` — every indexable page listed with a one-sentence description, grouped by cluster (primary tool → guides → reference → trust pages).
+- [ ] `llms.txt` intro line (`>`) accurately describes the site purpose in one sentence matching the primary keyword.
+- [ ] `sitemap.xml` includes every indexable page.
+- [ ] `robots.txt` allows Googlebot; disallows `/api/` and `/admin/`.
 
 **Project README:**
 - [ ] `README.md` generated in the project root using the Operations Guide template below.

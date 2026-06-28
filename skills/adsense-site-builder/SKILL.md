@@ -93,6 +93,9 @@ A site is not ready to submit for AdSense if any of these are true:
 ```txt
 <project-root>/
   README.md               ← operations guide, generated at end of phase 4
+  public/
+    llms.txt              ← AI crawler index, generated from site-map.json at end of phase 4
+    llms-full.txt         ← optional: full text of 3–5 key pages for AI citation
 outputs/
   niches.json
   <site-slug>/
