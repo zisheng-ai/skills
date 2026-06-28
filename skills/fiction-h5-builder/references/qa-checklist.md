@@ -164,8 +164,8 @@ Automated grep over build output:
 
 - [ ] No "lorem ipsum", "Coming soon", "TODO", "[BOOK TITLE]" on rendered pages.
 - [ ] No reader-visible copy mentions AI, Markdown, parser, prompt, or skill.
-- [ ] `public/logo.svg` exists and is not the default Next.js icon.
-- [ ] `public/favicon.svg` exists and is not the default Next.js favicon.
+- [ ] Logo exists: `public/logo.png` (apiyi path) or `public/logo.svg` (SVG fallback).
+- [ ] Favicon exists: `public/favicon-32x32.png` (apiyi path) or `public/favicon.svg` (SVG fallback).
 - [ ] End-of-chapter and end-of-book states render correctly.
 
 ## Performance Spot Check

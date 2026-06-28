@@ -169,35 +169,69 @@ Reader body typography matters more than display typography. Get body right befo
 
 ## Site Logo and Favicon
 
-Never use placeholder text, generic emoji, or external icon libraries as the site logo or favicon. Always generate real assets for launch.
+Never use placeholder text, generic emoji, or external icon libraries. Always generate real assets for launch.
 
-**Logo:** Write SVG directly — Claude generates the SVG code based on genre and tone. No image generation API needed.
+### Entry check
+
+```bash
+[ -n "$APIYI_API_KEY" ] && echo "API_PATH=apiyi" || echo "API_PATH=claude_svg"
+```
+
+- If not set → print yellow warning, then fall back to Claude SVG:
+  ```
+  \033[33m⚠ WARNING: APIYI_API_KEY is not set. Falling back to SVG logo/favicon generation.\033[0m
+  \033[33m  To enable AI-generated assets via gpt-image-2-vip, get an API key at:\033[0m
+  \033[33m  https://api.apiyi.com/register/?aff_code=ijv5\033[0m
+  \033[33m  Then set: export APIYI_API_KEY="your-key"\033[0m
+  ```
+
+### apiyi path (APIYI_API_KEY is set)
+
+Generate logo and favicon via `gpt-image-2-vip`. Both are square motif images — use `1024x1024`.
 
 ```bash
 mkdir -p public
-# Claude writes the SVG content directly to this file
-cat > public/logo.svg << 'SVG'
-{claude-generated SVG markup for the site logo}
-SVG
+
+# Logo prompt: single symbolic motif for the site genre, transparent or dark background,
+# no text, suitable for nav bar. Square composition, clean edges.
+LOGO_PROMPT="{genre-appropriate motif — e.g. glowing sword on dark background for xianxia}"
+
+curl -s https://api.apiyi.com/v1/images/generations \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $APIYI_API_KEY" \
+  -d "{\"model\":\"gpt-image-2-vip\",\"prompt\":$(echo "$LOGO_PROMPT" | python3 -c 'import json,sys;print(json.dumps(sys.stdin.read().strip()))'),\"n\":1,\"size\":\"1024x1024\",\"response_format\":\"b64_json\"}" \
+  | python3 -c "
+import sys,json,base64
+d=json.load(sys.stdin)
+open('public/logo_raw.png','wb').write(base64.b64decode(d['data'][0]['b64_json']))
+print('logo saved')
+"
+
+# Favicon prompt: same motif, ultra-simplified, readable at 32px
+FAVICON_PROMPT="{same motif, minimal, high contrast, no text, works at tiny size}"
+
+curl -s https://api.apiyi.com/v1/images/generations \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $APIYI_API_KEY" \
+  -d "{\"model\":\"gpt-image-2-vip\",\"prompt\":$(echo "$FAVICON_PROMPT" | python3 -c 'import json,sys;print(json.dumps(sys.stdin.read().strip()))'),\"n\":1,\"size\":\"1024x1024\",\"response_format\":\"b64_json\"}" \
+  | python3 -c "
+import sys,json,base64
+d=json.load(sys.stdin)
+open('public/favicon_raw.png','wb').write(base64.b64decode(d['data'][0]['b64_json']))
+print('favicon saved')
+"
+
+# Resize
+ffmpeg -i public/logo_raw.png -vf scale=256:256 public/logo.png -y \
+  || sips -z 256 256 public/logo_raw.png --out public/logo.png
+ffmpeg -i public/favicon_raw.png -vf scale=32:32 public/favicon-32x32.png -y \
+  || sips -z 32 32 public/favicon_raw.png --out public/favicon-32x32.png
+ffmpeg -i public/favicon_raw.png -vf scale=180:180 public/apple-touch-icon.png -y \
+  || sips -z 180 180 public/favicon_raw.png --out public/apple-touch-icon.png
+rm public/logo_raw.png public/favicon_raw.png
 ```
 
-The SVG should reflect the site's visual register and genre (see `cover-styles.md`). Keep it simple: a single motif (book, quill, ink drop, sword, portal, etc.) that works at both 32px and full nav-bar size. Output path: `public/logo.svg`.
-
-**Favicon:** Write a second SVG directly — a simplified single-motif version of the logo, optimized for small sizes (32px). Reference it as an SVG favicon in `app/layout.tsx`:
-
-```tsx
-// app/layout.tsx
-export const metadata = {
-  icons: {
-    icon: '/favicon.svg',
-  },
-}
-```
-
-Save to `public/favicon.svg`. Modern browsers support SVG favicons natively — no PNG conversion needed. Never ship the default Next.js favicon.
-- Output paths: `public/favicon-32x32.png`, `public/apple-touch-icon.png`, `public/favicon.ico` (convert from 32×32 PNG).
-- Wire up in `src/app/layout.tsx` via Next.js metadata:
-
+Wire up in `src/app/layout.tsx`:
 ```ts
 export const metadata: Metadata = {
   icons: {
@@ -206,6 +240,22 @@ export const metadata: Metadata = {
   },
 }
 ```
+
+### Claude SVG fallback (APIYI_API_KEY not set)
+
+Claude writes SVG files directly. Both must reflect the site's visual register and genre (see `cover-styles.md`).
+
+- **`public/logo.svg`** — single motif, works at nav-bar size and 32px. No text in the SVG itself.
+- **`public/favicon.svg`** — same motif, simplified for small sizes.
+
+Wire up in `src/app/layout.tsx`:
+```ts
+export const metadata: Metadata = {
+  icons: { icon: '/favicon.svg' },
+}
+```
+
+SVG favicons are supported by all modern browsers. Acceptable as a launch asset when the API is unavailable.
 
 **Never ship a site with the default Next.js favicon or a missing logo.** Development previews may use placeholders; launch requires real assets.
 

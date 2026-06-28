@@ -117,7 +117,7 @@ ERROR: fiction-h5-builder requires Claude Code. Re-invoke from a Claude Code ses
 [ -n "$APIYI_API_KEY" ] && echo "apiyi path" || echo "SVG fallback"
 ```
 
-**Logo and favicon (Phase 6):** Claude writes SVG files directly. No image generation API or external tools required.
+**Logo and favicon (Phase 6):** Same `APIYI_API_KEY` check as Phase 3. If set, generates PNG assets via `gpt-image-2-vip`; if not set, yellow warning + Claude writes SVG fallback.
 
 ## Phase Execution Protocol
 
@@ -210,8 +210,8 @@ Do not deliver a build if any of these are true.
 - `outline/outline.md` is missing or empty for any published book.
 - `world/worldbuilding.md` is missing or empty for any published book.
 - Cover image is missing for any book in the reader at launch time. (Development preview may use CSS placeholders; final launch requires real covers.)
-- `public/logo.svg` is the default Next.js placeholder or missing at launch time. (Development preview may use a placeholder; final launch requires a real generated logo.)
-- `public/favicon.svg` is the default Next.js favicon or missing at launch time. (Development preview may use a placeholder; final launch requires a real generated favicon.)
+- Logo is missing or is the default Next.js placeholder at launch time. Required: `public/logo.png` (apiyi path) or `public/logo.svg` (SVG fallback).
+- Favicon is missing or is the default Next.js favicon at launch time. Required: `public/favicon-32x32.png` (apiyi path) or `public/favicon.svg` (SVG fallback).
 
 **Technical:**
 - Build errors or console errors exist on page load.
@@ -291,11 +291,11 @@ Load references only when entering that phase. Do not preload all references at 
     ThemeToggle.tsx             # DaisyUI data-theme switcher
   public/
     covers/                     # cover images (Phase 3)
-    logo.svg                    # site logo (Phase 6)
-    favicon.svg                 # favicon (Phase 6)
+    logo.png / logo.svg         # site logo — PNG if APIYI_API_KEY set, else SVG (Phase 6)
+    favicon-32x32.png / favicon.svg  # favicon (Phase 6)
 ```
 
-Cover images (`public/covers/{book-title}/cover/cover_v1.png`) are generated in Phase 3 when Codex is available — one per book. Site logo (`public/logo.svg`) and favicon (`public/favicon.svg`) are written as SVG directly by Claude in Phase 6 — no image generation API required. During development only, CSS placeholders are acceptable — never ship without real assets.
+Cover images (`public/covers/{book-title}/cover/cover_v1.png`) are generated in Phase 3 via apiyi (or SVG fallback). Logo and favicon follow the same pattern in Phase 6 — PNG via apiyi if `APIYI_API_KEY` is set, SVG written by Claude otherwise. During development only, CSS placeholders are acceptable — never ship without real assets.
 
 For a review or redesign task, the output is a findings report and patch set, not a full scaffold.
 
