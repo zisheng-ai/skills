@@ -200,6 +200,14 @@ For a review or redesign task, the output is a findings report and patch set, no
 
 ## Collaboration With Other Skills
 
-`frontend-design` capabilities are built into this skill — no separate installation needed. Use them directly for implementation and visual verification.
+The skills listed in **Merged Skills** below are already integrated — no separate installation needed. Use their capabilities directly.
 
 This skill's reader-comfort requirements and QA gates take priority over any visual suggestion. Accept aesthetic feedback only when it does not reduce reading comfort, reduce contrast, or add visual noise to the chapter surface.
+
+## Merged Skills
+
+Skills that have been absorbed into this skill. When a source skill releases an update, review the diff against the corresponding reference files listed here and sync any improvements.
+
+| Skill | Source | Merged into | Notes |
+| --- | --- | --- | --- |
+| frontend-design | `frontend-design@claude-plugins-official` | `references/ui-components.md`, `references/design-system.md` | Visual component specs, typography system, responsive layout patterns, dark mode implementation |
