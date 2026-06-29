@@ -193,18 +193,13 @@ If the output is `API_PATH=claude_svg` → print the warning below, then fall ba
 
 Generate logo and favicon via `gpt-image-2-vip`. Both are square motif images — use `1024x1024`.
 
-**Before constructing the logo prompt:** check the site's visual register (recorded during Phase 6 design planning).
-- If register is **Dark Romance Editorial**: use the motif selection table and prompt structure from `references/cover-styles.md` → "Logo and favicon — Dark Romance Editorial register". Do not use a generic sword or lotus.
-- All other registers: choose a motif that matches the site's primary genre and color palette.
-
 ```bash
 mkdir -p public
 
 # Logo prompt: single symbolic motif for the site genre, transparent or dark background,
 # no text, suitable for nav bar. Square composition, clean edges.
 # Claude constructs this based on site genre and visual register before running curl
-# For Dark Romance Editorial register: see cover-styles.md for motif selection and prompt structure
-LOGO_PROMPT="{genre-appropriate motif — e.g. glowing sword on dark background for xianxia, or dark rose on near-black for dark romance}"
+LOGO_PROMPT="{genre-appropriate motif — e.g. glowing sword on dark background for xianxia}"
 
 LOGO_URL=$(curl -s https://api.apiyi.com/v1/images/generations \
   -H "Content-Type: application/json" \

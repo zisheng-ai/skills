@@ -10,29 +10,22 @@ Reference for `story-cover.md`. Genre-to-visual-style mapping for cover image ge
 |---|---|---|
 | **Cinematic Drama** | AI film-still quality, photorealistic real actors, high contrast, emotion-first composition | Site hosts 都市 / 现言 / 悬疑 / 古言 content — contemporary or historical drama where characters feel human and real |
 | **Dark Fantasy Illustration** | Hyperrealistic 3D render, near-black atmospheric background, gold/silver metallic typography, epic world elements | Site hosts 玄幻 / 仙侠 / 西幻 / 科幻 / 末世 content — power systems, cultivation, fantasy worlds, sci-fi |
-| **Dark Romance Editorial** | Moody editorial photography aesthetic, deep jewel-toned palette, sensual tension in every frame, restrained but charged body language | Site hosts Western dark romance, paranormal romance, billionaire romance, vampire romance, alpha/omega, enemies-to-lovers — English-language or globally targeted |
 
 Determine which register fits the site during **Phase 6 (Design plan)** and record it in the design-system notes. All Phase 3 cover generation for that site uses the same register.
 
 If the site mixes genres, default to **Cinematic Drama** for realism-leaning titles and **Dark Fantasy Illustration** for genre-fantasy titles, but keep color palettes harmonized across covers so the homepage grid feels cohesive.
 
-**Content Heat Standard active:** When the site's Content Heat Standard is enabled (see SKILL.md), all three asset types — cover, logo, favicon — must reflect the "sensual but not explicit" aesthetic. Composition, color, motif, and lighting choices should carry heat. A cover that could belong on a cozy mystery is wrong for this register. See the Dark Romance Editorial section below for specifics.
-
 ---
 
 ## Visual Style Standard
 
-All registers target **photorealistic or hyperrealistic quality** — not painted, not anime, not watercolor. The reference aesthetic per register:
+Both registers target **photorealistic or hyperrealistic 3D render quality** — not painted, not anime, not watercolor. The reference aesthetic is:
 
 - **Cinematic Drama** (都市 / 现言 / 悬疑 / 古言): AI-generated film-still quality. Characters look like real actors in a directed scene. High contrast, shallow depth of field, emotion-first composition. Think: prestige drama movie poster or streaming series thumbnail.
 - **Dark Fantasy Illustration** (西幻 / 玄幻 / 仙侠 / 科幻): Hyperrealistic 3D render, dark gradient background (deep black → navy/purple), character in detailed fantasy or sci-fi attire, dramatic atmospheric lighting. Gold/silver/chrome metallic typography is large and dominant in the lower 35% of the frame.
-- **Dark Romance Editorial**: Moody editorial photography, deep jewel tones (wine, midnight navy, deep plum, charcoal), candlelit or golden-hour light. Every image should feel like the reader walked in on something private. Bodies in frame are suggestive, not explicit — proximity, touch, gaze, and posture carry the heat. Typography is restrained and elegant (serif display fonts, wine or gold ink). Think: Penelope Douglas paperback, dark romance Kindle cover, not a thriller or lit fic cover.
 
 **Shared quality keywords (include in every prompt):**
 `photorealistic, ultra-detailed, cinematic lighting, 8K render, professional book cover, shallow depth of field, dramatic atmosphere`
-
-**Dark Romance Editorial additional keywords (add when using this register):**
-`moody editorial photography, jewel-toned palette, intimate atmosphere, sensual tension, charged body language, restrained not explicit, candlelight or golden-hour rim light, deep wine and midnight tones`
 
 ---
 
@@ -42,15 +35,12 @@ Pick the template that best matches the book's core tension. These mirror the re
 
 | Template | When to use | Description |
 |---|---|---|
-| **Power Inversion** | 都市/现言 revenge, humiliation, domination arcs | One standing figure (powerful, cold, composed) looks down at a kneeling/crying/bound figure. Third character optional as witness. Setting: luxury interior, parking garage, ballroom. |
-| **Intimate Tension** | 现言/都市 romance, billionaire arcs | Two figures in close proximity — one vulnerable (white sheet, disheveled hair, clutching clothes), one at rest (watching from a distance or looming). Luxury setting: penthouse bedroom, cityscape window behind. Props: champagne glass, scatter of luxury items. |
-| **Rain Shelter** | 悬疑/现言 dark romance, protection arcs | Two figures on a wet night street, one holding a black umbrella over the other. The protected figure looks downcast; the protector looks stern or conflicted. City lights reflect on the wet pavement. Setting can be European street or Asian neon city. |
-| **Grand Humiliation** | 现言/都市 gala/elite society arcs | Glamorous dominant figure (formal gown, jewels, red lips) stands elevated or turns away while a male figure kneels crying at her feet. Grand ballroom setting: chandeliers, crowd, flowers. |
-| **Lone Hero** | 西幻/科幻/玄幻 cultivation/system/isekai | Single powerful protagonist fills center-left frame, facing slightly away from camera. Epic world behind: ruined city + energy portal (sci-fi), snowy mountains + dark castle (fantasy), cloud sea + ancient pagodas (xianxia). Title in large metallic font occupies lower 35% of frame. |
-| **Duo Confrontation** | 西幻/古言 romance + power | Two characters pressed together — powerful male behind or beside protected female. Dark dramatic background. Matching detailed costumes. Both look into distance or at camera with intensity. |
-| **Possessive Hold** | Dark romance / paranormal — possessiveness, marking, tension | Male figure from behind, one hand at her waist or throat (not gripping), chin at her shoulder. She does not pull away — her expression is complicated (not scared, not compliant, something in between). Dark atmospheric background: stone interior, rain-slicked window, candlelit room. Wine-dark and shadow palette. |
-| **Almost Kiss** | Dark romance / enemies-to-lovers / slow burn | Two faces in extreme close-up, a breath apart, not touching. Eyes open or closed depending on the beat — open is confrontational, closed is surrender. Sharp shallow depth of field. Background blurred into deep wine or charcoal. Title in elegant serif across the negative space between their faces. |
-| **After Dark** | Dark romance / vampire / paranormal — morning-after / aftermath | Single female figure, disheveled elegance — rumpled silk, one shoulder bare, looking out a tall gothic window or standing in candlelight. She is not distressed; she looks like someone who made a choice she intends to keep. No male figure necessary. The atmosphere carries the implication. |
+| **Power Inversion** | 都市/现言 revenge, humiliation, domination arcs | **TWO characters.** One standing figure (powerful, cold, composed) looks down at a kneeling/crying/bound figure. Third character optional as witness. Setting: luxury interior, parking garage, ballroom. |
+| **Intimate Tension** | 现言/都市 romance, billionaire arcs | **TWO characters.** Two figures in close proximity — woman wrapped in white bed sheet with bare shoulders and legs visible to mid-thigh, clutching sheet to chest, expression of shock or conflict; man in open-collar shirt at rest on rumpled bed watching her. Luxury penthouse bedroom, floor-to-ceiling cityscape windows. Foreground props: champagne flute, scattered luxury items (jewelry, lipstick). |
+| **Rain Shelter** | 悬疑/现言 dark romance, protection arcs | **TWO characters.** Two figures on a wet night street, one holding a black umbrella over the other. The protected figure looks downcast; the protector looks stern or conflicted. City lights reflect on the wet pavement. Setting can be European street or Asian neon city. |
+| **Grand Humiliation** | 现言/都市 gala/elite society arcs | **TWO characters.** Glamorous dominant figure in deep-V plunging neckline floor-length gown (thigh-high slit, jeweled décolletage, red lips, chandelier jewels) stands elevated or turns away in contempt while a male figure kneels or collapses crying at her feet. Grand ballroom setting: chandeliers, champagne tower, roses, crowd of onlookers. |
+| **Lone Hero** | 西幻/科幻/玄幻 cultivation/system/isekai | **ONE character.** Single powerful protagonist fills center-left frame, facing slightly away from camera. Epic world behind: ruined city + energy portal (sci-fi), snowy mountains + dark castle (fantasy), cloud sea + ancient pagodas (xianxia). Title in large metallic font occupies lower 35% of frame. |
+| **Duo Confrontation** | 西幻/古言 romance + power | **TWO characters.** Two characters pressed together — powerful male behind or beside protected female. Dark dramatic background. Matching detailed costumes. Both look into distance or at camera with intensity. |
 
 ---
 
@@ -58,10 +48,6 @@ Pick the template that best matches the book's core tension. These mirror the re
 
 | Keywords in title | Genre | Style tag |
 |---|---|---|
-| vampire/blood/velvet/coven/bite/fangs/eternal/immortal/undead | Dark Romance — Paranormal / Vampire | `dark romance editorial, moody candlelit gothic interior, jewel-toned palette, sensual tension, intimate composition` |
-| alpha/omega/mate/claimed/pack/shift/wolf/fated/marked | Dark Romance — Paranormal / Shifter | `dark romance editorial, forest night or stone hall, dominant-protective composition, wine and shadow palette` |
-| billionaire/CEO/contract/arranged/enemies/obsession/forbidden/devious | Dark Romance — Contemporary | `dark romance editorial, luxury interior or rooftop city night, charged body language, wine-crimson and charcoal` |
-| duke/lord/rogue/wicked/sinful/highland/regency/rake/mistress | Dark Romance — Historical / Gothic | `dark romance editorial, candlelit manor or gothic castle, period costuming with sensual tension, deep jewel tones` |
 | 仙/道/剑/灵/修/宗/天/帝/尊/神 | 玄幻/仙侠 | `hyperrealistic 3D xianxia fantasy, dark misty atmosphere, divine golden light` |
 | 都市/总裁/校园/重生/系统/学霸/医生/兵王 | 都市 | `cinematic photorealistic urban drama, film still quality, high contrast` |
 | 妃/皇/侯/宫/嫡/庶/后/朝/凤/鸾 | 古言 | `hyperrealistic ancient Chinese palace drama, rich imperial colors, candlelight` |
@@ -79,7 +65,6 @@ Pick the template that best matches the book's core tension. These mirror the re
 
 | Genre | Title font keywords |
 |---|---|
-| Dark Romance / Western | `elegant serif display font in gold or ivory, restrained placement in lower third or negative space between figures, Cormorant Garamond or Didot style, no metallic chrome, no fantasy emboss` |
 | 玄幻/仙侠 | `large bold golden embossed calligraphy with metallic glow, ornate separator lines above and below` |
 | 都市 | `bold modern sans-serif in silver-white with subtle metallic sheen, clean layout` |
 | 古言/宫斗 | `elegant golden traditional Kai script, ornate red-gold border frame` |
@@ -97,7 +82,6 @@ Pick the template that best matches the book's core tension. These mirror the re
 
 | Genre | Author name keywords |
 |---|---|
-| Dark Romance / Western | `small elegant serif in ivory or pale gold, minimal decoration, thin rule line above or below, never ornate` |
 | 玄幻/仙侠 | `small refined white serif, faint golden glow, flanked by cloud-scroll ornaments, thin gold horizontal line` |
 | 都市 | `small clean white modern sans, subtle drop shadow, thin silver divider` |
 | 古言/宫斗 | `small elegant dark red traditional text, thin golden rectangular border` |
@@ -140,10 +124,10 @@ Pick the template that best matches the book's core tension. These mirror the re
 ### 现言/甜宠
 - **Render style:** Cinematic photorealistic. Warm film grain quality, dreamy atmosphere.
 - **Colors:** Warm cream + blush pink + soft gold; rainy blue-grey for dramatic variants
-- **Characters:** Couple — emotional tension is the subject. Female often vulnerable (wet, disheveled, clutching). Male protective or dominating (umbrella, looming posture).
-- **Background:** Luxury bedroom with city skyline view, rainy Asian or European street, café, garden sunset
-- **Lighting:** `golden sunset through floor-to-ceiling windows, wet street neon reflections, soft romantic bokeh`
-- **Composition:** Intimate Tension / Rain Shelter templates
+- **Characters:** Couple — emotional tension is the subject. Female often vulnerable (white bed sheet clutched to chest, bare shoulders and thighs exposed; or wet, disheveled). Male in open-collar shirt, at rest or looming, watching her. Foreground props: champagne flute, scattered jewelry, luxury items on glass table.
+- **Background:** Luxury penthouse bedroom with floor-to-ceiling city skyline windows (golden sunset preferred); or rainy Asian or European street
+- **Lighting:** `golden sunset pouring through panoramic windows, warm rim light on her bare shoulders, cool shadow on the man behind`
+- **Composition:** Intimate Tension template (white sheet variant at highest intensity) / Rain Shelter template
 
 ### 悬疑/推理
 - **Render style:** Cinematic dark photography. Stark, high-contrast, emotionally cold.
@@ -195,35 +179,7 @@ Pick the template that best matches the book's core tension. These mirror the re
 - **Lighting:** `magical particle sparkles, soft luminous backlighting, vivid colored light`
 - **Composition:** Character facing forward, friendly expression, colorful background
 
-### Dark Romance / Western Romance (English-language sites)
-- **Render style:** Moody editorial photography, photorealistic. Think: prestige dark romance paperback, not a thriller or cozy mystery. Every image should feel like the reader walked in on something private.
-- **Colors:** Deep wine / crimson, midnight navy, dark plum, charcoal near-black. Gold or pale ivory accent. Never bright white, never pastels, never neon.
-- **Characters:** Figures in charged proximity — one dominant, one not quite yielding. Bodies suggest intimacy without depicting it. Collar, wrist, shoulder, neck, jaw are compositional focal points. Expression is the story: complicated, not simple. No cartoon emotion.
-- **Background:** Gothic interior (stone, candles, stained glass), rain-slicked window at night, baroque library, candlelit bedroom corner, fog-filled courtyard. Background is atmosphere, not scenery — it should feel like a place where something just happened or is about to.
-- **Lighting:** `warm candlelight rim light, deep shadow fill, golden-hour window backlight, single practical source casting long shadows, jewel-toned atmosphere`
-- **Composition templates (in priority order):** Possessive Hold → Almost Kiss → After Dark → Intimate Tension. Choose based on the book's arc beat: Possessive Hold for possessiveness/claiming books, Almost Kiss for slow-burn/enemies-to-lovers, After Dark for paranormal/aftermath, Intimate Tension for contemporary billionaire/arranged.
-- **Typography:** Elegant serif display (think Cormorant Garamond or Didot style) in gold, ivory, or deep wine. Small, restrained, placed in the negative space above or below the figures. Do NOT use condensed sans, metallic chrome, or fantasy embossed styles — those belong to other registers.
-- **What not to generate:** No exposed anatomy below the collar. No acts depicted. No expressions that read as fear or pain. Heat comes from proximity, posture, gaze — not from skin.
-
-#### Logo and favicon — Dark Romance Editorial register
-
-When generating the site logo and favicon for a dark romance site, choose a motif from this list (pick one that fits the site's subgenre):
-
-| Subgenre | Motif options |
-|---|---|
-| Vampire / paranormal | A single dark rose with one drop; ornate skeleton key on black; wine glass with a crimson swirl |
-| Shifter / alpha | A crescent moon with a wolf silhouette; a single claw mark across a wax seal; a crown of thorns |
-| Contemporary / billionaire | A broken handcuff or single chain link in gold; a noir cityscape initial; a playing card (ace of spades, crimson back) |
-| Historical / gothic | A wax seal with an ornate letter; a single candlestick flame; a raven on a stone arch |
-| General dark romance | An ornate open book with a rose laid across it; a velvet ribbon tied in a loose knot; a crescent moon above a doorway |
-
-**Logo prompt structure:**
-`Single [motif], [dark background], minimal and symbolic, suitable for nav bar at 256px, no text, square composition, deep jewel tones, [wine/navy/black palette], cinematic lighting, ultra-detailed, no watermark`
-
-**Favicon prompt structure (same motif, simplified):**
-`Single [motif], ultra-minimal, high contrast, works at 32px, dark background, no text, square, [accent color] on near-black`
-
-The motif must be immediately readable as "dark romance" — not horror, not fantasy epic, not cozy. Elegant, a little dangerous, private.
+---
 
 ## Prompt Quality Checklist
 
