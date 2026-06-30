@@ -46,7 +46,7 @@ Ch-NNN: [primary emotion] | hook: {1-sentence} | turn: {what changes} | hook-out
 
 All chapters must have this before any parallel writing starts. The beat entries replace `tracking/context.md` as the coordination signal during parallel writing.
 
-### Step 2 — Spawn one Agent per chapter (model: haiku)
+### Step 2 — Spawn one Agent per chapter
 
 Spawn all chapter agents concurrently. To avoid redundant file reads, read shared context once in the main context and pass it into each agent's prompt:
 
@@ -73,7 +73,7 @@ Keep this pass minimal. Do not run a full quality rewrite here; that is Phase 4.
 
 ### Multiple books in parallel
 
-Spawn one top-level Agent per book (model: haiku). Pass only that book's `world/`, `outline/`, and character files so each agent starts with a minimal context. Books share no state and can complete in any order.
+Spawn one top-level Agent per book. Pass only that book's `world/`, `outline/`, and character files so each agent starts with a minimal context. Books share no state and can complete in any order.
 
 ## Single Chapter Writing Process
 
@@ -127,10 +127,10 @@ Word counts are targets, not uniform quotas. Let each chapter breathe according 
 
 | Chapter type | Word count range | Dialogue ratio | Action beats |
 | --- | --- | --- | --- |
-| Opening chapter | 3,000–4,500 | 20–30% | 3+ |
-| Escalation chapter | 2,500–4,000 | 30–50% | 2–4 |
-| Climax chapter | 2,000–3,500 | 15–25% | 4–6 |
-| Resolution chapter | 1,500–3,000 | 20–40% | 1–2 |
+| Opening chapter | 1,800–2,500 | 20–30% | 3+ |
+| Escalation chapter | 1,500–2,200 | 30–50% | 2–4 |
+| Climax chapter | 1,400–2,000 | 15–25% | 4–6 |
+| Resolution chapter | 1,200–1,800 | 20–40% | 1–2 |
 
 ## Context Handoff (`tracking/context.md` template)
 
@@ -157,15 +157,15 @@ Apply this section whenever the genre is romance or contains a romantic sub-plot
 
 ### Target Heat Level
 
-**Default: steamy / open-door, non-graphic.**
+**Default: steamy / closed-door at peak, non-graphic.** Matches `fiction-niche-researcher.md` AdSense safety policy.
 
 | Level | Definition | Policy |
 |-------|-----------|--------|
 | Sweet / closed-door | Tension only; intimacy implied off-page | Always safe |
-| **Steamy / open-door** | **Write through physical scenes up to and including the threshold; describe sensation, breath, skin, pressure — stop before explicit sexual acts** | **Default — use this** |
+| **Steamy / closed-door at peak** | **Build tension with sensation, breath, skin, pressure through proximity, touch, and kisses; fade-to-black or closed-door at the peak moment of intimacy — stop before explicit sexual acts** | **Default — use this** |
 | Explicit | Describes sex acts in anatomical detail | AdSense violation — never use |
 
-"Open door" here means: the reader is in the room. They feel the heat, they know what is happening, but the camera stays at the level of sensation and emotion — not mechanics.
+"Closed-door at peak" means: the reader feels the heat building — pulse, breath, contact, charged dialogue — but the camera cuts away at the peak intimate moment. They know what happened; they were not in the room for it. First kisses and make-out buildup are written through; escalated intimacy fades at the threshold.
 
 ---
 
@@ -233,7 +233,7 @@ Never interrupt and immediately resolve. The tension from an interrupted moment 
 
 #### First kiss
 
-Write through it fully. Don't fade at the first lip contact — that's closed-door. Stay in the scene.
+Write through it fully. A first kiss is not a fade point — stay in the scene through contact, response, and separation.
 
 Beats:
 - The initiation (who moves first, how)
@@ -246,7 +246,7 @@ Keep it under 400 words. Longer is not more intense — it dilutes.
 
 #### Escalated physical scene (make-out, pre-intimacy)
 
-Write through the escalation of contact. Clothing, hands, skin. Use sensory specificity — temperature, texture, pressure. Stop at the threshold of explicit sexual acts. Fade there, or cut to the aftermath.
+Build the escalation of contact — clothing, hands, skin — with sensory specificity (temperature, texture, pressure). **Fade-to-black or closed-door at the peak moment.** Do not write through the threshold; cut to aftermath or use a warm fade line. This is the AdSense-safe ceiling.
 
 **Fade technique:**
 > *His hand found the edge of her dress. She exhaled — barely sound, barely breath.*
@@ -281,13 +281,13 @@ Romance readers track the heat arc the same way they track plot. Structure it:
 
 | Chapter range | Expected heat beats |
 |--------------|---------------------|
-| Ch 1–3 | Awareness only. Character notices the other; no physical contact yet. |
-| Ch 4–6 | First accidental touch or forced proximity. One interrupted moment. |
-| Ch 7–9 | Escalating contact. First significant touch. Almost-kiss or interrupted kiss. |
-| Ch 10–12 | First kiss (if not earlier). Scene with real physical escalation. Emotional crisis interrupts. |
-| Final 1–2 chapters | Resolution of both emotional and physical tension. Open-door scene if the arc supports it. |
+| Ch 1–4 | Awareness only. Character notices the other; no physical contact yet. |
+| Ch 5–8 | First accidental touch or forced proximity. One interrupted moment. |
+| Ch 9–13 | Escalating contact. First significant touch. Almost-kiss or interrupted kiss. |
+| Ch 14–16 | First kiss (if not earlier). Scene with real physical escalation. Emotional crisis interrupts. |
+| Final 2–3 chapters | Resolution of both emotional and physical tension. Closed-door fade at peak if the arc supports it. |
 
-In a 12-chapter book, the first kiss should land no later than chapter 10. Readers who reach chapter 11 without it begin to feel cheated.
+In an 18-chapter book, the first kiss should land no later than chapter 14. Readers who reach chapter 16 without it begin to feel cheated.
 
 ---
 
@@ -314,3 +314,7 @@ Agents without this context will default to closed-door or will skip heat beats 
 - No consecutive paragraphs with identical rhythm or length.
 - No three consecutive sentences starting with the same subject.
 - If AI flavor is detected, flag the chapter for the Phase 4 deslop pass — do not run `/story-deslop` inline here. Phase 4 (`references/story-deslop.md`) is loaded separately and runs after all chapters are written.
+
+## After All Chapters Written → Cover Generation (automatic, no prompt)
+
+When all planned chapters are complete (or the user's requested batch is done), **immediately load `story-cover.md` and generate the cover** — do not ask whether to proceed. This is always the next step after the final chapter is saved.

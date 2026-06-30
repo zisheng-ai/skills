@@ -1,6 +1,6 @@
 ---
 name: fiction-h5-builder
-description: write fiction and build the reading site end-to-end. supports Chinese (ZH), English (EN), Japanese (JA), Korean (KO), and Spanish (ES) markets. use when the user asks to write a novel or short story (long-form / 长篇小说 / isekai / 로판 / novela; short-form / 短篇 / oneshot / 단편 / relato; write chapters, continue writing, story setup, import a manuscript, review prose, remove AI flavor / deslop), or asks for a mobile-first fiction reading site, web novel H5, work list/detail/catalog/reader pages, markdown chapters, multilingual reading sites, or a simple fiction site for social traffic campaigns. do not use for creator dashboards, ranking systems, bookshelf platforms, or reader community features unless the user explicitly asks for those.
+description: write fiction and build the reading site end-to-end. use when the user asks to write a novel or short story (long-form novel / 长篇小说, short-form story / 短篇小说, write chapters, continue writing, story setup, import a manuscript, review prose, remove AI flavor), or asks for a mobile-first fiction reading site, web novel H5, work list/detail/catalog/reader pages, markdown chapters, multilingual reading sites in english/spanish/japanese/korean, or a simple fiction site for social traffic campaigns. do not use for creator dashboards, ranking systems, bookshelf platforms, or reader community features unless the user explicitly asks for those.
 ---
 
 # Fiction H5 Builder
@@ -27,43 +27,6 @@ Typography, spacing, and contrast are non-negotiable. Interactive reader control
 - Realistic content only. Never ship placeholder text to readers.
 - Load only the references needed for the current task phase.
 
-## Content Heat Standard
-
-Dark romance readers come for the tension and stay for the burn. Every book must deliver sensual pull — suggestive, immersive, legally compliant. "Closed door but smoking hallway."
-
-### What to write
-
-- **Sensory grounding**: body heat, scent, skin texture, breath rhythm — no explicit anatomy
-- **Tension accumulation**: gaze, proximity, near-touches, the moment that almost happens
-- **Possessiveness and dominance**: jealousy, territorial behavior, power imbalance — the other character retains agency
-- **Implied scenes**: cut before the door closes; resume the morning after with coffee and rumpled sheets
-- **Symbolic intimacy**: for paranormal / vampire subgenres — feeding, marking, scarring as erotic surrogate
-- **Charged dialogue**: double meaning, unsaid things, a character suppressing what they're about to say
-
-### What never to write
-
-- Explicit intercourse (penetration, climax described directly)
-- Any intimate content involving minors
-- Non-consent presented as desirable or romantic without consequence (power imbalance is allowed; glorified assault is not)
-- Slurs used as sexual framing
-
-### Three writing rules
-
-1. **Sensation over action.** Describe what she feels, not what happens. "She failed" carries more heat than a choreographed scene.
-2. **Restraint is the tension.** The harder the character controls himself, the more the reader wants the collapse. The moment he steps back is the moment she leans forward.
-3. **Leave the blank.** Cut scenes, time jumps, morning-after framing. Readers fill in their own version — always better than what you wrote.
-
-### Heat dial
-
-| Level | Definition | Example |
-|-------|-----------|---------|
-| 1 — Undercurrent | Body language, charged dialogue, no contact | He stands too close; she doesn't step back |
-| 2 — Contact | Hands, neck, hair, temperature, blood draw | Wrist scene; pulse under his thumb |
-| 3 — Ignition | A kiss or equivalent; emotion breaks through | She said yes. It was nothing like a blood draw. |
-| 4 — Closed door | Scene enters then cuts; morning-after chapter opens | Chapter ends in the hallway. Next: two cups of coffee. |
-
-**Target per book:** no chapter below level 1; at least one level 3 or 4 scene every 3 chapters. Sustained level 1 for more than 3 consecutive chapters reads as flat — escalate or add a catalyst scene.
-
 ## Content-to-Site Promise
 
 This skill delivers a Next.js-blog-style experience:
@@ -76,62 +39,114 @@ All writing phase outputs MUST be saved to the correct path under `content/` fro
 
 ## Build Pipeline
 
-### Writing phases (run when the user has no existing content — always produce real chapters, never mock)
+All work starts with Phase 0. After that, Track A (content) and Track B (site) run in parallel.
 
-| Phase | Load Reference | Required Output |
-| --- | --- | --- |
-| 0. Project setup | `references/story-setup.md` | Directory structure, naming conventions |
-| 1a. Write (long-form) | `references/story-long-write.md` | Chapters in `chapters/ch-NNN-{title}.md`, updated `tracking/` |
-| 1b. Write (short-form) | `references/story-short-write.md` | `prose.md`, `setup.md`, `beat-outline.md` |
-| 2. Import manuscript | `references/story-import.md` | Split chapters, `world/`, `outline/`, `tracking/` reconstructed |
-| 3. Cover | `references/story-cover.md` + `references/cover-styles.md` | Cover image `public/covers/{book-title}/cover/cover_v1.png` for each book; skipped covers are retried later |
-| 4. Quality pass | `references/story-review.md` + `references/story-deslop.md` | Review report, prose with AI flavor removed |
+### Phase 0 — Setup
 
-Phase 1a and 1b are mutually exclusive — run the one that matches the project type, skip the other. These phases are skipped entirely when the user starts from existing Markdown files.
+Reference: `references/story-setup.md`
+Output: directory structure, naming conventions, GitHub private repo, submodule registration. Skip if the project directory already exists.
 
-### Parallel Pipeline
+**GitHub + Submodule setup (run once per new site):**
 
-Writing and site build run on two independent tracks that start together after Phase 0:
+```bash
+# 1. Initial commit inside the new site directory
+git add -A && git commit -m "feat: initial commit"
 
-| Track | Phases | Can start when |
-| --- | --- | --- |
-| Writing (new) | 1 → 3 → 4 | Phase 0 complete |
-| Writing (import) | 2 → 3 → 4 | Phase 0 complete |
-| Site setup | 5 → 6 → 7 | Phase 0 complete |
-| Site build | 8 → 9 → 10 | Track "Site setup" complete AND ≥ 1 book with ≥ 10 chapters exists |
+# 2. Create private GitHub repo and push (account: zisheng-ai)
+gh repo create zisheng-ai/{site-name} --private --source=. --remote=origin --push
 
-Do not wait for all books to finish before starting Phase 5. Do not wait for site setup to finish before continuing to write. Add books to `content/` incrementally as they are completed — the site builder picks them up automatically.
+# 3. Register as submodule in the fictions parent repo
+git -C /Users/zisheng/Desktop/zisheng-ai/fictions submodule add --force \
+  https://github.com/zisheng-ai/{site-name}.git {site-name}
+
+# 4. Commit the submodule entry in the parent repo
+git -C /Users/zisheng/Desktop/zisheng-ai/fictions add .gitmodules {site-name}
+git -C /Users/zisheng/Desktop/zisheng-ai/fictions commit -m "feat: add {site-name} as submodule"
+git -C /Users/zisheng/Desktop/zisheng-ai/fictions push
+```
+
+Replace `{site-name}` with the actual project directory name (kebab-case). Skip this block if the site already has a remote configured.
+
+### Track A — Content
+
+Starts after Phase 0. Runs in parallel with Track B.
+
+| Phase | Name | Reference | Output |
+| --- | --- | --- | --- |
+| A0 | Niche Research | `fiction-niche-researcher.md` | `outputs/{site-slug}/{book-slug}/niche-research.json` |
+| A1 | Write | see modes below | chapters, outline, world, tracking |
+| A2 | Cover | `story-cover.md` + `cover-styles.md` | `public/covers/{book-title}/cover/cover_v1.png` per book |
+| A3 | Quality Pass | `story-review.md` + `story-deslop.md` | review report, AI flavor removed |
+
+A0 runs once per book (not once per site). Required for each new book unless the user has explicitly stated the genre, tropes, and premise. A0's `differentiation_angle` and `competitive_brief` feed directly into A1's story brief.
+
+**A1 modes — pick exactly one per session:**
+
+- **Long-form:** `references/story-long-write.md` → `chapters/ch-NNN-{title}.md` + `tracking/`
+- **Short-form:** `references/story-short-write.md` → `prose.md`, `setup.md`, `beat-outline.md`
+- **Import:** `references/story-import.md` → split chapters, reconstructed `world/`, `outline/`, `tracking/`
+
+A3 is optional unless the user requests a review or the quality gate fails.
+
+### Track B — Site
+
+Starts after Phase 0. Runs in parallel with Track A.
+
+| Phase | Name | Reference | Output |
+| --- | --- | --- | --- |
+| B1 | Stack | `tech-stack.md` | chosen stack with one-line rationale |
+| B2 | Design | `design-system.md` | tone, palette, type system, `public/logo.svg`, `public/favicon.svg` |
+| B3 | Data | `data-contract.md` | content-collections schema |
+| B4 | Build | `ui-components.md` + `reader-ux.md` | working site with all required pages |
+| B5 | Performance | `performance.md` | Core Web Vitals targets met, images optimized |
+| B6 | QA | `qa-checklist.md` | automated QA pass; screenshots on failure only |
+
+B1 → B2 → B3 → B4 are sequential. B5 and B6 run in parallel against the same build — run `pnpm run build` once, then check both.
+
+**B4 gate:** at least one book with ≥ 10 chapters must exist before starting B4. B1–B3 may run while writing is still in progress.
+
+Optional phases (load only when the brief requires):
+- `references/internationalization.md` — when target language is not the build default
+- `references/product-surface.md` — when IA or URL structure needs formal documentation
+
+### Parallel-safe pairs
+
+| What | Notes |
+| --- | --- |
+| Track A + Track B | Both start after Phase 0; fully independent |
+| Multiple books in A1 | All books run concurrently |
+| Chapters within a book (A1) | Expand outline first → parallel chapters → continuity pass |
+| Covers across books (A2) | Batch all books in one round, not one-at-a-time |
+| B2 + B3 | Design tokens and data schema are independent |
+| B5 + B6 | Share one `pnpm run build` — do not run two concurrent builds |
 
 ### Pre-Launch Gate
 
-All of the following must be true before go-live (after Phase 10 QA passes). These are launch requirements, not build-start requirements.
+All of the following must be true before go-live (after B6 passes):
 
 | Check | Required location |
 | --- | --- |
-| `content/` has ≥ 5 book directories | `content/{book-title}/` per book |
-| Each book has ≥ 10 chapters (中篇 minimum) | `content/{book-title}/chapters/` |
-| Each chapter meets the language-specific minimum length (see table below) | writing phase 1 |
-| `outline/outline.md` exists and is non-empty | writing phase 0 or import |
-| `world/worldbuilding.md` exists and is non-empty | writing phase 0 or import |
-| `tracking/context.md` exists | writing phase 1 or import |
-| Cover image generated for each book before launch | `public/covers/{book-title}/cover/cover_v1.png` |
+| ≥ 5 book directories | `content/{book-title}/` |
+| Each book has 10–20 chapters, and **no two books share the same count** | `content/{book-title}/chapters/` |
+| Each chapter meets its type target (see Pacing Guidelines in `story-long-write.md`); word counts must vary naturally across chapters — never identical | A1 output |
+| `outline/outline.md` exists and non-empty | A1 output |
+| `world/worldbuilding.md` exists and non-empty | A1 output |
+| `tracking/context.md` exists | A1 output |
+| Cover image for every book | `public/covers/{book-title}/cover/cover_v1.png` |
 
-If any book is missing a cover image at launch time, load `references/story-cover.md` and execute cover generation immediately — do not prompt the user.
+If any book is missing a cover at launch time, run A2 immediately — do not prompt the user.
 
-### Site build phases (always run for publishing)
+### Scope-to-phase mapping
 
-| Phase | Load Reference | Required Output |
-| --- | --- | --- |
-| 5. Stack | `references/tech-stack.md` | Chosen stack with one-line rationale |
-| 6. Design plan | `references/design-system.md` | Tone, palette, type system, layout concept, signature element, `public/logo.svg`, `public/favicon.svg` |
-| 7. Data setup | `references/data-contract.md` | Loader plan (direct filesystem) |
-| 8. Build | `references/ui-components.md` + `references/reader-ux.md` | Working site with all required pages |
-| 9. Performance | `references/performance.md` | Core Web Vitals targets met, images optimized |
-| 10. QA | `references/qa-checklist.md` | Automated QA pass; screenshots captured programmatically and surfaced only on failure |
-
-Optional site build phases (load only when the brief requires):
-- `references/internationalization.md` — when target language is not the build default
-- `references/product-surface.md` — when IA or URL structure needs formal documentation
+| User intent | Phases to run |
+| --- | --- |
+| "Write a novel" / "Continue writing" / `/story-long-write` | 0 (skip if exists), A1 long-form, A3 (if requested) |
+| "Write a short story" / `/story-short-write` | 0 (skip if exists), A1 short-form, A3 (if requested) |
+| "Add one book to existing site" | A1 long-form (single book), A2 (single book) |
+| "Generate covers" / `/story-cover` | A2 only |
+| "Import manuscript" / `/story-import` | A1 import only |
+| "Review prose" / `/story-review` | A3 only |
+| "Build the site" / full pipeline | 0 → Track A + Track B in parallel |
 
 For review and redesign tasks, start at the relevant phase and load only the references covering the failing areas.
 
@@ -148,37 +163,23 @@ If the Bash tool is unavailable (not a Claude Code session), stop immediately an
 ERROR: fiction-h5-builder requires Claude Code. Re-invoke from a Claude Code session.
 ```
 
-**Cover image generation (Phase 3):** Calls `https://api.apiyi.com/v1/images/generations` with model `gpt-image-2-vip` via curl. Requires `APIYI_API_KEY` in the environment. If not set, Claude generates a styled SVG cover as fallback — no external API required.
+**Cover image generation (A2):** Calls `https://api.apiyi.com/v1/images/generations` with model `gpt-image-2-vip` via curl. Requires `APIYI_API_KEY` in the environment. If not set, Claude generates a styled SVG cover as fallback — no external API required.
 
 ```bash
 [ -n "$APIYI_API_KEY" ] && echo "apiyi path" || echo "SVG fallback"
 ```
 
-**Logo and favicon (Phase 6):** Same `APIYI_API_KEY` check as Phase 3. If set, generates PNG assets via `gpt-image-2-vip`; if not set, yellow warning + Claude writes SVG fallback.
+**Logo and favicon (B2):** Same `APIYI_API_KEY` check as A2. If set, generates PNG assets via `gpt-image-2-vip`; if not set, yellow warning + Claude writes SVG fallback.
 
 ## Phase Execution Protocol
 
 Execute phases one at a time. Track progress with the best mechanism available in the current environment:
 
-**If `TaskCreate` / `TaskUpdate` are available** (Claude Code): use them. Create tasks only for the phases that will actually run in this session. Do not create tasks for phases outside the current scope.
+**If `TaskCreate` / `TaskUpdate` are available** (Claude Code): use them. Create tasks only for the phases that will actually run in this session. Do not create tasks for phases outside the current scope. Flip a task to `in_progress` when entering that phase and `completed` when done. Use `TaskGet` on re-entry to restore state.
 
-Scope-to-phase mapping:
-
-| User intent | Phases to track |
-| --- | --- |
-| "Write a novel" / "Continue writing" / `/story-long-write` | 0 (skip if project exists), 1a, (4 if requested) |
-| "Write a short story" / `/story-short-write` | 0 (skip if project exists), 1b, (4 if requested) |
-| "Add one book to existing site" | 1a (single-book), 3 (single-book mode) — skip 0 and 5–10 |
-| "Generate covers" / `/story-cover` | 3 only |
-| "Import manuscript" / `/story-import` | 2 only |
-| "Review prose" / `/story-review` | 4 only |
-| "Build the site" / full pipeline | 0–10 |
-
-Flip a task to `in_progress` when entering that phase and `completed` when done. Use `TaskGet` on re-entry to restore state.
-
-**Phase numbering convention:**
-- Full pipeline (0–10): use numbered phases in task titles and progress output, e.g. "Phase 3: Cover".
-- Single-function triggers (`/story-cover`, `/story-import`, `/story-review`, etc.): do not use phase numbers. Use descriptive task titles such as "Cover Generation", "Manuscript Import", or "Prose Review".
+**Phase naming convention:**
+- Full pipeline: use phase IDs in task titles, e.g. "A2: Cover", "B4: Build".
+- Single-function triggers (`/story-cover`, `/story-import`, `/story-review`, etc.): use descriptive titles — "Cover Generation", "Manuscript Import", "Prose Review".
 
 **If those tools are not available** (other agents / API): print a compact text progress block only when a phase runs. For `/story-cover`, output something like:
 
@@ -187,26 +188,26 @@ Flip a task to `in_progress` when entering that phase and `completed` when done.
 ▶ Cover
 ```
 
-**Parallelism:** Some phases can run concurrently — do not force sequential execution when parallel work is safe.
+**Orchestration — use `Agent` for all delegation:**
 
-| Parallel-safe pairs | Notes |
+Use the `Agent` tool for every delegation task, whether single or parallel. To run tasks concurrently, send multiple `Agent` tool calls in a single response — the runtime executes them in parallel automatically. Do not use `Workflow`.
+
+| Situation | Use |
 | --- | --- |
-| Writing track (1–4) + Site setup track (5–7) | Both start after Phase 0; fully independent — no shared state |
-| Multiple books (Phase 1) | Spawn one Agent per book; all books write concurrently |
-| Chapters within a book (Phase 1) | Expand outline beats first, then spawn one Agent per chapter; run a continuity pass after all finish |
-| Phase 6 (Design) + Phase 7 (Data setup) | Design tokens and data schema are independent; can draft both in one turn |
-| Phase 3 covers across multiple books | Generate all book covers in one batch (B1–B3 loop), not one-at-a-time |
-| Phase 9 (Performance) + Phase 10 (QA) | Share one build: run `npm run build` once, then run performance checks and QA checks in parallel against the same build output. Do not run two separate builds concurrently — they would conflict on `.next/`. |
-
-Sequential dependencies that cannot be parallelized: 0 → (writing track AND site setup track); within writing: outline expansion → parallel chapter writing → continuity pass → cover; within site: 5→6→7→8 (with ≥1 complete book as gate for Phase 8); 8→9→10.
+| Single chapter rewrite, single cover retry | One `Agent` call |
+| A1 — multiple books in parallel | Multiple `Agent` calls in one response, one per book |
+| A1 — chapters within a book | Expand outline first → multiple `Agent` calls in one response (one per chapter) → continuity pass |
+| A2 — cover batch across all books | Multiple `Agent` calls in one response, one per book |
+| Track A + Track B launched together | Two `Agent` calls in one response |
+| B5 + B6 against the same build | Two `Agent` calls in one response |
 
 **Model selection:**
 
-**If the `Agent` tool is available** (Claude Code — guaranteed by the prerequisite check above): delegate all chapter and prose generation to the Agent tool with `model: 'haiku'`. Never write fiction content directly in the main context. Never prompt the user to switch models manually.
+**If the `Agent` tool is available** (Claude Code — guaranteed by the prerequisite check above): delegate all chapter and prose generation with `model: 'haiku'`. Never write fiction content directly in the main context. Never prompt the user to switch models manually.
 
 **If the `Agent` tool is not available**: write chapters sequentially in the main context. Skip parallel multi-book and multi-chapter spawning; write one chapter at a time following the Single Chapter Writing Process in `story-long-write.md`. Note: this is a degraded mode — quality and speed are both reduced.
 
-Site build phases (5–10) carry no model override and inherit the session model regardless.
+Track B phases carry no model override and inherit the session model regardless.
 
 **Rules (apply in both modes):**
 - **Within a phase: act autonomously.** Invoke all required tools (image generation, file writes, bash commands) without asking the user. Never surface a "please run X" or "待处理" prompt mid-phase — just do it.
@@ -224,7 +225,9 @@ Do not deliver a build if any of these are true.
 **Reading product:**
 - Chapter content contains lorem ipsum or generic placeholder text.
 - Reader background is pure white (`#fff`) or pure black (`#000`), or a tinted hue that makes the page feel pink / rosy / flashy.
-- Previous / next chapter navigation is missing, broken, or nav buttons are below 60px height.
+- Next chapter button is missing, broken, or below 60px height.
+- Next button uses a muted or dark color instead of a vivid warm fill (hot pink / magenta / coral).
+- A "Previous" button appears in the reader nav.
 - Table of contents button is missing from the reader nav.
 - Chapter content fails to load or shows a blank page.
 
@@ -243,16 +246,10 @@ Do not deliver a build if any of these are true.
 
 **Content completeness:**
 - Site launches with fewer than 5 books.
-- Any book has fewer than 10 chapters (not 中篇 level).
-- Any chapter is under the language-specific minimum:
-
-  | Language | Minimum per chapter |
-  |---|---|
-  | ZH (Chinese) | 2,000 characters |
-  | EN (English) | 1,500 words (KU); 1,000 words (Wattpad/serial) |
-  | JA (Japanese) | 3,000 characters per episode |
-  | KO (Korean) | 1,500 characters per episode |
-  | ES (Spanish) | 1,200 words (Wattpad); 1,500 words (KDP) |
+- Any book has fewer than 10 chapters or more than 20 chapters.
+- All books share the same chapter count — each book must differ.
+- Any chapter falls below its type's minimum (see Pacing Guidelines in `story-long-write.md`).
+- All chapters in a book have the same word count — natural variation is required.
 - `outline/outline.md` is missing or empty for any published book.
 - `world/worldbuilding.md` is missing or empty for any published book.
 - Cover image is missing for any book in the reader at launch time. (Development preview may use CSS placeholders; final launch requires real covers.)
@@ -272,7 +269,7 @@ Do not deliver a build if any of these are true.
 - Reader-facing only by default: no AI labels, writing workflow panels, or "generated by" branding.
 - Mobile is the primary target. Desktop must have its own layout logic — not a stretched phone screen.
 - Required pages: home / book list, book detail with chapter list, chapter reader.
-- Required reader controls: previous / next chapter navigation (buttons min 60px height), table of contents button, dark mode toggle (DaisyUI `data-theme`), resume-last-chapter via localStorage.
+- Required reader controls: fixed bottom bar with TOC (ghost) + Next → (vivid warm fill, min 60px height); no Previous button; dark mode toggle (DaisyUI `data-theme`); resume-last-chapter via localStorage.
 - Add font size control or reading progress indicator only when the brief explicitly asks for them.
 - Do not add ranking, bookshelf, favorites/bookmarks, search, payment, comments, social sharing, or account modules unless explicitly requested.
 - Respect content language: set `lang`, use language-appropriate font stacks, handle CJK line flow.
@@ -336,12 +333,12 @@ Load references only when entering that phase. Do not preload all references at 
     ChapterNav.tsx
     ThemeToggle.tsx             # DaisyUI data-theme switcher
   public/
-    covers/                     # cover images (Phase 3)
-    logo.png / logo.svg         # site logo — PNG if APIYI_API_KEY set, else SVG (Phase 6)
-    favicon-32x32.png / favicon.svg  # favicon (Phase 6)
+    covers/                     # cover images (A2)
+    logo.png / logo.svg         # site logo — PNG if APIYI_API_KEY set, else SVG (B2)
+    favicon-32x32.png / favicon.svg  # favicon (B2)
 ```
 
-Cover images (`public/covers/{book-title}/cover/cover_v1.png`) are generated in Phase 3 via apiyi (or SVG fallback). Logo and favicon follow the same pattern in Phase 6 — PNG via apiyi if `APIYI_API_KEY` is set, SVG written by Claude otherwise. During development only, CSS placeholders are acceptable — never ship without real assets.
+Cover images (`public/covers/{book-title}/cover/cover_v1.png`) are generated in A2 via apiyi (or SVG fallback). Logo and favicon follow the same pattern in B2 — PNG via apiyi if `APIYI_API_KEY` is set, SVG written by Claude otherwise. During development only, CSS placeholders are acceptable — never ship without real assets.
 
 For a review or redesign task, the output is a findings report and patch set, not a full scaffold.
 

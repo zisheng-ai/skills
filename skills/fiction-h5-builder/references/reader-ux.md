@@ -12,39 +12,136 @@ The default reader ships with a focused set of controls. Add font size, density,
 
 | Control | Requirement | Notes |
 | --- | --- | --- |
-| Previous / next chapter | Required | Always visible; must work at end of chapter content; see **Navigation Button Size** below |
+| Next chapter | Required | Always visible via fixed bottom bar; see **Bottom Navigation Bar** below. No Previous button — Table of contents handles backward navigation |
 | Table of contents | Required | "Table of contents" button in reader nav; links to or opens the chapter catalog |
 | Book cover header | Required | Small cover thumbnail in the reader header above the chapter title; omit if no cover image exists |
-| End-of-chapter prompt | Required | Clear "Next chapter" CTA at bottom of content |
+| End-of-chapter prompt | Required | Repeat "Next chapter →" as inline CTA at the very bottom of chapter text, above the sticky bar. Use **`my-10`** (symmetric 40px) margin — never asymmetric `mt-16 mb-6`. |
 | Keyboard prev/next | Required on desktop | `←` / `→` arrow keys |
 | Error / empty states | Required | See Error States section |
 | Dark mode toggle | Required | DaisyUI `data-theme` swap; persists in `localStorage` |
 | Resume last chapter | Required | Store last visited chapter slug in `localStorage`; restore on home/detail page |
 | Tap zones (mobile) | Recommended | Left/right 15% tap zones for prev/next |
 
-## Navigation Button Size
+## Top Reader Header
 
-Prev/next buttons must be large and easy to hit — they are the primary action on the page. Small or cramped nav buttons are a quality gate failure.
+Always fixed (`position: fixed; top: 0`), `height: 56px`, `bg-base-100/95 backdrop-blur-sm`, `border-b border-base-300`.
 
-- **Minimum height:** 60px on mobile, 64px on desktop.
-- **Font size:** 17–19px. Never below 16px.
-- **Font weight:** 700–800.
-- **Border radius:** 16–18px.
-- **Layout:** 2-column grid — TOC/Prev on the left, Next on the right. Next gets the wider column and the primary color fill. Prev/TOC gets a white or neutral fill with a clear border.
-- On mobile at ≤ 640px: maintain at least 60px height; reduce font to 17px if needed.
-
-Example layout (end of chapter):
+**Layout — left: cover thumbnail | center: book + chapter title | right: TOC icon + theme toggle**
 
 ```
-[ Table of contents ]  [ Next chapter → ]
-   (neutral, outlined)    (primary, filled, wider)
+[ cover img ]   [ Book Title (xs, muted)    ]   [ ≡ ]  [ ☽ ]
+                [ Ch. 1 - Chapter Title (sm)]
 ```
 
-When both Prev and Next exist:
+- **Left slot — site logo** (`h-8 w-auto`, links to `/`): the site logo links to the home page. Never a back arrow (`<`), never the book cover thumbnail. The logo anchors the reader in the site brand across all chapters.
+- **Center slot** — two-line text block: book title in `11px` muted, chapter title in `13px` medium. Truncate both.
+- **Right slot** — two icon buttons (TOC list-icon, dark mode toggle). Use `btn btn-ghost btn-sm btn-circle`.
+
+No back arrow (`<`) anywhere in the header. The cover thumbnail IS the back link.
+
+Add `padding-top: 56px` (or `pt-14`) to the chapter content wrapper so it clears the fixed header.
+
+---
+
+## Bottom Navigation Bar
+
+The bottom navigation bar is **always fixed** (`position: fixed; bottom: 0`) throughout the entire chapter reading experience — not just at the end of chapter content. It must remain visible while the reader scrolls. This is the primary navigation surface on mobile.
+
+Apply `padding-bottom: env(safe-area-inset-bottom)` to handle iPhone notch/home bar.
+
+**Layout — always two buttons, no Previous:**
 
 ```
-[ ← Prev ]  [ Table of contents ]  [ Next → ]
+[ Table of contents ]          [ Next → ]
+  (ghost / outlined, ~36%)     (vivid fill, ~60%)
 ```
+
+No "Previous" button. Ever. Fiction reading is a forward-only experience — the previous chapter is already read; showing a back button dilutes the forward momentum. If the reader wants to go back, the Table of contents handles that.
+
+On the last chapter, the Next slot is an empty flex spacer — TOC button stays on the left. No "The End" label; nobody taps it.
+
+**Always fixed — no transition:**
+
+The nav bar is `position: fixed; bottom: 0` at all times. Never switch to inline mode. Add `padding-bottom` to the chapter content equal to the nav bar height (+ `env(safe-area-inset-bottom)`) so the last line of text is never hidden behind the bar.
+
+```css
+.chapter-content {
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
+}
+.chapter-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+```
+
+**Next button — psychology-driven design:**
+
+The Next button must trigger an almost involuntary desire to tap. Use a vivid, saturated warm color — hot pink (`#E91E8C` range), coral, or electric magenta. Never use the site's calm brand color here; this button needs contrast-driven urgency.
+
+Why this works: bright saturated warm colors activate dopamine anticipation. Combined with the unresolved story tension (Zeigarnik effect — the reader's brain cannot rest on an open narrative loop), the button becomes the path of least resistance. The reader taps before consciously deciding to.
+
+- **Color:** vivid warm fill — hot pink / magenta / coral. Do NOT use dark navy, muted tones, or the site's neutral palette.
+- **Label:** `Next →` — the arrow reinforces forward motion. Never "Next Chapter" (too wordy) or just "Next" without arrow.
+- **Width:** ~60% of the nav bar. Significantly wider than TOC.
+- **Height:** minimum 60px mobile, 64px desktop.
+- **Font size:** 18–20px, weight 700–800, white text.
+- **Border radius:** 14–18px (pill-ish, approachable).
+
+**Button styling — no DaisyUI component classes:**
+
+Do not use `.btn`, `.btn-primary`, `.btn-outline`, or any DaisyUI component class on nav buttons. Use plain Tailwind utilities only.
+
+Both buttons must carry an explicit `style={{ fontFamily: '...' }}` with the full system stack — do NOT rely on body font inheritance, as DaisyUI resets can interfere:
+
+```tsx
+const btnFont = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif'
+// apply as: style={{ fontFamily: btnFont }}
+```
+
+Shared base: `flex items-center justify-center font-extrabold tracking-tight select-none transition-all duration-150 hover:-translate-y-px active:translate-y-0 cursor-pointer`
+
+Heights and radius (responsive):
+- Mobile: `min-h-12` (48px), `rounded-[14px]`, `text-[15px]`
+- Desktop sm+: `sm:min-h-[54px]`, `sm:rounded-2xl`, `sm:text-[17px]`
+
+**TOC button:**
+
+- `bg-base-100 border-2 border-base-300 text-base-content`
+- Hover: `hover:border-primary hover:text-primary`
+- Label: `Table of contents` — full text, no abbreviation.
+- Width: ~40% of nav bar (grid `minmax(96px, 0.72fr)`)
+
+**Next button:**
+
+- `bg-primary text-white`
+- `style={{ boxShadow: '0 8px 18px rgba(236,75,155,.18)' }}`
+- Label: `Next →` (Unicode arrow, not SVG icon)
+- Width: ~60% of nav bar (grid `minmax(136px, 1.12fr)`)
+- Do not add glow wrappers (Aura component creates white padding artifacts)
+
+**Nav bar grid layout:**
+
+```jsx
+<div style={{ display: 'grid', gap: '12px', gridTemplateColumns: 'minmax(96px, 0.72fr) minmax(136px, 1.12fr)' }}>
+```
+
+On the last chapter (no next), use `gridTemplateColumns: '1fr'` — TOC takes full width.
+
+**TOC panel — DaisyUI 5 modal bottom sheet:**
+
+Bottom sheet is the right choice for mobile fiction reading: thumb-friendly, native feel, fast in/out. Right-side drawer is not suitable — requires reaching the screen edge and covers more reading context.
+
+Use `<dialog>` with `className="modal modal-bottom"` (DaisyUI 5). Open with `dialogRef.current.showModal()`, close with `dialogRef.current.close()`. Inside: `modal-box rounded-t-3xl rounded-b-none`, max-height `72vh`. Current chapter: `border-l-2 border-primary text-primary bg-primary/5 font-semibold`. Non-current: `border-l-2 border-transparent text-base-content/65`. Auto-scroll to current chapter on open (`scrollIntoView` with 50ms delay). Close on backdrop click (`e.target === dialogRef.current`).
+
+**Quality gate failure if not met:**
+
+- Next button uses a muted, dark, or low-saturation color.
+- Next button is same width or narrower than TOC.
+- "Previous" button appears anywhere in the reader nav.
+- On mobile ≤ 640px: maintain 60px height minimum.
 
 ## Optional Enhancements
 
@@ -76,10 +173,15 @@ These features add UI complexity and distract from reading. Omit by default:
 
 Use conservative defaults. Readers should not need to adjust settings to find a comfortable starting point.
 
-- **Body font stack (English / Latin):** `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif`. No external webfont required — the system stack renders crisply at any DPI and loads instantly.
-- **CJK body font stack:** `"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif`.
-- Latin body size: 18–19px on mobile, 19–20px on desktop.
-- CJK body size: 17–20px on mobile, 18–21px on desktop.
+- **Font:** system stack only — see `tech-stack.md` Fonts section. No webfonts.
+- **Prose size:** `18px` mobile → `19px` sm+.
+- **Line height:** `1.95` mobile → `2.05` sm+.
+- **Paragraph spacing:** `margin-bottom: 1.3em`.
+
+```css
+.prose-reader { font-size: 18px; line-height: 1.95; }
+@media (min-width: 640px) { .prose-reader { font-size: 19px; line-height: 2.05; } }
+```
 - Latin line-height: 1.9–2.1 (generous — easier to track across the line).
 - Japanese/Korean line-height: 1.85–2.0.
 - Paragraph spacing: `1em` top margin between paragraphs. Enough to separate beats without the double-spaced blog-style gap.
@@ -154,7 +256,21 @@ function applySize(index) {
 - Default: vertical scroll for H5. Horizontal paging is an optional mode, not the default.
 - End-of-chapter: show a clear "Next chapter" prompt at the bottom of content — do not rely on navigation bars alone.
 - Resume: on entering a chapter, restore scroll position from `localStorage` if available.
-- Chapter transitions: prefer client-side navigation for SPA builds; a brief fade (150ms) is acceptable. Do not animate content in on every paragraph.
+- Chapter transitions: force a full browser reload so AdSense reinitializes and the browser shows its native loading progress bar. Do NOT use `<Link>` from `next/link` or `router.push()` — Next.js App Router intercepts same-origin clicks after hydration and performs SPA navigation even on plain `<a>` tags. The only reliable override is `e.preventDefault()` + `window.location.href`:
+
+  ```tsx
+  <a
+    href={`/book/${bookSlug}/chapter/${nextChapter}`}
+    onClick={(e) => {
+      e.preventDefault()
+      window.location.href = `/book/${bookSlug}/chapter/${nextChapter}`
+    }}
+  >
+    Next →
+  </a>
+  ```
+
+  A plain `<a href>` without the `onClick` override is NOT sufficient in Next.js App Router — the framework hydration intercepts it for SPA routing.
 
 ## Gestures and Tap Zones (Mobile)
 

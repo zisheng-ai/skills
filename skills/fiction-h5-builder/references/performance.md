@@ -14,10 +14,10 @@ Slow page loads lose readers before the first chapter. Fiction reading sites hav
 ### Verification strategy
 
 **Default (fast, unattended):**
-- Build the site (`npm run build`).
+- Build the site (`pnpm run build`).
 - Check the build output for warnings about large JS bundles or unoptimized images.
 - Run automated smoke tests with `curl` against the started server (see `qa-checklist.md`).
-- Verify cover images are under 80KB at display size. Use `next/image` for automatic WebP/AVIF negotiation — do not manually convert or rename source PNG files.
+- Verify cover images are under 80KB and use WebP/AVIF where possible.
 
 **Deep audit (only when user explicitly asks):**
 - Test on simulated mobile (Moto G4 equivalent) at Slow 3G in Chrome DevTools Lighthouse. Do not test only on fast desktop connections.
@@ -32,8 +32,7 @@ Book covers are the heaviest assets on the home and detail pages.
 - Always set `width` and `height` on `<img>` to prevent CLS during load.
 - Use `loading="lazy"` for below-fold covers on the home page.
 - Use `fetchpriority="high"` on the first visible cover image.
-- Prefer WebP. If converting existing PNG covers to WebP for delivery, use `next/image` with `format="webp"` — do not manually rename files or change extensions. `next/image` handles format negotiation at the CDN/edge layer without touching the source file.
-- **Never rename cover files or change their extension during optimization.** The cover pipeline writes `cover_v1.png`; all references in `src/lib/books.ts`, `content-collections.ts`, and any data files must match. If you do convert to a different format as a source file, update every reference atomically in the same step.
+- Prefer WebP with JPEG fallback via `<picture>`.
 - CSS cover placeholders are acceptable when no image is provided. They must use flat color or subtle texture, not heavy gradients or box shadows.
 
 ## Fonts

@@ -2,6 +2,14 @@
 
 Load this reference when the user asks to set up a new writing project or initialize a fiction project directory.
 
+## Niche Research Input
+
+Before creating the project structure for a new book, check `outputs/{site-slug}/{book-slug}/niche-research.json`:
+
+- **Exists** → read `selected_genre`, `selected_tropes`, `differentiation_angle`, and `producibility`. Record them in `tracking/context.md` as the story brief baseline.
+- **Does not exist + user gave explicit genre/premise** → document them in `tracking/context.md` directly and proceed.
+- **Does not exist + no explicit brief** → run `fiction-niche-researcher.md` first, then return here.
+
 ## Project Root Directory
 
 Before creating any files, determine where the project lives:
@@ -99,15 +107,7 @@ When building a fiction site from scratch, write **N books** in total, where N i
 
 Each book must reach 中篇 level before it can be included in the site build:
 - ≥ 10 chapters per book
-- Chapter length minimum by language:
-
-  | Language | Minimum per chapter |
-  |---|---|
-  | ZH (Chinese) | 2,000 characters |
-  | EN (English) | 1,500 words (KU); 1,000 words (Wattpad/serial) |
-  | JA (Japanese) | 3,000 characters per episode |
-  | KO (Korean) | 1,500 characters per episode |
-  | ES (Spanish) | 1,200 words (Wattpad); 1,500 words (KDP) |
+- ≥ 1,500 Chinese characters or 1,200 English words per chapter
 
 Run `/story-cover` to generate covers. This can run incrementally as books are completed, or in one batch before launch.
 
@@ -117,7 +117,7 @@ Verify all of the following before go-live:
 
 - [ ] `content/` has ≥ 5 book directories.
 - [ ] Each book has ≥ 10 chapters in `chapters/`.
-- [ ] Each chapter is ≥ 2,000 characters / 1,500 words.
+- [ ] Each chapter is ≥ 1,500 characters / 1,200 words.
 - [ ] `outline/outline.md` is non-empty for each book.
 - [ ] `world/worldbuilding.md` is non-empty for each book.
 - [ ] `tracking/context.md` populated for each book.

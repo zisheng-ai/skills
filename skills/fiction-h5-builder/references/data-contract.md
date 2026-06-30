@@ -19,7 +19,7 @@ Use [`@content-collections`](https://www.content-collections.dev/) as the conten
 **Install:**
 
 ```bash
-yarn add @content-collections/core @content-collections/next
+pnpm add @content-collections/core@^0.15 @content-collections/next@^0.3
 ```
 
 **Project layout:**
@@ -55,56 +55,69 @@ my-novel-site/
 
 **`content-collections.ts`:**
 
+> **v0.15 breaking changes vs older docs:**
+> - `schema` must be `z.object({...})`, NOT the old `z => ({...})` function form.
+> - `content: z.string()` must be explicit in the schema — the field is not injected automatically.
+> - `defineConfig` key is `content: [...]`, NOT `collections: [...]`.
+
 ```ts
 import { defineCollection, defineConfig } from '@content-collections/core'
+import { z } from 'zod'
 
 const chapters = defineCollection({
   name: 'chapters',
   directory: 'content',
   include: '*/chapters/*.md',      // long-form: content/{book-title}/chapters/ch-NNN-{title}.md
-  schema: z => ({
+  schema: z.object({               // z.object() — NOT z => ({})
     title: z.string().optional(),
     chapter: z.coerce.number().optional(),
+    bookId: z.string().optional(),
+    language: z.string().optional(),
     wordCount: z.coerce.number().optional(),
     publishedAt: z.string().optional(),
     status: z.enum(['published', 'draft']).default('published'),
+    content: z.string(),           // required explicit field in v0.15
   }),
-  transform: doc => {
+  transform: (doc) => {
     const [bookSlug] = doc._meta.path.split('/')
     const filename = doc._meta.fileName
     const orderMatch = filename.match(/ch-?0*(\d+)/)
     const order = doc.chapter ?? (orderMatch ? Number(orderMatch[1]) : 0)
-    const title = doc.title
-      ?? filename.replace(/^ch-\d+-?/, '').replace(/\.md$/, '')
+    const rawTitle = filename
+      .replace(/^ch-\d+-?/, '').replace(/\.md$/, '')
+      .replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())
+    const title = doc.title ?? rawTitle
     return { ...doc, bookSlug, order, title }
   },
 })
 
-const shortStories = defineCollection({
-  name: 'shortStories',
-  directory: 'content/short',
-  include: '*/prose.md',           // short-form: content/short/{title}/prose.md
-  schema: z => ({
-    title: z.string().optional(),
-    wordCount: z.coerce.number().optional(),
-    publishedAt: z.string().optional(),
-  }),
-  transform: doc => {
-    const storyTitle = doc._meta.path.split('/')[0]
-    return { ...doc, storyTitle, title: doc.title ?? storyTitle }
-  },
-})
-
-export default defineConfig({
-  collections: [chapters, shortStories],
-})
+export default defineConfig({ content: [chapters] })  // "content", NOT "collections"
 ```
 
-**`next.config.ts`:**
+**`next.config.ts` (Next.js 16 + Turbopack):**
 
 ```ts
 import { withContentCollections } from '@content-collections/next'
-const nextConfig = { /* ... */ }
+import path from 'path'
+import type { NextConfig } from 'next'
+
+const generated = path.resolve(process.cwd(), '.content-collections/generated/index.js')
+
+const nextConfig: NextConfig = {
+  output: 'export',
+  images: { unoptimized: true },
+  trailingSlash: true,
+  turbopack: {
+    resolveAlias: {
+      'content-collections': './.content-collections/generated/index.js',  // relative — required
+    },
+  },
+  webpack(config) {
+    config.resolve.alias['content-collections'] = generated
+    return config
+  },
+}
+
 export default withContentCollections(nextConfig)
 ```
 
@@ -123,11 +136,13 @@ export async function generateStaticParams() {
 }
 
 // Resolve prev/next within the same book
-export default function ChapterPage({ params }: { params: { slug: string; n: string } }) {
+// Next.js 15+: params is a Promise — must be async/await
+export default async function ChapterPage({ params }: { params: Promise<{ slug: string; n: string }> }) {
+  const { slug, n } = await params
   const bookChapters = allChapters
-    .filter(ch => ch.bookSlug === params.slug)
+    .filter(ch => ch.bookSlug === slug)
     .sort((a, b) => a.order - b.order)
-  const idx = bookChapters.findIndex(ch => String(ch.order) === params.n)
+  const idx = bookChapters.findIndex(ch => String(ch.order) === n)
   if (idx === -1) notFound()
   const chapter = bookChapters[idx]
   const prev = bookChapters[idx - 1] ?? null

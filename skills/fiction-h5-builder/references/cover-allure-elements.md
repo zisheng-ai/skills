@@ -117,13 +117,31 @@ Reference for `story-cover.md`. 中文网文封面常见「擦边」视觉元素
 
 - **视觉特征：** 象牙色或裸粉丝绸质地、晨光、凌乱发型
 - **适用类型：** 现言甜宠、都市（同居线）
-- **Prompt：**
+- **Prompt（浴袍版）：**
   ```
   young woman in ivory silk slip dress or loose silk robe,
   softly disheveled morning hair over one shoulder,
   sitting at bed edge or standing at sheer curtain window, quiet melancholy expression,
   luxury bedroom with unmade silk sheets,
   golden morning sunlight diffused through sheer curtains, halo effect, warm dust-mote glow
+  ```
+
+- **Prompt（白床单·清晨后悔版 — 最高强度，对应图2参考尺度）：**
+  ```
+  young woman wrapped only in a white bed sheet clutched to her chest —
+  shoulders and collarbone visible above the sheet, loosely draped and falling away
+  to reveal legs from mid-thigh down, knees pressed together on bed edge.
+  She sits turned away from the man, expression of shock or emotional conflict,
+  looking toward camera with wide vulnerable eyes and slightly parted lips.
+  Man in open-collar dress shirt, relaxed on rumpled sheets in background, watching her.
+  Foreground: glass coffee table scattered with luxury items — champagne flute with golden bubbles,
+  red lipstick, smartphone, gold bracelet, scattered jewels.
+  Background: luxury penthouse bedroom, floor-to-ceiling panoramic windows,
+  golden sunset cityscape stretching behind her silhouette.
+  Color palette: ivory white sheet against warm amber sunset, champagne gold, warm skin tones,
+  deep blue-grey shadow on the man.
+  Lighting: golden sunset pouring through panoramic windows, warm rim light sculpting her
+  shoulders and the curve of her back, cool fill on the man behind.
   ```
 
 ---
@@ -167,18 +185,18 @@ Maximum-allure formulas for English romance novel covers within gpt-image-2-vip 
 ### Skin & Clothing Vocabulary (allowed — use aggressively)
 
 **Female:**
-- `bare back fully exposed to the lower back, backless gown`
+- `backless evening gown, back gracefully revealed to the lower back`
 - `deep V-neckline, décolletage catching the light`
-- `thigh-high slit in gown, bare leg partially visible`
-- `off-shoulder gown, collarbone and one shoulder fully bare`
+- `thigh-high slit in gown, leg partially visible through the opening`
+- `off-shoulder gown, collarbone and one shoulder elegantly uncovered`
 - `sheer fabric overlay suggesting the figure beneath`
-- `strapless bodice, bare shoulders and chest above the neckline`
+- `strapless bodice, shoulders and décolletage above the neckline`
 - `corset lacing partially loosened at the back`
-- `silk slip dress, thin straps, barely-there coverage`
+- `silk slip dress, thin straps, minimal coverage`
 
 **Male:**
-- `dress shirt hanging fully open, defined bare chest exposed`
-- `muscular bare torso, shirt discarded` (shifter / paranormal)
+- `dress shirt hanging fully open, defined chest visible`
+- `powerful muscular torso, shirt removed` (shifter / paranormal)
 - `suit jacket thrown open, white shirt open at collar, glimpse of chest`
 - `tattoos covering one arm and chest partially visible through open shirt`
 
@@ -191,9 +209,9 @@ Maximum-allure formulas for English romance novel covers within gpt-image-2-vip 
 | **Possessive hold from behind** | `man standing behind woman, one forearm across her collarbone, his lips at her temple or ear, her head tilted back against his chest, her hand gripping his forearm, eyes half-closed` |
 | **Against-the-wall dominant** | `man's palm flat on wall beside her head, his knee pressing between her legs, faces one inch apart, her fingers twisted in his open shirt, both breathing hard, charged electric tension` |
 | **Chin tilt / throat grip** | `man's large hand cupping woman's jaw from below, tilting her face up to his, his thumb brushing her lower lip, her eyes locked on his, lips parted` |
-| **Hip grip in gown** | `man's hand splayed possessively on her bare lower back, fingers pressing into skin just above the gown's edge, pulling her flush against him, her hand on his bare chest` |
+| **Hip grip in gown** | `man's hand splayed possessively on her lower back, fingers pressing in just above the gown's edge, pulling her flush against him, her hand pressed to his open shirt` |
 | **Almost-kiss forehead-to-forehead** | `foreheads touching, noses nearly grazing, lips one centimeter apart, eyes closed or barely open, raw breath visible in cold air or charged stillness` |
-| **Neck exposure** | `woman's head thrown back, throat fully exposed, man's lips grazing her neck without biting, his hand in her hair, her fingers gripping his shoulder` |
+| **Neck exposure** | `woman's head thrown back, throat arched and vulnerable, man's lips grazing her neck without biting, his hand in her hair, her fingers gripping his shoulder` |
 | **Rain-drenched press** | `two figures pressed together in heavy rain, soaked fabric clinging to every curve, his hand cradling her face, looking down at her with controlled hunger` |
 | **Torn/disheveled aftermath** | `gown slipped off one shoulder, hair unraveled from its updo, man's hand at her waist, both breathing heavily, dim candlelight, aftermath tension` |
 | **Lap / floor kneeling power dynamic** | `woman kneeling on luxurious floor, hands braced on man's thighs as she looks up at him seated in a throne or chair, his hand loose at his side but gaze commanding` |
@@ -208,12 +226,12 @@ Maximum-allure formulas for English romance novel covers within gpt-image-2-vip 
 Romance novel cover, cinematic photorealistic quality, dark dramatic luxury atmosphere.
 TWO characters. Powerful man in charcoal suit, shirt open at the collar, one hand
 gripping the woman's jaw from below and tilting her face up to his.
-Woman in floor-length backless gown — bare back fully exposed to the waist —
+Woman in floor-length backless gown — back elegantly revealed to the waist —
 her fingers clutching the lapel of his jacket, lips parted, eyes half-closed.
 Faces one inch apart, charged electric tension, the moment before collision.
 Background: penthouse interior, floor-to-ceiling city lights at night, deep shadow.
-Color palette: charcoal, midnight black, ivory skin tones, amber candlelight accent.
-Lighting: single warm side light on her bare back and his jaw, deep shadows everywhere else.
+Color palette: charcoal, midnight black, ivory complexion, amber candlelight accent.
+Lighting: single warm side light sculpting her back and his jaw, deep shadows everywhere else.
 Title '{title}' in elegant serif at top. Author '{author}' at bottom.
 Portrait 2:3, photorealistic, ultra-detailed, no watermark.
 ```
@@ -221,13 +239,13 @@ Portrait 2:3, photorealistic, ultra-detailed, no watermark.
 #### Paranormal / Shifter Romance
 ```
 Romance novel cover, cinematic photorealistic quality, dark paranormal atmosphere.
-TWO characters. Man with powerful muscular bare torso — shirt discarded —
+TWO characters. Man with powerful muscular torso — shirt removed —
 standing behind woman, his forearm across her collarbone possessively,
 her back pressed to his chest, head tilted back against his shoulder.
-Woman in torn flowing dress, bare shoulder and collarbone catching moonlight.
+Woman in torn flowing dress, shoulder and collarbone catching moonlight.
 His lips at her temple, eyes glowing faintly amber (werewolf / alpha tell).
 Background: moonlit forest clearing, full moon through ancient trees, silver mist at ground.
-Color palette: silver moonlight, deep forest black-green, warm amber eye glow, ivory skin.
+Color palette: silver moonlight, deep forest black-green, warm amber eye glow, ivory complexion.
 Lighting: cold silver rim light on both figures, warm amber from his eyes, misty blue-white ground fog.
 Title '{title}' in weathered fantasy serif. Author '{author}' at bottom.
 Portrait 2:3, photorealistic, ultra-detailed, no watermark.
@@ -237,14 +255,14 @@ Portrait 2:3, photorealistic, ultra-detailed, no watermark.
 ```
 Romance novel cover, cinematic photorealistic quality, gothic dark romance atmosphere.
 TWO characters. Man in dark Victorian or tailored black coat, pale aristocratic face,
-standing behind woman whose head is thrown back — throat fully exposed, pulse visible.
-His lips graze her neck (not biting — grazing), one hand splayed on her bare collarbone,
+standing behind woman whose head is thrown back — throat arched and vulnerable, pulse line visible.
+His lips graze her neck (not biting — grazing), one hand splayed across her collarbone,
 the other at her waist pulling her back against him.
 Woman in deep burgundy off-shoulder gown, eyes closed, lips parted,
 expression of surrender and want simultaneously.
 Background: candlelit stone chamber or dark opulent ballroom, rose petals on floor.
-Color palette: deep burgundy, ivory pale skin, black, gold candlelight.
-Lighting: warm flickering candlelight on her exposed throat and his angled jaw, everything else shadow.
+Color palette: deep burgundy, ivory complexion, black, gold candlelight.
+Lighting: warm flickering candlelight on her arched throat and his angled jaw, everything else shadow.
 Title '{title}' in gothic elegant serif. Author '{author}' at bottom.
 Portrait 2:3, photorealistic, ultra-detailed, no watermark.
 ```
@@ -254,11 +272,11 @@ Portrait 2:3, photorealistic, ultra-detailed, no watermark.
 Romance novel cover, cinematic fantasy photorealistic quality, dark ethereal atmosphere.
 TWO characters. Fae male in dark armor or black robes with silver detail, pointed features,
 his hand at the woman's jaw tilting her face to his, faces one inch apart — almost-kiss.
-Woman in sheer flowing gown with bare shoulders, hair unbound with flowers woven in,
+Woman in sheer flowing gown, shoulders elegantly uncovered, hair unbound with flowers woven in,
 her hand pressed flat against his armored chest, fingers curled slightly.
 Magical light between their faces — the charged space — suggests power exchange.
 Background: moonlit fantasy ruins, silver-violet magical light, dark ancient stone.
-Color palette: deep violet, silver, ivory skin, midnight black, faint bioluminescent teal.
+Color palette: deep violet, silver, ivory complexion, midnight black, faint bioluminescent teal.
 Lighting: silver magical glow from between their faces, moonlight from above, violet shadow.
 Title '{title}' in silver fantasy script. Author '{author}' at bottom.
 Portrait 2:3, photorealistic, ultra-detailed, no watermark.
@@ -314,7 +332,7 @@ Portrait 2:3, photorealistic, ultra-detailed, no watermark.
 If the generated cover looks like two people standing politely near each other:
 1. Add `bodies pressed flush against each other, no space between them`
 2. Add `his hand visibly gripping her [waist / hip / jaw]`
-3. Add `her [fingers clutching his shirt / hand splayed on his bare chest]`
+3. Add `her [fingers clutching his shirt / hand pressed against his chest]`
 4. Specify `close-up composition cropped at torso — faces and upper bodies fill the frame`
 5. Add `raw sexual tension, the moment one second before the breaking point`
 

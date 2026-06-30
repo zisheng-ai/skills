@@ -112,158 +112,120 @@ Derive all three from project files:
 
 Do not ask the user. Do not fabricate values that cannot be derived.
 
-Cover ratio: **2:3 portrait**. Generate at `1024x1536` (smallest portrait size the API supports), then resize down to `480x720` for web delivery. The resized file is what goes into `public/covers/`.
-
-Output path: `public/covers/{book-title}/cover/cover_v1.png` — note the `cover/` subdirectory. Create it with `mkdir -p`.
-
-Resize command after generation:
-```bash
-ffmpeg -i cover_v1_raw.png -vf scale=480:720 cover_v1.png -y
-# fallback if ffmpeg unavailable:
-sips -z 720 480 cover_v1_raw.png --out cover_v1.png
-```
+Cover ratio: **2:3 portrait**. Generate at `848x1280` (1K Fast tier — sufficient for all UI display sizes, fastest generation). No resize step needed.
 
 ## Step 1.5 — Determine visual register and genre
 
 **First: check the site-level visual register** (set during Phase 6 design plan, or derive from the site's dominant content type):
-- English dark romance / paranormal / vampire / shifter / billionaire → **Dark Romance Editorial** register
-- Chinese 都市/现言/悬疑/古言 content → **Cinematic Drama** register
-- Chinese 玄幻/仙侠/西幻/科幻 content → **Dark Fantasy Illustration** register
+- If the site is drama/romance-dominant → **Cinematic Drama** register for all covers
+- If the site is fantasy/sci-fi-dominant → **Dark Fantasy Illustration** register for all covers
 - Record the register and apply it consistently across all books on this site
 
 **Then: detect per-book genre** by scanning the book title (and synopsis if available) against the keyword table in `references/cover-styles.md`.
-- EN keywords first (vampire/blood/alpha/billionaire/duke/lord/fated/obsession etc.) → Dark Romance subgenre
-- ZH keywords → priority order: 仙侠 > 西幻 > 古言 > 现言 > 都市 > 悬疑 > 科幻 > 历史 > 灵异 > 轻小说
+- One match → use it
+- Multiple matches → priority order: 仙侠 > 西幻 > 古言 > 现言 > 都市 > 悬疑 > 科幻 > 历史 > 灵异 > 轻小说
 - No match → default to the site's primary genre
 
-**Then: select the composition template** from `references/cover-styles.md` for the detected genre. This step is mandatory — the template determines whether the cover has one or two characters, and what their physical relationship is. Record it before building the prompt.
+The genre determines composition template, color palette, character design, and typography style. The visual register determines render quality language (photorealistic film-still vs. hyperrealistic 3D render).
 
-| Register | Composition options | Default for romance |
-|---|---|---|
-| Dark Romance Editorial | Possessive Hold, Almost Kiss, After Dark, Intimate Tension | Possessive Hold |
-| Cinematic Drama | Power Inversion, Intimate Tension, Rain Shelter, Grand Humiliation | Intimate Tension |
-| Dark Fantasy Illustration | Lone Hero, Duo Confrontation | Duo Confrontation for romance arcs |
+**For romance/drama genres: allure elements are MANDATORY, not optional.** Load `references/cover-allure-elements.md` and apply the highest-intensity pose from the appropriate genre section. The target is maximum implication within gpt-image-2-vip policy — bodies pressed together, visible skin, explicit physical contact (grip, hold, almost-kiss). A cover where two people are simply standing near each other fails this gate.
 
-The genre determines composition template, color palette, character design, and typography style. The visual register determines render quality language.
-
-**For romance genres: allure elements are MANDATORY, not optional.** Load `references/cover-allure-elements.md` and apply the highest-intensity pose from the appropriate genre section. The target is maximum implication within gpt-image-2-vip policy — bodies pressed together, visible skin, explicit physical contact (grip, hold, almost-kiss). A cover where two people are simply standing near each other fails this gate.
-
-- **English romance genres (Dark Romance, Billionaire, Paranormal, Shifter, Vampire, Fantasy Romance, Mafia, Sports, Contemporary):** use Section 六 (English Romance Playbook). Pick the genre-specific prompt formula, select the highest-intensity pose that fits the book's synopsis, and follow the Escalation Strategy if the output looks tame.
 - **Chinese web novel genres (都市/现言/甜宠/轻小说):** use Sections 一–三 (uniform types, 壁咚, rain-soaked, bedside morning).
+- **English romance genres (Dark Romance, Billionaire, Paranormal, Shifter, Vampire, Fantasy Romance, Mafia, Sports, Contemporary):** use Section 六 (English Romance Playbook). Pick the genre-specific prompt formula, select the highest-intensity pose that fits the book's synopsis, and follow the Escalation Strategy if the output looks tame.
 
 ## Step 2 — Build the prompt
 
-All prompt text in English. Structure: register layer + composition layer + character layer + style layer + text layer.
-
-**Step 2a — Choose character count from composition template:**
-- Possessive Hold, Almost Kiss, Intimate Tension, Rain Shelter, Power Inversion, Duo Confrontation, Grand Humiliation → **two characters**; describe both explicitly
-- Lone Hero, After Dark → **one character**
-
-**Step 2b — Assemble prompt:**
+All prompt text in English. Structure: text layer + style layer + visual layer.
 
 ```
-[register opening phrase], [composition template description from cover-styles.md].
-[character 1 description: gender, position, expression, clothing, key physical detail].
-[character 2 description if two-character template: gender, position relative to character 1, expression, clothing].
-[background scene: specific location with 2-3 atmospheric details].
-[color palette from genre section]. [lighting from genre section].
-[genre quality keywords from cover-styles.md].
-Title text '{book-title}' [placement: lower third / top center / negative space between figures] in [title font style for genre].
-Author name '{pen-name}' [placement] in [author name style for genre].
-Professional book cover, photorealistic, portrait orientation 2:3 ratio 1024x1536,
-keep title and author name inside the central safe area (inner 85%), no watermark, no extra limbs
+Chinese web novel cover, [genre style from cover-styles.md].
+Title text '{book-title}' at top center in [title font style for genre].
+Author name '{pen-name}' at bottom center in [author name style for genre].
+[genre style tags]. [character description]. [background description].
+[color palette]. [lighting].
+Professional book cover, high detail digital painting, portrait [ratio] ratio,
+keep title and author name inside the central safe area (inner ~85%), no watermark
 ```
 
-**Register opening phrases:**
-- Dark Romance Editorial: `"Dark romance editorial photography, moody jewel-toned atmosphere,"`
-- Cinematic Drama: `"Cinematic photorealistic drama, film-still quality,"`
-- Dark Fantasy Illustration: `"Hyperrealistic dark fantasy 3D render,"`
+**Character count rule — must follow before writing `[character description]`:**
 
-**Two-character prompt discipline:** When the template calls for two characters, both must appear in the prompt with explicit positional language — "male figure standing behind her," "their faces a breath apart," "his hand at her waist." Do not use vague phrases like "a couple" or "two people." Vague character descriptions default to single-character generation.
+| Genre | Characters in prompt |
+|---|---|
+| 都市 / 现言 / 甜宠 / 古言 | TWO characters — describe BOTH explicitly: male (position, expression, clothing) AND female (position, expression, clothing). Single-character prompts produce single-character covers for these genres. |
+| 西幻 | TWO characters — male in dark armored robes, female in dark dress with crown; side-by-side or pressed together. |
+| 悬疑 / 灵异 | TWO figures — protector + protected, or supernatural presence + ordinary person. May be partial silhouette. |
+| 玄幻 / 仙侠 / 科幻 / 历史 | Single protagonist (Lone Hero template). One character only. |
+| 轻小说 | Single protagonist or duo — match the book's gender composition. |
+
+Title font styles and author name styles are in `references/cover-styles.md` per genre.
+Offer 2–3 composition variants (close-up portrait / full body / pure scene) on first generation.
 
 ## Step 3 — Generate cover
 
-### apiyi path (APIYI_API_KEY is set)
+**生图逻辑由全局 `image-gen` skill 统一处理**（API 调用、重试、SVG fallback、安全过滤）。本 step 只负责传参。
 
-```bash
-BOOK_DIR="public/covers/{book-title}/cover"
-mkdir -p "$BOOK_DIR"
+参数：
+- `output` = `public/covers/{book-title}/cover_v1.png`
+- `size` = `848x1280`
+- `prompt` = Step 2 构建的完整 prompt
 
-# Write prompt to a temp file to avoid bash variable escaping issues with long strings
-PROMPT_FILE=$(mktemp)
-cat > "$PROMPT_FILE" << 'PROMPT_CONTENT'
-{full-prompt-from-step-2}
-PROMPT_CONTENT
+`image-gen` skill 执行流程：
+1. 检查 `APIYI_API_KEY` → 有则走 apiyi，无则 SVG fallback
+2. `curl --max-time 200` 调用 `gpt-image-2-vip`，base64 解码写入 PNG
+3. prompt 写入同目录 `.prompt.txt`
+4. 若触发安全过滤（`invalid_prompt`）：按 skill 内置词表替换触发词后自动重试一次
+5. 重试仍失败 → SVG fallback（480×720 viewBox，含标题/作者/背景渐变）
 
-PROMPT_JSON=$(python3 -c "import json; print(json.dumps(open('$PROMPT_FILE').read().strip()))")
+安全过滤词替换规则见 `.claude/skills/image-gen/SKILL.md`（项目内）。
 
-RESPONSE=$(curl -s --max-time 180 https://api.apiyi.com/v1/images/generations \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $APIYI_API_KEY" \
-  -d "{\"model\":\"gpt-image-2-vip\",\"prompt\":$PROMPT_JSON,\"n\":1,\"size\":\"1024x1536\"}")
-
-rm -f "$PROMPT_FILE"
-
-# API returns b64_json (not a URL). Decode and write directly.
-python3 -c "
-import sys, json, base64
-r = json.load(sys.stdin)
-if 'data' not in r:
-    msg = r.get('error', {}).get('message', str(r))
-    print('API_ERROR: ' + msg)
-    exit(1)
-b64 = r['data'][0].get('b64_json', '')
-if b64:
-    open('$BOOK_DIR/cover_v1_raw.png', 'wb').write(base64.b64decode(b64))
-    print('SAVED_B64')
-else:
-    # fallback: URL path
-    url = r['data'][0].get('url', '')
-    print('URL: ' + url)
-" <<< "$RESPONSE"
-```
-
-After generation:
-```bash
-# Resize to 480×720 for web delivery
-ffmpeg -i "$BOOK_DIR/cover_v1_raw.png" -vf scale=480:720 "$BOOK_DIR/cover_v1.png" -y \
-  || sips -z 720 480 "$BOOK_DIR/cover_v1_raw.png" --out "$BOOK_DIR/cover_v1.png"
-rm -f "$BOOK_DIR/cover_v1_raw.png"
-```
-
-Write the prompt to `$BOOK_DIR/cover_v1.prompt.txt`.
-
-**On API error:**
-- If error contains `safety_violations=[sexual]`: the prompt triggered the content filter. Rewrite the prompt — remove explicit proximity language ("hand at her waist", "breath apart", "sensual") and replace with mood/atmosphere language ("dramatic tension between them", "powerful emotional stakes"). Retry once with the toned-down prompt.
-- On any other error: log the full response, skip this book, continue batch.
-
-### Claude SVG fallback (APIYI_API_KEY not set — confirmed by entry check)
-
-**Only enter this section if the entry check above returned `API_PATH=claude_svg`. If APIYI_API_KEY is set, go back and use the apiyi curl path.**
-
-Claude writes a styled SVG cover directly. Size: 480×720 viewBox. Must include:
-- Genre-appropriate background gradient (from `cover-styles.md` color palette)
-- Book title in large centered text with genre font style
-- Author name in smaller text at bottom
-- A simple symbolic motif (sword, lotus, city silhouette, etc.) as an SVG shape or path
-
-Output path: `{BOOK_DIR}/cover_v1.svg`
-
-Log per book: `\033[33m⚠ SVG fallback — {book-title}\033[0m`
+On API error: log the response, skip this book, continue batch.
 
 ### B3 batch flow
 
-For each book in `BOOKS`, run Steps 1–3 in sequence. Write each prompt to a temp file before passing to curl — do not inline long prompts in bash variables (escaping fails silently):
+For each book in `BOOKS`, run Steps 1–3 in sequence. Build the prompt inline per book — do not pre-build a map:
 
 ```bash
 for bookSlug in "${BOOKS[@]}"; do
-  BOOK_DIR="public/covers/${bookSlug}/cover"
-  mkdir -p "$BOOK_DIR"
-  # Steps 1.5 + 2: detect genre, select composition template, build prompt
-  # Write prompt to temp file, then pass via python3 json.dumps() — not via bash variable
-  # Step 3: apiyi curl (b64_json decode) or SVG fallback
+  BOOK_DIR="public/covers/${bookSlug}"
+  # Steps 1.5 + 2: detect genre, build PROMPT string for this book
+  PROMPT="$(build_cover_prompt "$bookSlug")"  # inline per Step 2 template
+  # Step 3: apiyi curl or SVG fallback
 done
 ```
+
+`build_cover_prompt` is not a real function — it represents executing Steps 1.5 and 2 inline for each book before the curl call.
+
+## Step 3.5 — Compress the cover
+
+Run immediately after Step 3, before quality check. Do not skip.
+
+```bash
+COVER_FILE="$BOOK_DIR/cover_v1.png"
+if [ -f "$COVER_FILE" ]; then
+  if ! command -v pngquant &>/dev/null; then
+    if ! brew install pngquant -q; then
+      echo "⚠ pngquant install failed — skipping compression for $COVER_FILE"
+    fi
+  fi
+  if command -v pngquant &>/dev/null; then
+    BEFORE=$(stat -f%z "$COVER_FILE" 2>/dev/null || stat -c%s "$COVER_FILE")
+    pngquant --quality=80-90 --ext .png --force "$COVER_FILE"
+    AFTER=$(stat -f%z "$COVER_FILE" 2>/dev/null || stat -c%s "$COVER_FILE")
+    echo "✓ pngquant: ${BEFORE}B → ${AFTER}B (-$(( (BEFORE-AFTER)*100/BEFORE ))%)"
+  fi
+fi
+```
+
+For **batch mode**, run this loop after all covers are generated:
+
+```bash
+for bookSlug in "${BOOKS[@]}"; do
+  COVER_FILE="public/covers/${bookSlug}/cover_v1.png"
+  # same snippet as above with COVER_FILE set per book
+done
+```
+
+---
 
 ## Step 4 — Quality check
 

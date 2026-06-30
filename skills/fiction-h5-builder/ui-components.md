@@ -52,19 +52,27 @@ Any of these is a quality gate failure:
 
 ```tsx
 // 底部栏网格
+// ⚠️ 所有导航必须用 window.location.href，<a href> 在 hydration 后同样被 Next.js 路由拦截
 <div style={{
   display: 'grid',
   gap: '12px',
   gridTemplateColumns: nextChapter !== null ? 'minmax(96px, 0.75fr) minmax(136px, 1.12fr)' : '1fr',
 }}>
-  {/* TOC 按钮 — Link 而非 button，!text-[13px] 防止换行 */}
-  <Link href={`/book/${bookSlug}#toc`} className={`${btnBase} !text-[13px]`}>
+  <a
+    href={`/book/${bookSlug}#toc`}
+    onClick={(e) => { e.preventDefault(); window.location.href = `/book/${bookSlug}#toc` }}
+    className={`${btnBase} !text-[13px]`}
+  >
     Table of contents
-  </Link>
+  </a>
   {nextChapter !== null && (
-    <Link href={`/book/${bookSlug}/chapter/${nextChapter}`} className={`${btnBase} bg-primary text-white`}>
+    <a
+      href={`/book/${bookSlug}/chapter/${nextChapter}`}
+      onClick={(e) => { e.preventDefault(); window.location.href = `/book/${bookSlug}/chapter/${nextChapter}` }}
+      className={`${btnBase} bg-primary text-white`}
+    >
       Next →
-    </Link>
+    </a>
   )}
 </div>
 
@@ -161,9 +169,9 @@ const featured = books.find(b => b.featured) ?? books[0]
       {featured.title}
     </h1>
     <p className="text-sm text-base-content/60 mb-5">by {featured.author}</p>
-    <Link href={`/book/${featured.slug}/chapter/1`} className="inline-flex items-center justify-center px-7 h-11 rounded-[12px] bg-primary text-white font-bold text-sm tracking-tight hover:-translate-y-px transition-transform">
+    <HardLink href={`/book/${featured.slug}/chapter/1`} className="inline-flex items-center justify-center px-7 h-11 rounded-[12px] bg-primary text-white font-bold text-sm tracking-tight hover:-translate-y-px transition-transform">
       Read now
-    </Link>
+    </HardLink>
   </div>
 </div>
 
@@ -312,6 +320,25 @@ export type Book = {
 
 ---
 
+**`src/components/HardLink.tsx`（必须创建，server component 用它替代 `<a>` 和 `<Link>`）：**
+
+```tsx
+'use client'
+import type { CSSProperties, ReactNode } from 'react'
+export default function HardLink({ href, className, style, children }: {
+  href: string; className?: string; style?: CSSProperties; children: ReactNode
+}) {
+  return (
+    <a href={href} className={className} style={style}
+      onClick={(e) => { e.preventDefault(); window.location.href = href }}>
+      {children}
+    </a>
+  )
+}
+```
+
+---
+
 **完整 `app/book/[slug]/page.tsx`（三种风格共存实现）：**
 
 ```tsx
@@ -323,6 +350,7 @@ import { allChapters } from 'content-collections'
 import { books, getBook, type Book } from '@/lib/books'
 import ThemeToggle from '@/components/ThemeToggle'
 import ResumeReading from '@/components/ResumeReading'
+import HardLink from '@/components/HardLink'
 
 type Props = { params: { slug: string } }
 
@@ -352,7 +380,7 @@ function BelowFold({ book, chapters, slug }: { book: Book; chapters: { order: nu
           </h2>
           <div className="divide-y divide-base-300">
             {chapters.map(ch => (
-              <Link
+              <HardLink
                 key={ch.order}
                 href={`/book/${slug}/chapter/${ch.order}`}
                 className="flex items-center gap-4 py-3.5 group hover:bg-base-200 -mx-3 px-3 rounded transition-colors"
@@ -362,7 +390,7 @@ function BelowFold({ book, chapters, slug }: { book: Book; chapters: { order: nu
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-base-content/30 group-hover:text-primary transition-colors shrink-0" aria-hidden="true">
                   <polyline points="9 18 15 12 9 6" />
                 </svg>
-              </Link>
+              </HardLink>
             ))}
           </div>
         </section>
@@ -373,17 +401,19 @@ function BelowFold({ book, chapters, slug }: { book: Book; chapters: { order: nu
 
 // ── 共用：CTA 按钮组 ─────────────────────────────────────────────────────────
 
+// ⚠️ CTABlock 是 server component，无法加 onClick，必须用 HardLink 组件
+// HardLink 内部用 window.location.href，保证浏览器蓝色进度条出现、广告重新初始化
 function CTABlock({ book, slug, chapters }: { book: Book; slug: string; chapters: unknown[] }) {
   return (
     <div className="flex flex-col sm:flex-row gap-3">
       {chapters.length > 0 ? (
-        <Link
+        <HardLink
           href={`/book/${slug}/chapter/1`}
           className="inline-flex items-center justify-center px-8 h-12 rounded-[14px] bg-primary text-white font-extrabold text-[15px] tracking-tight transition-all duration-150 hover:-translate-y-px active:translate-y-0"
           style={{ boxShadow: '0 8px 18px rgba(236,75,155,.25)' }}
         >
           Start reading
-        </Link>
+        </HardLink>
       ) : (
         <span className="inline-flex items-center justify-center px-8 h-12 rounded-[14px] bg-base-300 text-base-content/40 font-extrabold text-[15px] tracking-tight cursor-not-allowed">
           Coming soon

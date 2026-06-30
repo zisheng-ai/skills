@@ -79,9 +79,9 @@ Apply when the genre is romance or the premise has a central pairing.
 
 ### Target Heat Level
 
-**Default: steamy / open-door, non-graphic.** Physical sensation, breath, skin, pressure — stop before explicit sexual acts. AdSense-safe ceiling.
+**Default: steamy / closed-door at peak, non-graphic.** Matches `fiction-niche-researcher.md` AdSense safety policy. Build tension with sensation, breath, skin, pressure — fade at the peak intimate moment; stop before explicit sexual acts.
 
-In short form, heat is almost always tension-only or tension-plus-first-kiss. Full open-door scenes belong in long form. In 8,000–20,000 characters, one well-written almost-kiss or first kiss is worth more than a full scene.
+In short form, heat is almost always tension-only or tension-plus-first-kiss. Escalated intimacy scenes belong in long form (and fade at peak there too). In 8,000–20,000 characters, one well-written almost-kiss or first kiss is worth more than a full scene.
 
 ---
 
@@ -130,6 +130,10 @@ The heat climax should arrive before the story's emotional climax, not after. Le
 - Ending: has one image or line that lingers?
 - No consecutive 3+ sentences with identical syntactic structure.
 - Total word count: 8,000–20,000 characters for a self-contained short story.
+
+## After Story Completion → Cover Generation (automatic, no prompt)
+
+When the story passes quality checks, **immediately load `story-cover.md` and generate the cover** — do not ask the user whether to proceed. This is always the next step.
 
 ## Reference Book Integration
 

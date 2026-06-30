@@ -8,7 +8,7 @@ Run these checks before go-live. These are **not** blockers for development prev
 
 - [ ] `content/` has ≥ 5 book directories (initial site launch).
 - [ ] Each book has ≥ 10 chapter files in `content/{book-title}/chapters/` (中篇 minimum).
-- [ ] Each chapter is ≥ 2,000 Chinese characters or 1,500 English words — no stub content.
+- [ ] Each chapter is ≥ 1,500 Chinese characters or 1,200 English words — no stub content.
 - [ ] `outline/outline.md` exists and contains a real arc outline (not empty or stub-only).
 - [ ] `world/worldbuilding.md` exists and describes the world, genre, and tone.
 - [ ] `tracking/context.md` exists and reflects the last written chapter.
@@ -20,19 +20,16 @@ If any launch asset is missing, attempt to generate it automatically (Phase 3 / 
 
 ## Automated Verification (run without user input)
 
-Run the build and start the production server, then verify routes programmatically. The stack is fixed to Next.js (see `tech-stack.md`). Use the project's package manager (npm/yarn/pnpm) and script names as needed.
+Run the build and start the production server, then verify routes programmatically. The stack is fixed to Next.js (see `tech-stack.md`). Package manager is pnpm.
 
 ```bash
 set -e
 
-# Detect package manager
-PKG_MGR=$([ -f yarn.lock ] && echo yarn || [ -f pnpm-lock.yaml ] && echo pnpm || echo npm)
-
 # Build
-$PKG_MGR run build
+pnpm run build
 
 # Start server in background and capture its port
-$PKG_MGR run start > /tmp/fiction-server.log 2>&1 &
+pnpm run start > /tmp/fiction-server.log 2>&1 &
 SERVER_PID=$!
 
 # Wait for server to be ready; extract the port it bound to

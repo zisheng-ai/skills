@@ -33,48 +33,89 @@ Any of these is a quality gate failure:
 
 ### Top / Navigation Bar
 - Height: 48–56px on mobile.
-- Content: logo (left), optional action (right). Never more than one action icon.
-- **Logo 规范（全站统一）：** `<img src="/logo.png" className="block h-8 w-auto rounded-sm" />`，主页用 `next/image`（`width={28} height={28} className="rounded-sm"`），效果一致。
-- 首页：logo + 站名文字 + ThemeToggle
-- 书籍详情页：logo（链接到 `/`）+ ThemeToggle
-- 章节页：logo（链接到 `/`）+ 居中书名/章节名 + TOC 图标 + ThemeToggle
+- Content: site title or logo (left), optional action (right). Never more than one action icon.
+- On the reader page: title (truncated), catalog trigger, settings trigger. No branding.
 - On scroll down: may compress or hide (if implementing immersive mode).
 
 ### Bottom Bar (Mobile Reader)
 - Height: 60–64px + `env(safe-area-inset-bottom)`. Large tap targets are non-negotiable — this is the primary interaction on the page.
-- Content: "Table of contents" (left) + "Next →" (right, hidden on last chapter).
+- Content: prev chapter (or TOC when on chapter 1), table of contents, next chapter. Settings or catalog may appear here if not in the top bar.
 - Must not cover body text. Use `padding-bottom` on the content area to prevent overlap.
 - See `reader-ux.md` **Navigation Button Size** for full button spec.
 
-**底部 TOC 按钮行为：** 跳转到书籍详情页并滚动到章节列表锚点，不打开 drawer。书籍详情页的章节列表容器必须有 `id="toc"`。
+**ALL same-origin navigation — MUST use `window.location.href`, never `<Link>` or plain `<a href>`:**
 
-左右列比例 `minmax(96px, 0.75fr) minmax(136px, 1.12fr)`，TOC 按钮字号用 `!text-[13px]` 覆盖 btnBase 的默认值，保证 "Table of contents" 在移动端单行显示。
+Next.js App Router intercepts ALL same-origin `<a>` clicks after hydration (including plain `<a href>`, not just `<Link>`) and performs soft SPA navigation. Soft navigation does NOT reload the page, so the browser shows no progress bar, GPT/AdSense scripts don't re-run, and ads don't fill. **Only `window.location.href` bypasses the router interception and guarantees a true page reload with the blue browser progress bar.**
+
+This applies to every navigation between pages:
+- Bottom bar "Next →" and "Table of contents" buttons
+- Book detail "Start reading" CTA and "Continue from Chapter X" (ResumeReading)
+- Chapter list items on the book detail page
+- TOCDrawer chapter items
+- BookCard (→ book detail page)
+- Home page featured "Read now" CTA
+- Inline "Next chapter →" and "Back to book page →" in chapter body
+
+**Pattern for `'use client'` components** — add `onClick` directly:
 
 ```tsx
-// 底部栏网格
-<div style={{
-  display: 'grid',
-  gap: '12px',
-  gridTemplateColumns: nextChapter !== null ? 'minmax(96px, 0.75fr) minmax(136px, 1.12fr)' : '1fr',
-}}>
-  {/* TOC 按钮 — Link 而非 button，!text-[13px] 防止换行 */}
-  <Link href={`/book/${bookSlug}#toc`} className={`${btnBase} !text-[13px]`}>
-    Table of contents
-  </Link>
-  {nextChapter !== null && (
-    <Link href={`/book/${bookSlug}/chapter/${nextChapter}`} className={`${btnBase} bg-primary text-white`}>
-      Next →
-    </Link>
-  )}
-</div>
-
-// 书籍详情页 BelowFold 组件内
-<section id="toc">
-  {/* 章节列表 */}
-</section>
+<a
+  href={`/book/${bookSlug}/chapter/${nextChapter}`}
+  onClick={(e) => { e.preventDefault(); window.location.href = `/book/${bookSlug}/chapter/${nextChapter}` }}
+  className={...}
+>
+  Next →
+</a>
 ```
 
-这样用户在任意章节都可以一键返回详情页并看到完整章节列表。
+**Pattern for server components** — use the `HardLink` client component (server components cannot have `onClick`):
+
+```tsx
+// src/components/HardLink.tsx
+'use client'
+import type { CSSProperties, ReactNode } from 'react'
+export default function HardLink({ href, className, style, children }: {
+  href: string; className?: string; style?: CSSProperties; children: ReactNode
+}) {
+  return (
+    <a href={href} className={className} style={style}
+      onClick={(e) => { e.preventDefault(); window.location.href = href }}>
+      {children}
+    </a>
+  )
+}
+
+// Usage in server components (page.tsx):
+import HardLink from '@/components/HardLink'
+<HardLink href={`/book/${slug}/chapter/1`} className="...">Start reading</HardLink>
+<HardLink href={`/book/${slug}/chapter/${ch.order}`} className="...">Ch. {ch.order}</HardLink>
+```
+
+**The ONLY acceptable use of `<Link>`** is the home logo (`<Link href="/">`). Everything else uses `HardLink` or `<a>` + inline `onClick → window.location.href`.
+
+**BookCard** is a `'use client'` component (needs `useState` for image error fallback), so add `onClick` inline — no need for `HardLink`:
+
+```tsx
+// BookCard.tsx — 'use client'
+<a
+  href={`/book/${slug}`}
+  className="group block"
+  onClick={(e) => { e.preventDefault(); window.location.href = `/book/${slug}` }}
+>
+  {/* cover + metadata */}
+</a>
+```
+
+**ResumeReading** is also `'use client'` — same pattern:
+```tsx
+<a
+  href={`/book/${bookSlug}/chapter/${chapter}`}
+  className="..."
+  onClick={(e) => { e.preventDefault(); window.location.href = `/book/${bookSlug}/chapter/${chapter}` }}
+>
+  Continue from Chapter {chapter}
+</a>
+```
 
 ### Book Card (Cover-First Responsive Grid)
 
@@ -111,469 +152,107 @@ The book list uses a responsive grid. The card is the page's primary visual unit
 - Right: title, author, 1-line synopsis or latest chapter name, metadata.
 - Divider: `1px` `--muted` border between rows, or `8px` gap without border.
 
-### Home Page Hero
-
-The home page hero sets the site's identity before the reader sees a single book. Choose one style and apply it consistently — same logic as the book detail hero.
-
-**Choose by site tone (same decision as book detail):**
-
-| Site tone | Home hero style |
-|---|---|
-| Dark romance / thriller / vampire / paranormal | **cinematic** — Featured Book Full-Bleed |
-| Fantasy / contemporary romance / colorful multi-genre | **gradient** — Brand Gradient Tagline |
-| Literary fiction / clean romance / prose-first / short story | **editorial** — Text-Only Editorial |
-
-主页 hero 是站点级决策，整个站点只用一种。书籍详情页 hero 是 per-book 的，每本书独立设置 `heroStyle`，两者互相独立。
-
----
-
-#### cinematic — Featured Book Full-Bleed
-
-One designated featured book's cover fills the top of the home page, full viewport width. Site tagline and a "Start reading" CTA are overlaid at the bottom. Book grid follows below the fold.
-
-```
-┌─────────────────────────────────────────────┐  ← full viewport width
-│                                             │
-│    [featured book cover, object-cover]      │  min-h-[55vh]
-│                                             │
-│▓▓▓▓ gradient from-base-100 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
-│  Site tagline                               │
-│  [Read now →]  [Browse all ↓]              │
-└─────────────────────────────────────────────┘
-  Book grid (all books including featured)
-```
-
-Implementation:
-```tsx
-// books.ts — mark one book as featured
-{ slug: 'blood-and-velvet', featured: true, ... }
-
-// page.tsx
-const featured = books.find(b => b.featured) ?? books[0]
-
-<div className="relative min-h-[55vh] flex items-end">
-  <Image src={featured.cover} alt={featured.title} fill className="object-cover object-center" priority />
-  <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/40 to-transparent pointer-events-none" />
-  <div className="absolute inset-0 bg-gradient-to-t from-base-100 via-base-100/60 to-transparent pointer-events-none" />
-  <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
-    <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">Featured</p>
-    <h1 className="text-3xl sm:text-4xl font-extrabold text-base-content leading-tight tracking-tight mb-1">
-      {featured.title}
-    </h1>
-    <p className="text-sm text-base-content/60 mb-5">by {featured.author}</p>
-    <Link href={`/book/${featured.slug}/chapter/1`} className="inline-flex items-center justify-center px-7 h-11 rounded-[12px] bg-primary text-white font-bold text-sm tracking-tight hover:-translate-y-px transition-transform">
-      Read now
-    </Link>
-  </div>
-</div>
-
-{/* Book grid — all books */}
-<section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-8">
-    {books.map(book => <BookCard key={book.slug} {...book} />)}
-  </div>
-</section>
-```
-
-Notes:
-- Nav: same transparent floating pattern as book detail `cinematic` — `text-white/80` back link, top scrim
-- Featured book also appears in the grid below — do not hide it
-- Add `featured?: boolean` to the `Book` type in `books.ts`
-
----
-
-#### gradient — Brand Gradient Tagline
-
-No cover image. Site's brand color fills the hero as a gradient. Site name, genre descriptor, and tagline sit on the gradient. Book grid below.
-
-```
-┌─────────────────────────────────────────────┐
-│  ░░░░░ brand gradient (accent → base-100) ░░│
-│                                             │
-│         Site Name                           │
-│         Genre descriptor                   │
-│         Tagline                             │
-│                                             │
-└─────────────────────────────────────────────┘
-  Book grid
-```
-
-Implementation:
-```tsx
-<section
-  className="pt-24 pb-16 px-4 text-center"
-  style={{ background: 'linear-gradient(160deg, oklch(from var(--p) l c h / 0.15) 0%, transparent 70%)' }}
->
-  <h1 className="text-4xl sm:text-5xl font-extrabold text-base-content leading-tight tracking-tight mb-3">
-    {siteTitle}
-  </h1>
-  <p className="text-base text-base-content/60 max-w-sm mx-auto">{tagline}</p>
-</section>
-```
-
-Notes:
-- Background: subtle accent tint, not a loud solid — `oklch` with low alpha keeps it readable in both light and dark themes
-- Nav: standard opaque `bg-base-100/95 backdrop-blur-sm` header
-
----
-
-#### editorial — Text-Only Editorial
-
-Plain page background. Big typographic headline + subtitle. No image, no gradient in the hero. Book grid starts immediately below.
-
-```
-  Site Name (in nav)
-  ─────────────────────────────────────────
-  Big headline line 1
-  Big headline line 2 (accent color)
-  Subtitle
-  ─────────────────────────────────────────
-  Book grid
-```
-
-Implementation (current velvet-throne pattern):
-```tsx
-<header className="border-b border-base-300">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-    <Link href="/" className="flex items-center gap-2.5">
-      <Image src="/logo.png" alt={siteTitle} width={28} height={28} className="rounded-sm" priority />
-      <span className="text-lg font-bold text-base-content tracking-tight">{siteTitle}</span>
-    </Link>
-    <ThemeToggle />
-  </div>
-</header>
-
-<section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8 text-center">
-  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-base-content leading-[1.1] tracking-tight pb-1">
-    {headlineLine1}<br />
-    <span className="text-primary">{headlineLine2}</span>
-  </h1>
-  <p className="mt-4 text-base text-base-content/60 max-w-md mx-auto">{subtitle}</p>
-</section>
-
-<section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-8">
-    {books.map(book => <BookCard key={book.slug} {...book} />)}
-  </div>
-</section>
-```
-
-Notes:
-- Nav: standard opaque header with logo + site name + ThemeToggle
-- Headline is 2 lines split at a natural break — first line neutral, second line in accent color
-- No CTA in hero — the book grid *is* the CTA
-- Best for sites where the catalog speaks for itself
-
----
-
 ### Book Detail Hero
 
-每本书通过 `books.ts` 里的 `heroStyle` 字段声明自己的 hero 风格，三种风格在同一站点共存，`page.tsx` 按字段分发渲染。
+The detail page hero is the first impression. It sets the genre mood and drives the reader toward chapter 1. Flat cover-on-white is not acceptable — it reads like a blog post, not a reading product.
 
-**决策表（按书的类型和封面质量选）：**
+**Default treatment — Atmospheric (recommended for web novel, romance, thriller):**
 
-| 书的类型 / 调性 | `heroStyle` |
-|---|---|
-| Dark romance / thriller / vampire / paranormal | `'cinematic'` |
-| Fantasy / contemporary romance / 色彩丰富的封面 | `'gradient'` |
-| Literary fiction / clean romance / 文学向 | `'editorial'` |
-
-封面画面张力不够填满全屏时，默认用 `'editorial'`。
-
-**顶部导航栏（三种风格统一）：** 使用 frosted glass 方案，与背景无关——封面、渐变、纯色背景都自然适配：
+The cover image serves double duty: a blurred, darkened version fills the full-width hero zone as a background atmosphere; the sharp cover floats centered on top.
 
 ```
-bg-base-100/70 backdrop-blur-md border-b border-base-300/50
+┌─────────────────────────────────────────────┐   ← hero zone (100vw)
+│  [blurred + darkened cover, scale(1.08)]    │   background layer
+│         ┌─────────────────┐                  │
+│         │  crisp cover    │  ← centered     │
+│         │  max-w: 200px   │    float on top  │
+│         │  aspect 2:3     │                  │
+│         │  radius: 18px   │                  │
+│         │  shadow heavy   │                  │
+│         └─────────────────┘                  │
+└─────────────────────────────────────────────┘
+           Genre pill  ←  below the zone
+           Big Title
+           Author / N Chapters
+           [Start Reading →]  ←  accent CTA
 ```
 
-文字用 `text-base-content/70`，不再因 hero 风格不同而区分 `text-white` 和 `text-base-content`。深浅主题均自动适配。
+Implementation:
+- Hero zone: `position: relative; overflow: hidden`
+- Background image layer: same `<img>` src as the cover, `position: absolute; inset: -5%; width: 110%; height: 110%; object-fit: cover; filter: blur(40px) brightness(0.45) saturate(1.4)`
+- Cover float: `position: relative; z-index: 1; max-width: 200px; aspect-ratio: 2/3; border-radius: 18px; box-shadow: 0 24px 64px rgba(0,0,0,0.55); margin: 32px auto 28px`
+- Hero zone padding bottom: `28px`
+- Text below the hero zone sits on the normal page background (not on the dark zone)
 
----
+**Alternative treatment — Cinematic (use for dark romance, thriller, fantasy):**
 
-**`books.ts` 类型定义：**
+Cover image fills the full hero zone unblurred. A dark gradient overlay (bottom 60%) lets text sit directly on the image. Genre pill, title, and CTA are inside the hero zone, not below it.
 
-```ts
-export type HeroStyle = 'cinematic' | 'gradient' | 'editorial'
-
-export type Book = {
-  slug: string
-  title: string
-  author: string
-  tagline: string
-  description: string
-  genres: string[]
-  cover: string
-  status: BookStatus
-  chapterCount: number
-  heroStyle: HeroStyle  // 必填，无默认值
-  heroColor?: string    // heroStyle === 'gradient' 时必填，如 '#1a0a1e'
-}
+```
+┌─────────────────────────────────────────────┐   ← hero zone (100vw, min-height: 420px)
+│  [cover image, object-fit: cover]            │   full-bleed, no blur
+│                                              │
+│  ░░░░░░░░ dark gradient overlay ░░░░░░░░░░  │   bottom 60%, rgba(0,0,0,0–0.82)
+│  Genre pill                                  │
+│  Big Title                                   │
+│  Author / N Chapters                         │
+│  [Start Reading →]                           │
+└─────────────────────────────────────────────┘
 ```
 
----
+Implementation:
+- Hero zone: `position: relative; overflow: hidden; min-height: 420px`
+- Background: `<img>` with `position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top`
+- Gradient overlay: `position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 20%, rgba(0,0,0,0.82) 100%)`
+- Text container: `position: relative; z-index: 1; padding: 200px 20px 32px` (pushes text to bottom of zone)
+- All text inside zone: white (`#fff`), no need for accent color genre pill — use `rgba(255,255,255,0.15)` backdrop pill instead
+- No text below the zone — CTA button is inside
 
-**完整 `app/book/[slug]/page.tsx`（三种风格共存实现）：**
+**Third treatment — Gradient wash (use for contemporary romance, sports, billionaire):**
 
-```tsx
-import type { Metadata } from 'next'
-import Image from 'next/image'
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
-import { allChapters } from 'content-collections'
-import { books, getBook, type Book } from '@/lib/books'
-import ThemeToggle from '@/components/ThemeToggle'
-import ResumeReading from '@/components/ResumeReading'
+A soft color gradient derived from the book's brand color washes the hero background. The cover floats centered on top. Clean, vibrant, works well in light mode.
 
-type Props = { params: { slug: string } }
-
-export function generateStaticParams() {
-  return books.map(b => ({ slug: b.slug }))
-}
-
-export function generateMetadata({ params }: Props): Metadata {
-  const book = getBook(params.slug)
-  if (!book) return {}
-  return { title: book.title, description: book.description }
-}
-
-// ── 共用：简介 + 章节列表 ────────────────────────────────────────────────────
-
-function BelowFold({ book, chapters, slug }: { book: Book; chapters: { order: number; title: string }[]; slug: string }) {
-  return (
-    <div className="max-w-2xl mx-auto px-6 pt-6 pb-16">
-      <p className="text-base text-base-content/75 leading-relaxed mb-2">{book.description}</p>
-      <p className="text-sm text-base-content/40 mt-3 mb-10">
-        {chapters.length} {chapters.length === 1 ? 'chapter' : 'chapters'} available
-      </p>
-      {chapters.length > 0 && (
-        <section id="toc">
-          <h2 className="text-[11px] font-semibold uppercase tracking-widest text-base-content/40 mb-4" style={{ letterSpacing: '0.12em' }}>
-            Chapters
-          </h2>
-          <div className="divide-y divide-base-300">
-            {chapters.map(ch => (
-              <Link
-                key={ch.order}
-                href={`/book/${slug}/chapter/${ch.order}`}
-                className="flex items-center gap-4 py-3.5 group hover:bg-base-200 -mx-3 px-3 rounded transition-colors"
-              >
-                <span className="text-sm text-base-content/30 w-6 text-right tabular-nums shrink-0">{ch.order}</span>
-                <span className="flex-1 text-sm text-base-content group-hover:text-primary transition-colors">{ch.title}</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-base-content/30 group-hover:text-primary transition-colors shrink-0" aria-hidden="true">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
-    </div>
-  )
-}
-
-// ── 共用：CTA 按钮组 ─────────────────────────────────────────────────────────
-
-function CTABlock({ book, slug, chapters }: { book: Book; slug: string; chapters: unknown[] }) {
-  return (
-    <div className="flex flex-col sm:flex-row gap-3">
-      {chapters.length > 0 ? (
-        <Link
-          href={`/book/${slug}/chapter/1`}
-          className="inline-flex items-center justify-center px-8 h-12 rounded-[14px] bg-primary text-white font-extrabold text-[15px] tracking-tight transition-all duration-150 hover:-translate-y-px active:translate-y-0"
-          style={{ boxShadow: '0 8px 18px rgba(236,75,155,.25)' }}
-        >
-          Start reading
-        </Link>
-      ) : (
-        <span className="inline-flex items-center justify-center px-8 h-12 rounded-[14px] bg-base-300 text-base-content/40 font-extrabold text-[15px] tracking-tight cursor-not-allowed">
-          Coming soon
-        </span>
-      )}
-      <ResumeReading bookSlug={slug} totalChapters={book.chapterCount} />
-    </div>
-  )
-}
-
-// ── cinematic：封面全宽铺底，底部渐变压文字 ──────────────────────────────────
-// 封面全宽铺底（不模糊），底部叠深色渐变，书名和 CTA 直接压在图上。
-// 适合：dark romance / thriller / paranormal
-
-function HeroCinematic({ book, chapters, slug }: { book: Book; chapters: { order: number; title: string }[]; slug: string }) {
-  return (
-    <>
-      <header className="fixed top-0 left-0 right-0 z-30 h-14 bg-base-100/70 backdrop-blur-md border-b border-base-300/50">
-        <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
-          <Link href="/" className="shrink-0 opacity-90 hover:opacity-100 transition-opacity duration-150" aria-label="Home">
-            <img src="/logo.png" alt={siteTitle} className="block h-8 w-auto rounded-sm" />
-          </Link>
-          <ThemeToggle />
-        </div>
-      </header>
-
-      <div className="relative min-h-[75vh] flex items-end">
-        <Image src={book.cover} alt={book.title} fill className="object-cover object-center" priority />
-        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/50 to-transparent pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-t from-base-100 via-base-100/70 to-transparent pointer-events-none" />
-        <div className="relative z-10 w-full max-w-2xl mx-auto px-6 pb-8">
-          <div className="flex flex-wrap gap-2 mb-3">
-            {book.genres.map(g => (
-              <span key={g} className="inline-block rounded-full bg-primary/20 border border-primary/40 px-3 py-0.5 text-xs text-primary font-semibold backdrop-blur-sm">{g}</span>
-            ))}
-          </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-base-content leading-tight tracking-tight mb-1">{book.title}</h1>
-          <p className="text-sm text-base-content/60 mb-6">by {book.author}</p>
-          <CTABlock book={book} slug={slug} chapters={chapters} />
-        </div>
-      </div>
-
-      <BelowFold book={book} chapters={chapters} slug={slug} />
-    </>
-  )
-}
-
-// ── gradient：封面完整展示在色彩渐变背景上 ───────────────────────────────────
-// 从封面提取主色（heroColor 字段），用 CSS 渐变做背景，封面完整居中。
-// 适合：fantasy / contemporary romance / 色彩丰富的封面
-
-function HeroGradient({ book, chapters, slug }: { book: Book; chapters: { order: number; title: string }[]; slug: string }) {
-  const bg = book.heroColor ?? 'var(--p)'
-  return (
-    <>
-      <header className="fixed top-0 left-0 right-0 z-30 h-14 bg-base-100/70 backdrop-blur-md border-b border-base-300/50">
-        <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
-          <Link href="/" className="shrink-0 opacity-90 hover:opacity-100 transition-opacity duration-150" aria-label="Home">
-            <img src="/logo.png" alt={siteTitle} className="block h-8 w-auto rounded-sm" />
-          </Link>
-          <ThemeToggle />
-        </div>
-      </header>
-
-      <div className="pt-14">
-        <div
-          className="py-14 flex flex-col items-center text-center"
-          style={{ background: `linear-gradient(160deg, ${bg}33 0%, transparent 70%)` }}
-        >
-          <div className="relative w-40 sm:w-52 aspect-[2/3] rounded-xl overflow-hidden shadow-2xl mb-8">
-            <Image src={book.cover} alt={book.title} fill className="object-cover" priority />
-          </div>
-          <div className="flex flex-wrap justify-center gap-2 mb-4">
-            {book.genres.map(g => (
-              <span key={g} className="inline-block rounded-full bg-primary/10 border border-primary/30 px-3 py-0.5 text-xs text-primary font-semibold">{g}</span>
-            ))}
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-base-content leading-tight tracking-tight mb-1 px-6">{book.title}</h1>
-          <p className="text-sm text-base-content/50 mb-6">by {book.author}</p>
-          <div className="px-6">
-            <CTABlock book={book} slug={slug} chapters={chapters} />
-          </div>
-        </div>
-        <BelowFold book={book} chapters={chapters} slug={slug} />
-      </div>
-    </>
-  )
-}
-
-// ── editorial：封面完整居中，干净页面背景 ────────────────────────────────────
-// 封面完整展示，无渐变无背景特效，内容清晰优先。
-// 适合：literary fiction / clean romance / 文学向
-
-function HeroEditorial({ book, chapters, slug }: { book: Book; chapters: { order: number; title: string }[]; slug: string }) {
-  return (
-    <>
-      <header className="fixed top-0 left-0 right-0 z-30 h-14 bg-base-100/70 backdrop-blur-md border-b border-base-300/50">
-        <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
-          <Link href="/" className="shrink-0 opacity-90 hover:opacity-100 transition-opacity duration-150" aria-label="Home">
-            <img src="/logo.png" alt={siteTitle} className="block h-8 w-auto rounded-sm" />
-          </Link>
-          <ThemeToggle />
-        </div>
-      </header>
-
-      <div className="pt-14">
-        <div className="max-w-2xl mx-auto px-4 pt-10 pb-4 text-center">
-          <div className="relative w-36 sm:w-44 aspect-[2/3] rounded-lg overflow-hidden shadow-2xl mx-auto mb-8">
-            <Image src={book.cover} alt={book.title} fill className="object-cover" priority />
-          </div>
-          <div className="flex flex-wrap justify-center gap-2 mb-4">
-            {book.genres.map(g => (
-              <span key={g} className="inline-block rounded-full bg-primary/10 border border-primary/30 px-3 py-0.5 text-xs text-primary font-semibold">{g}</span>
-            ))}
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-base-content leading-tight tracking-tight mb-1">{book.title}</h1>
-          <p className="text-sm text-base-content/50 mt-1 mb-6">by {book.author}</p>
-          <CTABlock book={book} slug={slug} chapters={chapters} />
-        </div>
-        <BelowFold book={book} chapters={chapters} slug={slug} />
-      </div>
-    </>
-  )
-}
-
-// ── Page 入口：按 heroStyle 分发 ─────────────────────────────────────────────
-
-export default function BookDetailPage({ params }: Props) {
-  const book = getBook(params.slug)
-  if (!book) notFound()
-
-  const chapters = allChapters
-    .filter(ch => ch.bookSlug === params.slug && ch.status === 'published')
-    .sort((a, b) => a.order - b.order)
-    .map(ch => ({ order: ch.order, title: ch.title }))
-
-  return (
-    <div className="min-h-screen bg-base-100">
-      {book.heroStyle === 'cinematic' && <HeroCinematic book={book} chapters={chapters} slug={params.slug} />}
-      {book.heroStyle === 'gradient'  && <HeroGradient  book={book} chapters={chapters} slug={params.slug} />}
-      {book.heroStyle === 'editorial' && <HeroEditorial  book={book} chapters={chapters} slug={params.slug} />}
-    </div>
-  )
-}
+```
+┌─────────────────────────────────────────────┐   ← hero zone (100vw)
+│  [brand color gradient, 160deg, 33% opacity]│   background wash
+│         ┌─────────────────┐                  │
+│         │  crisp cover    │  ← centered     │
+│         │  max-w: 208px   │    float on top  │
+│         │  aspect 2:3     │                  │
+│         │  radius: 16px   │                  │
+│         │  shadow-2xl     │                  │
+│         └─────────────────┘                  │
+│  Genre pill  (centered below cover)          │
+│  Big Title                                   │
+│  Author                                      │
+│  [Start Reading →]                           │
+└─────────────────────────────────────────────┘
 ```
 
-**注意：**
-- `cinematic`：nav 固定透明，back link 用 `text-white/80`；top scrim 保证导航可读
-- `gradient`：`heroColor` 值后加 `33`（20% alpha hex）做渐变起点，避免颜色过重
-- `editorial`：nav 标准不透明，封面 `w-36 sm:w-44`，比 gradient 的 `w-40 sm:w-52` 小一档
+Implementation:
+- Hero zone: `py-14 flex flex-col items-center text-center`
+- Background: `background: linear-gradient(160deg, {heroColor}33 0%, transparent 70%)`
+- Cover: `relative w-40 sm:w-52 aspect-[2/3] rounded-xl overflow-hidden shadow-2xl mb-8`
+- `heroColor` is a hex value stored on the book object (e.g. `#7c3aed`). Required when using gradient style; falls back to `var(--color-primary)` if absent.
+- Text sits inside the gradient zone (no separate below-fold for the hero metadata)
 
-**文字层级（三种风格 BelowFold 共用）：**
-- Genre pill: `bg-primary/10 border border-primary/30 text-primary text-xs font-semibold rounded-full px-3 py-0.5`
-- Title: `text-3xl sm:text-4xl font-extrabold text-base-content leading-tight tracking-tight`（cinematic 用 `text-4xl sm:text-5xl`）
-- Author: `text-sm text-base-content/50`（cinematic 用 `/60`）
-- Synopsis: `text-base text-base-content/75 leading-relaxed`
-- CTA: `bg-primary text-white font-extrabold text-[15px] h-12 px-8 rounded-[14px]`
-- Chapter count: `text-sm text-base-content/40`
+**Text below the hero (Atmospheric and Gradient wash):**
+- Genre pill: `background: var(--accent-10)` (10% opacity accent), `color: var(--accent)`, `border-radius: 999px`, `font-size: 13px`, `font-weight: 700`, `padding: 4px 14px`
+- Title: `font-size: clamp(26px, 6vw, 44px)`, `font-weight: 800`, `letter-spacing: -0.03em`, `line-height: 1.08`
+- Author + chapter count: `font-size: 15px`, `--muted`, e.g., "By Jane Foster · 24 Chapters" — **never the raw domain URL**
+- Synopsis: `font-size: 16px`, `line-height: 1.8`, max 4 lines with "Read more" toggle
+- CTA button: "Start Reading →", `background: var(--accent)`, `color: #fff`, full-width on mobile, `min-height: 56px`, `border-radius: 16px`, `font-weight: 800`, `font-size: 17px`
+
+**Quality bar:** The detail page must look dramatically better than a WordPress novel post. Pick the treatment by genre signal:
+- **Atmospheric** — default for most web novel / romance / thriller
+- **Cinematic** — dark romance, dark fantasy, horror, mafia: the unblurred cover creates stronger genre impact
+- **Gradient wash** — contemporary romance, sports romance, billionaire, light paranormal: vibrant and clean, works well in light mode with a strong brand color
 
 ### Chapter List Row
 - Height: auto, minimum 48px.
 - Content: chapter number, title, optional publish date or word count (right-aligned).
 - Volume/arc grouping: sticky or bold section header between groups. `--text-sm`, uppercase, `--muted`.
 - Locked chapters (if requested): lock icon, grayed text. Do not show paywall UI by default.
-
-### Chapter Reader — Cover on Chapter 1
-
-When rendering chapter 1 (first chapter of a book), display the book cover at the top of the article, before the chapter title. Subsequent chapters show no cover.
-
-```tsx
-{/* chapter 1 only */}
-{idx === 0 && (
-  <div className="mb-10 flex flex-col items-center gap-4">
-    <img
-      src={book.cover}
-      alt={`${book.title} cover`}
-      width={220}
-      height={330}
-      className="rounded-lg shadow-2xl"
-      style={{ aspectRatio: '2/3', objectFit: 'cover' }}
-    />
-    <div className="text-center">
-      <p className="font-display text-2xl italic text-base-content">{book.title}</p>
-      <p className="text-sm text-base-content/50 mt-1">{book.author}</p>
-    </div>
-  </div>
-)}
-```
-
-`idx` is the zero-based index of the current chapter in the sorted published chapter list. Insert this block inside `<article>`, before the `<header>` that contains the chapter title.
 
 ### Reader Settings Sheet
 
