@@ -118,7 +118,7 @@ printf '%s' "$PROMPT" > "${OUTPUT_PATH%.png}.prompt.txt"
 
 ---
 
-## 与 fiction-h5-builder 的关系
+## 与 fiction-site-builder 的关系
 
-`fiction-h5-builder` 的 A2（封面生成）阶段使用本 skill 的生成逻辑。  
+`fiction-site-builder` 的 A2（封面生成）阶段使用本 skill 的生成逻辑。  
 安全过滤词表和重试策略以本文件为准；`story-cover.md` 中的 prompt 构建逻辑独立存在，生成 prompt 后交由本 skill 执行图片生成。
