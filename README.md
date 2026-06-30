@@ -7,7 +7,6 @@
 | 技能 | 目录 | 触发词 | 说明 |
 | --- | --- | --- | --- |
 | AdSense Site Builder | [`adsense-site-builder`](./adsense-site-builder) | `adsense-site-builder` | 从 niche 验证到上线的 AdSense 站点构建与审计 |
-| Fiction H5 Builder | [`fiction-site-builder`](./fiction-site-builder) | `fiction-site-builder` | 构建移动优先的小说阅读 H5 站点，支持多语言、多页面模板与 oh-story 数据接入 |
 
 ## 安装方式
 
@@ -21,15 +20,12 @@ npx skills add zisheng-ai/skills --list
 
 # 安装指定技能到当前项目
 npx skills add zisheng-ai/skills --skill adsense-site-builder
-npx skills add zisheng-ai/skills --skill fiction-site-builder
 
 # 安装到 Claude Code 全局
 npx skills add zisheng-ai/skills --skill adsense-site-builder --agent claude-code --global
-npx skills add zisheng-ai/skills --skill fiction-site-builder --agent claude-code --global
 
 # 安装到 Codex 全局
 npx skills add zisheng-ai/skills --skill adsense-site-builder --agent codex --global
-npx skills add zisheng-ai/skills --skill fiction-site-builder --agent codex --global
 ```
 
 > 将 `zisheng-ai` 替换为你的 GitHub 用户名。技能目录位于仓库根目录下，`npx skills` 会优先发现根目录的技能。
@@ -42,13 +38,10 @@ Claude Code 默认从 `~/.claude/skills/` 加载技能。
 # 安装
 mkdir -p ~/.claude/skills
 cp -R adsense-site-builder ~/.claude/skills/adsense-site-builder
-cp -R fiction-site-builder ~/.claude/skills/fiction-site-builder
 
 # 更新（直接覆盖）
 rm -rf ~/.claude/skills/adsense-site-builder
 cp -R adsense-site-builder ~/.claude/skills/adsense-site-builder
-rm -rf ~/.claude/skills/fiction-site-builder
-cp -R fiction-site-builder ~/.claude/skills/fiction-site-builder
 ```
 
 安装后，在 Claude Code 中输入 `/adsense-site-builder` 或在 prompt 中写 `Use adsense-site-builder to ...` 即可触发。
@@ -61,13 +54,10 @@ Codex 默认从 `~/.codex/skills/` 加载技能。
 # 安装
 mkdir -p ~/.codex/skills
 cp -R adsense-site-builder ~/.codex/skills/adsense-site-builder
-cp -R fiction-site-builder ~/.codex/skills/fiction-site-builder
 
 # 更新
 rm -rf ~/.codex/skills/adsense-site-builder
 cp -R adsense-site-builder ~/.codex/skills/adsense-site-builder
-rm -rf ~/.codex/skills/fiction-site-builder
-cp -R fiction-site-builder ~/.codex/skills/fiction-site-builder
 ```
 
 ### 方式四：Cursor / 其他编辑器
@@ -126,20 +116,6 @@ Requirements:
 
 更多 prompt 模板请查看 [`adsense-site-builder/README.md`](./adsense-site-builder/README.md)。
 
-### Fiction H5 Builder 示例
-
-```txt
-Use fiction-site-builder to build a polished English web novel H5 template from oh-story Markdown.
-```
-
-```txt
-Use fiction-site-builder to build a Japanese light novel mobile reader with a work list, detail page, and vertical-layout option.
-```
-
-```txt
-Use fiction-site-builder to review this Spanish novela H5 for reading comfort and desktop responsiveness.
-```
-
 ## 开发新技能
 
 1. 在根目录创建新目录，例如 `my-skill/`。
@@ -164,12 +140,6 @@ description: one-line description of what this skill does and when to use it.
     references/          # 阶段性子模块
     agents/              # 可选：Agent 配置
     outputs/             # 运行时输出（gitignored）
-  fiction-site-builder/
-    SKILL.md             # 技能入口，含 frontmatter
-    references/          # 子模块：设计、UX、国际化、QA 等
-    agents/              # 可选：Agent 配置
-    assets/              # 静态资源说明
-    scripts/             # 辅助脚本（如 parse-oh-story-claudecode.mjs）
   image-gen/
     SKILL.md             # 技能入口，含 frontmatter
 ```

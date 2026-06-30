@@ -115,10 +115,3 @@ printf '%s' "$PROMPT" > "${OUTPUT_PATH%.png}.prompt.txt"
 | 书籍封面（2:3 竖版） | `848x1280` |
 | 方形封面 / 头像 | `1024x1024` |
 | 横版 Banner | `1280x848` |
-
----
-
-## 与 fiction-site-builder 的关系
-
-`fiction-site-builder` 的 A2（封面生成）阶段使用本 skill 的生成逻辑。  
-安全过滤词表和重试策略以本文件为准；`story-cover.md` 中的 prompt 构建逻辑独立存在，生成 prompt 后交由本 skill 执行图片生成。
