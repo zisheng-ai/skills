@@ -1,0 +1,3 @@
+[submodule "fiction-site-builder"]
+	path = fiction-site-builder
+	url = https://github.com/zisheng-ai/fiction-site-builder.git
