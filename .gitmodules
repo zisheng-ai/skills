@@ -1,0 +1,3 @@
+[submodule "fiction-h5-builder"]
+	path = fiction-h5-builder
+	url = https://github.com/zisheng-ai/fiction-h5-builder.git
