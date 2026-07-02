@@ -1,3 +1,6 @@
 [submodule "fiction-site-builder"]
 	path = fiction-site-builder
 	url = https://github.com/zisheng-ai/fiction-site-builder.git
+[submodule "adsense-site-builder"]
+	path = adsense-site-builder
+	url = https://github.com/zisheng-ai/adsense-site-builder.git
